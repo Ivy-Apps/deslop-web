@@ -1,0 +1,5 @@
+{
+  "name": "Deslop - AI Slop Remover",
+  "description": "CI tool that removes AI slop from TypeScript and NextJS projects with strict guardrails.",
+  "requestFramePermissions": []
+}
