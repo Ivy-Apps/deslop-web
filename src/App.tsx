@@ -242,6 +242,19 @@ export default function App() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto"
           >
+            <div className="mb-6 flex justify-center">
+              <div className="relative rounded-full p-px bg-gradient-to-r from-[#5EAEFF]/50 via-white/25 to-[#5EAEFF]/50 shadow-[0_0_32px_-8px_rgba(94,174,255,0.35)]">
+                <div className="flex items-center gap-2 rounded-full bg-zinc-950/90 px-4 py-1.5 backdrop-blur-sm">
+                  <span
+                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-br from-[#5EAEFF] to-[#1E6FD4] shadow-[0_0_8px_rgba(94,174,255,0.8)]"
+                    aria-hidden
+                  />
+                  <span className="text-[11px] sm:text-xs font-semibold tracking-wide text-zinc-100">
+                    Optimized for TypeScript & NextJS
+                  </span>
+                </div>
+              </div>
+            </div>
             <div className="relative mb-8">
               <div
                 className="pointer-events-none absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 w-[min(120%,36rem)] h-[14rem] md:h-[18rem] opacity-50 md:opacity-[0.55]"
@@ -284,7 +297,7 @@ export default function App() {
             </div>
             <p className="text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
               Embrace the full potential of vibe-coding without sacrificing
-              quality. Add Deslop to your CI and stop AI slop and tech-debt
+              quality. Add Deslop to your CI and stop AI slop with tech-debt
               deterministically via advanced static analysis.
             </p>
           </motion.div>
