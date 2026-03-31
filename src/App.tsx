@@ -26,38 +26,40 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/80 backdrop-blur-md border-b border-white/10 py-3" : "bg-transparent py-6"}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-zinc-950/85 backdrop-blur-xl border-b border-white/[0.06] py-3" : "bg-transparent py-5 md:py-6"}`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <div className="flex items-center gap-2 group cursor-pointer">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center transition-transform group-hover:rotate-12">
-            <span className="text-black font-bold text-lg leading-none">δ</span>
+        <div className="flex items-center gap-2.5 group cursor-pointer">
+          <div className="w-8 h-8 rounded-md bg-white flex items-center justify-center ring-1 ring-white/10 transition-transform group-hover:scale-[1.02]">
+            <span className="text-zinc-950 font-semibold text-lg leading-none">
+              δ
+            </span>
           </div>
-          <span className="text-xl font-bold tracking-tight text-white">
+          <span className="text-[15px] font-semibold tracking-[-0.02em] text-zinc-100">
             Deslop
           </span>
         </div>
 
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-1">
           <a
             href="#features"
-            className="text-sm text-zinc-300 hover:text-white transition-colors"
+            className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors px-3 py-1.5 rounded-md hover:bg-white/[0.04]"
           >
             Features
           </a>
           <a
             href="#integrations"
-            className="text-sm text-zinc-300 hover:text-white transition-colors"
+            className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors px-3 py-1.5 rounded-md hover:bg-white/[0.04]"
           >
             Integrations
           </a>
           <a
             href="#pricing"
-            className="text-sm text-zinc-300 hover:text-white transition-colors"
+            className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors px-3 py-1.5 rounded-md hover:bg-white/[0.04]"
           >
             Pricing
           </a>
-          <button className="bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-zinc-200 transition-colors">
+          <button className="ml-3 bg-white text-zinc-950 px-4 py-2 rounded-md text-sm font-medium hover:bg-zinc-100 transition-colors ring-1 ring-white/10">
             Get Personal License
           </button>
         </div>
@@ -77,7 +79,7 @@ const Navbar = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-black border-b border-white/10 p-6 flex flex-col gap-4 md:hidden"
+            className="absolute top-full left-0 right-0 bg-zinc-950 border-b border-white/10 p-6 flex flex-col gap-4 md:hidden"
           >
             <a
               href="#features"
@@ -219,34 +221,76 @@ const FeatureCard = ({
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
+    <div className="min-h-screen bg-zinc-950 text-white selection:bg-white selection:text-black font-sans">
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-black">
-        {/* Grid Background */}
-        <div className="absolute inset-0 z-0 opacity-[0.15] [mask-image:radial-gradient(ellipse_at_center,black,transparent)]">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:44px_44px]"></div>
+      <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-zinc-950">
+        <div
+          className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-px bg-gradient-to-r from-[#3E99F5]/40 via-white/10 to-[#5C3DF5]/40"
+          aria-hidden
+        />
+        {/* Futuristic ambient: blue (left) + purple (right) */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_55%_45%_at_15%_5%,rgba(62,153,245,0.14),transparent_55%),radial-gradient(ellipse_50%_45%_at_85%_0%,rgba(92,61,245,0.15),transparent_55%)]"
+          aria-hidden
+        />
+        <motion.div
+          className="pointer-events-none absolute -left-[20%] top-[5%] z-0 h-[min(70vw,32rem)] w-[min(70vw,32rem)] rounded-full bg-[#3E99F5]/25 blur-[120px]"
+          animate={{ opacity: [0.35, 0.55, 0.35], scale: [1, 1.05, 1] }}
+          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+          aria-hidden
+        />
+        <motion.div
+          className="pointer-events-none absolute -right-[15%] top-[25%] z-0 h-[min(60vw,28rem)] w-[min(60vw,28rem)] rounded-full bg-[#5C3DF5]/20 blur-[110px]"
+          animate={{ opacity: [0.28, 0.48, 0.28], scale: [1.02, 1, 1.02] }}
+          transition={{
+            duration: 13,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5,
+          }}
+          aria-hidden
+        />
+        <motion.div
+          className="pointer-events-none absolute bottom-[-10%] left-1/2 z-0 h-[22rem] w-[min(95vw,44rem)] -translate-x-1/2 rounded-full blur-[130px]"
+          animate={{ opacity: [0.25, 0.42, 0.25] }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(62,153,245,0.14) 0%, rgba(92,61,245,0.12) 100%)",
+          }}
+          aria-hidden
+        />
+        {/* Grid: brand blue verticals + purple horizontals */}
+        <div
+          className="absolute inset-0 z-0 opacity-[0.4] [mask-image:radial-gradient(ellipse_75%_65%_at_50%_40%,black,transparent)]"
+          aria-hidden
+        >
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(62,153,245,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(92,61,245,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
         </div>
-
-        {/* Background Gradients */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none z-0">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-white/5 blur-[120px] rounded-full" />
-          <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] bg-white/5 blur-[120px] rounded-full" />
-        </div>
+        {/* Soft scan beam: blue → purple */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[min(60vh,28rem)] bg-[linear-gradient(180deg,transparent_0%,rgba(62,153,245,0.03)_22%,rgba(92,61,245,0.045)_78%,transparent_100%)] [animation:hero-beam_14s_ease-in-out_infinite]"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-44 bg-gradient-to-t from-zinc-950 via-zinc-950/90 to-transparent"
+          aria-hidden
+        />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center max-w-3xl mx-auto"
           >
-            <div className="mb-6 flex justify-center">
-              <div className="relative rounded-full p-px bg-gradient-to-r from-[#5EAEFF]/50 via-white/25 to-[#5EAEFF]/50 shadow-[0_0_32px_-8px_rgba(94,174,255,0.35)]">
-                <div className="flex items-center gap-2 rounded-full bg-zinc-950/90 px-4 py-1.5 backdrop-blur-sm">
+            <div className="mb-8 flex flex-col items-center gap-6">
+              <div className="rounded-full bg-gradient-to-r from-[#3E99F5]/90 via-[#5C3DF5]/95 to-[#4A2DD4]/90 p-px shadow-[0_0_40px_-6px_rgba(62,153,245,0.4),0_0_44px_-6px_rgba(92,61,245,0.45)]">
+                <div className="flex items-center gap-2.5 rounded-full bg-zinc-950/95 px-4 py-2 backdrop-blur-md">
                   <span
-                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-br from-[#5EAEFF] to-[#1E6FD4] shadow-[0_0_8px_rgba(94,174,255,0.8)]"
+                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-br from-[#3E99F5] to-[#5C3DF5] shadow-[0_0_10px_rgba(62,153,245,0.85),0_0_12px_rgba(92,61,245,0.75)]"
                     aria-hidden
                   />
                   <span className="text-[11px] sm:text-xs font-semibold tracking-wide text-zinc-100">
@@ -254,48 +298,39 @@ export default function App() {
                   </span>
                 </div>
               </div>
-            </div>
-            <div className="relative mb-8">
-              <div
-                className="pointer-events-none absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 w-[min(120%,36rem)] h-[14rem] md:h-[18rem] opacity-50 md:opacity-[0.55]"
-                aria-hidden
-              >
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_55%_at_50%_45%,rgba(62,153,245,0.2),transparent_68%)]" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_45%_at_50%_65%,rgba(255,255,255,0.07),transparent_70%)]" />
-              </div>
-              <h1 className="relative text-balance px-1 sm:px-2">
-                <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium tracking-tight mb-3 md:mb-4 bg-gradient-to-b from-zinc-200 via-zinc-400 to-zinc-500 bg-clip-text text-transparent [text-shadow:0_0_40px_rgba(255,255,255,0.04)]">
+              <h1 className="text-balance text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-[-0.04em] leading-[1.06]">
+                <span className="block bg-gradient-to-b from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent drop-shadow-[0_0_48px_rgba(255,255,255,0.12)]">
                   Your AI writes code.
                 </span>
-                <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.12] md:leading-[1.08]">
-                  <span className="bg-gradient-to-br from-[#C8E4FF] via-[#5EAEFF] to-[#1E6FD4] bg-clip-text text-transparent">
+                <span className="mt-2 md:mt-3 block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-[-0.04em] leading-[1.06]">
+                  <span className="bg-gradient-to-r from-[#3E99F5] via-[#4B6EF4] to-[#5C3DF5] bg-clip-text text-transparent">
                     Deslop
                   </span>
-                  <span className="bg-gradient-to-b from-white via-zinc-50 to-zinc-400 bg-clip-text text-transparent drop-shadow-[0_2px_24px_rgba(255,255,255,0.12)]">
+                  <span className="bg-gradient-to-b from-white to-zinc-300 bg-clip-text text-transparent">
                     {" "}
                     makes it{" "}
                   </span>
-                  <span className="bg-gradient-to-br from-[#C8E4FF] via-[#5EAEFF] to-[#1E6FD4] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[#5C3DF5] via-[#4B6EF4] to-[#3E99F5] bg-clip-text text-transparent">
                     good.
                   </span>
                 </span>
               </h1>
             </div>
-            <p className="text-xl md:text-2xl text-zinc-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base md:text-lg text-zinc-300 mb-10 max-w-2xl mx-auto leading-relaxed font-normal">
               The Clean Code guardrail for the Agentic era. Removes AI slop and
               enforces architectural boundaries via MCP for Cursor and Claude
               Code.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-              <button className="w-full sm:w-auto bg-white text-black px-8 py-4 rounded-2xl text-lg font-bold hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 group">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-10">
+              <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-3.5 text-base font-bold text-zinc-950 shadow-[0_0_28px_-6px_rgba(62,153,245,0.35),0_0_32px_-6px_rgba(92,61,245,0.4)] ring-1 ring-white/20 transition-all hover:bg-zinc-100 hover:shadow-[0_0_36px_-4px_rgba(62,153,245,0.45),0_0_40px_-4px_rgba(92,61,245,0.5)]">
                 Get Personal License — $10.99/mo
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 opacity-90" />
               </button>
-              <button className="w-full sm:w-auto bg-white/5 border border-white/10 text-white px-8 py-4 rounded-2xl text-lg font-semibold hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+              <button className="w-full sm:w-auto inline-flex items-center justify-center rounded-2xl border border-[#3E99F5]/25 bg-gradient-to-r from-[#3E99F5]/10 to-[#5C3DF5]/10 px-8 py-3.5 text-base font-semibold text-zinc-100 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-sm ring-1 ring-[#3E99F5]/15 transition-all hover:border-[#3E99F5]/45 hover:ring-[#5C3DF5]/25 hover:from-[#3E99F5]/15 hover:to-[#5C3DF5]/15">
                 Request Team Access
               </button>
             </div>
-            <p className="text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
+            <p className="text-xs text-zinc-500 max-w-lg mx-auto leading-relaxed">
               Embrace the full potential of vibe-coding without sacrificing
               quality. Add Deslop to your CI and stop AI slop with tech-debt
               deterministically via advanced static analysis.
@@ -304,99 +339,130 @@ export default function App() {
 
           {/* Hero Image/Code Preview */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 40 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="mt-24 relative"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.12, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-16 md:mt-20 relative max-w-5xl mx-auto"
           >
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10" />
-            <div className="bg-[#0A0A0A] border border-white/10 rounded-3xl overflow-hidden shadow-2xl shadow-white/5">
-              <div className="bg-white/5 border-b border-white/10 px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-zinc-800" />
-                    <div className="w-3 h-3 rounded-full bg-zinc-800" />
-                    <div className="w-3 h-3 rounded-full bg-zinc-800" />
+            <div
+              className="pointer-events-none absolute -inset-[1px] rounded-3xl bg-gradient-to-b from-[#3E99F5]/22 via-[#5C3DF5]/08 to-[#4A2DD4]/16 opacity-80 blur-[1px]"
+              aria-hidden
+            />
+            <div className="pointer-events-none absolute -inset-1 rounded-3xl bg-gradient-to-tr from-[#3E99F5]/16 via-transparent to-[#5C3DF5]/14 opacity-70"
+              aria-hidden
+            />
+            <div className="relative rounded-3xl border border-[#3E99F5]/15 bg-zinc-950/85 shadow-[0_28px_100px_-28px_rgba(0,0,0,0.9),0_0_50px_-18px_rgba(62,153,245,0.12),0_0_55px_-16px_rgba(92,61,245,0.18)] ring-1 ring-[#5C3DF5]/10 backdrop-blur-md overflow-hidden">
+              <div className="flex items-center justify-between gap-4 border-b border-white/[0.06] bg-zinc-900/50 px-4 py-3 md:px-5">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex shrink-0 gap-1.5">
+                    <div className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-[#28C840]" />
                   </div>
-                  <span className="text-zinc-500 text-sm font-mono">
+                  <span className="truncate font-mono text-[13px] text-zinc-400">
                     deslop.config.yaml
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-zinc-500 text-xs">
-                  <Terminal className="w-4 h-4" />
-                  <span>CI/CD Pipeline</span>
+                <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                  <Terminal className="h-3.5 w-3.5 opacity-70" />
+                  <span>CI / CD</span>
                 </div>
               </div>
-              <div className="p-8 md:p-12 font-mono text-sm md:text-base leading-relaxed text-zinc-400">
+              <div className="p-6 md:p-10 font-mono text-[13px] md:text-sm leading-[1.75] text-zinc-500">
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">1</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    1
+                  </span>
                   <span>
-                    <span className="text-white">name:</span> Demo Rulebook
+                    <span className="text-[#3E99F5]">name:</span> Demo Rulebook
                   </span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">2</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    2
+                  </span>
                   <span>
-                    <span className="text-white">rules:</span>
+                    <span className="text-[#3E99F5]">rules:</span>
                   </span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">3</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    3
+                  </span>
                   <span className="pl-4 text-zinc-600"># P0</span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">4</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    4
+                  </span>
                   <span className="pl-4">
-                    - <span className="text-white">id:</span> no-react-in-core
+                    - <span className="text-[#3E99F5]">id:</span>{" "}
+                    no-react-in-core
                   </span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">5</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    5
+                  </span>
                   <span className="pl-8">
-                    <span className="text-white">description:</span> "The core
-                    must not have React dependencies"
+                    <span className="text-[#3E99F5]">description:</span>{" "}
+                    &quot;The core must not have React dependencies&quot;
                   </span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">6</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    6
+                  </span>
                   <span className="pl-8">
-                    <span className="text-white">target:</span>
+                    <span className="text-[#3E99F5]">target:</span>
                   </span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">7</span>
-                  <span className="pl-12">- @/client/core/**/*</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    7
+                  </span>
+                  <span className="pl-12 text-zinc-400">- @/client/core/**/*</span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">8</span>
-                  <span className="pl-12">- @/server/**/*</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    8
+                  </span>
+                  <span className="pl-12 text-zinc-400">- @/server/**/*</span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">9</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    9
+                  </span>
                   <span className="pl-8">
-                    <span className="text-white">forbidden:</span>
+                    <span className="text-[#3E99F5]">forbidden:</span>
                   </span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">10</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    10
+                  </span>
                   <span className="pl-12">
-                    - <span className="text-white">import:</span> react
+                    - <span className="text-[#3E99F5]">import:</span> react
                   </span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="text-zinc-700 select-none">11</span>
+                  <span className="w-6 shrink-0 select-none text-right text-zinc-600 tabular-nums">
+                    11
+                  </span>
                   <span className="pl-16">
-                    <span className="text-white">transitive:</span> true
+                    <span className="text-[#3E99F5]">transitive:</span>{" "}
+                    <span className="text-amber-200/80">true</span>
                   </span>
                 </div>
               </div>
             </div>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent z-[1]" />
           </motion.div>
         </div>
       </section>
 
       {/* Section 2: The Big Three (Black Background) */}
-      <section id="features" className="py-24 md:py-32 bg-black">
+      <section id="features" className="py-24 md:py-32 bg-zinc-950">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-20 text-center">
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white">
@@ -489,8 +555,8 @@ export default function App() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
-                    <Terminal className="w-5 h-5 text-blue-500" />
+                  <div className="w-10 h-10 rounded-xl bg-[#5C3DF5]/20 flex items-center justify-center mb-4">
+                    <Terminal className="w-5 h-5 text-[#5C3DF5]" />
                   </div>
                   <h4 className="text-lg font-bold text-white mb-2">
                     Local MCP Server
@@ -515,7 +581,7 @@ export default function App() {
 
             <div className="relative">
               <div className="absolute -inset-4 bg-white/5 blur-3xl rounded-full opacity-30" />
-              <div className="relative bg-black border border-white/10 rounded-3xl p-8 shadow-2xl">
+              <div className="relative bg-zinc-950 border border-white/10 rounded-3xl p-8 shadow-2xl">
                 <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-4">
                   <div className="w-3 h-3 rounded-full bg-red-500" />
                   <div className="w-3 h-3 rounded-full bg-yellow-500" />
@@ -535,7 +601,7 @@ export default function App() {
                   <p className="text-green-400">
                     √ Resolving 12 relative imports
                   </p>
-                  <p className="text-purple-400">
+                  <p className="text-[#5C3DF5]">
                     i RuleBook: 0 violations found.
                   </p>
                   <p className="text-white">
@@ -549,7 +615,7 @@ export default function App() {
       </section>
 
       {/* Section 4: Pricing (Black Background) */}
-      <section id="pricing" className="py-24 md:py-32 bg-black">
+      <section id="pricing" className="py-24 md:py-32 bg-zinc-950">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-20 text-center">
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white">
@@ -639,7 +705,7 @@ export default function App() {
       </section>
 
       {/* Section 4: Error Reporting (Black Background) */}
-      <section className="py-24 md:py-32 bg-black">
+      <section className="py-24 md:py-32 bg-zinc-950">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -731,8 +797,8 @@ export default function App() {
               </p>
               <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                    <Shield className="w-5 h-5 text-purple-500" />
+                  <div className="w-10 h-10 rounded-full bg-[#5C3DF5]/20 flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-[#5C3DF5]" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-white">
@@ -754,7 +820,7 @@ export default function App() {
       </section>
 
       {/* CTA Section (Black Background) */}
-      <section className="py-24 md:py-48 relative overflow-hidden bg-black">
+      <section className="py-24 md:py-48 relative overflow-hidden bg-zinc-950">
         <div className="absolute inset-0 bg-white/[0.02] pointer-events-none" />
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <h2 className="text-4xl md:text-7xl font-bold mb-8 tracking-tight">
@@ -778,7 +844,7 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-white/10 bg-black">
+      <footer className="py-12 border-t border-white/10 bg-zinc-950">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
