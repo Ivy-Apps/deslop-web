@@ -242,15 +242,35 @@ export default function App() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <h1 className="text-5xl md:text-8xl font-bold tracking-tighter mb-8 bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">
-              Your AI writes code.
-              <br />
-              <span className="text-[#3E99F5]">Deslop</span> makes it{" "}
-              <span className="text-[#3E99F5]">good.</span>
-            </h1>
+            <div className="relative mb-8">
+              <div
+                className="pointer-events-none absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 w-[min(120%,36rem)] h-[14rem] md:h-[18rem] opacity-50 md:opacity-[0.55]"
+                aria-hidden
+              >
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_55%_at_50%_45%,rgba(62,153,245,0.2),transparent_68%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_45%_at_50%_65%,rgba(255,255,255,0.07),transparent_70%)]" />
+              </div>
+              <h1 className="relative text-balance px-1 sm:px-2">
+                <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium tracking-tight mb-3 md:mb-4 bg-gradient-to-b from-zinc-200 via-zinc-400 to-zinc-500 bg-clip-text text-transparent [text-shadow:0_0_40px_rgba(255,255,255,0.04)]">
+                  Your AI writes code.
+                </span>
+                <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.12] md:leading-[1.08]">
+                  <span className="bg-gradient-to-br from-[#C8E4FF] via-[#5EAEFF] to-[#1E6FD4] bg-clip-text text-transparent">
+                    Deslop
+                  </span>
+                  <span className="bg-gradient-to-b from-white via-zinc-50 to-zinc-400 bg-clip-text text-transparent drop-shadow-[0_2px_24px_rgba(255,255,255,0.12)]">
+                    {" "}
+                    makes it{" "}
+                  </span>
+                  <span className="bg-gradient-to-br from-[#C8E4FF] via-[#5EAEFF] to-[#1E6FD4] bg-clip-text text-transparent">
+                    good.
+                  </span>
+                </span>
+              </h1>
+            </div>
             <p className="text-xl md:text-2xl text-zinc-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-              The Clean Code guardrail for the Agentic era. Removing AI slop and
-              enforcing architectural boundaries via MCP for Cursor and Claude
+              The Clean Code guardrail for the Agentic era. Removes AI slop and
+              enforces architectural boundaries via MCP for Cursor and Claude
               Code.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
@@ -263,8 +283,9 @@ export default function App() {
               </button>
             </div>
             <p className="text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
-              Deslop acts as the "Senior Overlord" that reviews your AI’s work
-              in real-time. Zero-config aesthetics for fragmented AI output.
+              Embrace the full potential of vibe-coding without sacrificing
+              quality. Add Deslop to your CI and stop AI slop and tech-debt
+              deterministically via advanced static analysis.
             </p>
           </motion.div>
 
@@ -573,7 +594,7 @@ export default function App() {
                 CI / Team License
               </h3>
               <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-4xl font-bold text-white">$12.99</span>
+                <span className="text-4xl font-bold text-white">$24.99</span>
                 <span className="text-zinc-500">/mo</span>
               </div>
               <p className="text-zinc-400 mb-8">
@@ -581,11 +602,11 @@ export default function App() {
               </p>
               <ul className="space-y-4 mb-10">
                 {[
-                  "Includes all Personal features",
-                  "GitHub Action integration",
+                  "Includes everything from Personal",
+                  "GitHub Action CI integration",
                   "Per-Repository enforcement",
-                  "Team-wide RuleBook sync",
-                  "Priority Support",
+                  "Team-wide RuleBook",
+                  "Easier to review and cleaner PRs",
                 ].map((item, i) => (
                   <li
                     key={i}
