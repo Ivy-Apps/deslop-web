@@ -166,13 +166,6 @@ export default function App() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <div className="inline-flex items-center gap-3 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-zinc-400 mb-8">
-              <div className="flex items-center gap-1.5 border-r border-white/10 pr-3 mr-1">
-                <span className="w-2 h-2 rounded-full bg-purple-500" />
-                <span className="text-purple-400">Haskell Engine</span>
-              </div>
-              <span className="text-zinc-300">Built for Speed & Correctness</span>
-            </div>
             <h1 className="text-5xl md:text-8xl font-bold tracking-tighter mb-8 bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">
               Your AI writes code.<br />Deslop makes it <span className="text-white">Senior-grade.</span>
             </h1>
