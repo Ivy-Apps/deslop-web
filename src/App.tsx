@@ -245,7 +245,8 @@ export default function App() {
             <h1 className="text-5xl md:text-8xl font-bold tracking-tighter mb-8 bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">
               Your AI writes code.
               <br />
-              Deslop makes it <span className="text-white">good.</span>
+              <span className="text-[#3E99F5]">Deslop</span> makes it{" "}
+              <span className="text-[#3E99F5]">good.</span>
             </h1>
             <p className="text-xl md:text-2xl text-zinc-300 mb-12 max-w-3xl mx-auto leading-relaxed">
               The Clean Code guardrail for the Agentic era. Removing AI slop and
