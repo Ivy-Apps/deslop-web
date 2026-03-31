@@ -69,7 +69,11 @@ const Navbar = () => {
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
-          {isMobileMenuOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+          {isMobileMenuOpen ? (
+            <X className="h-7 w-7" />
+          ) : (
+            <Menu className="h-7 w-7" />
+          )}
         </button>
       </div>
 
@@ -212,7 +216,9 @@ const FeatureCard = ({
         <Icon className="w-7 h-7 text-white" />
       </div>
       <h3 className="text-3xl font-bold text-white mb-4">{title}</h3>
-      <p className="text-zinc-300 text-lg leading-relaxed mb-8">{description}</p>
+      <p className="text-zinc-300 text-lg leading-relaxed mb-8">
+        {description}
+      </p>
       {children}
     </motion.div>
   );
@@ -333,8 +339,8 @@ export default function App() {
             </div>
             <p className="text-sm md:text-base text-zinc-500 max-w-xl mx-auto leading-relaxed">
               Embrace the full potential of vibe-coding without sacrificing
-              quality. Add Deslop to your CI and stop AI slop with tech-debt
-              deterministically via advanced static analysis.
+              quality. Add Deslop to your CI and stop the AI slop tech-debt via
+              advanced static analysis.
             </p>
           </motion.div>
 
@@ -342,14 +348,19 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.12, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            transition={{
+              delay: 0.12,
+              duration: 0.65,
+              ease: [0.22, 1, 0.36, 1],
+            }}
             className="mt-16 md:mt-20 relative max-w-5xl mx-auto"
           >
             <div
               className="pointer-events-none absolute -inset-[1px] rounded-3xl bg-gradient-to-b from-[#3E99F5]/22 via-[#5C3DF5]/08 to-[#4A2DD4]/16 opacity-80 blur-[1px]"
               aria-hidden
             />
-            <div className="pointer-events-none absolute -inset-1 rounded-3xl bg-gradient-to-tr from-[#3E99F5]/16 via-transparent to-[#5C3DF5]/14 opacity-70"
+            <div
+              className="pointer-events-none absolute -inset-1 rounded-3xl bg-gradient-to-tr from-[#3E99F5]/16 via-transparent to-[#5C3DF5]/14 opacity-70"
               aria-hidden
             />
             <div className="relative rounded-3xl border border-[#3E99F5]/15 bg-zinc-950/85 shadow-[0_28px_100px_-28px_rgba(0,0,0,0.9),0_0_50px_-18px_rgba(62,153,245,0.12),0_0_55px_-16px_rgba(92,61,245,0.18)] ring-1 ring-[#5C3DF5]/10 backdrop-blur-md overflow-hidden">
@@ -422,7 +433,9 @@ export default function App() {
                   <span className="w-7 shrink-0 select-none text-right text-zinc-600 tabular-nums">
                     7
                   </span>
-                  <span className="pl-12 text-zinc-400">- @/client/core/**/*</span>
+                  <span className="pl-12 text-zinc-400">
+                    - @/client/core/**/*
+                  </span>
                 </div>
                 <div className="flex gap-4">
                   <span className="w-7 shrink-0 select-none text-right text-zinc-600 tabular-nums">
@@ -732,7 +745,10 @@ export default function App() {
                   "Context-aware error reporting",
                   "Seamless CI/CD integration",
                 ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-zinc-200 text-lg">
+                  <li
+                    key={i}
+                    className="flex items-center gap-3 text-zinc-200 text-lg"
+                  >
                     <Check className="w-6 h-6 text-green-500 shrink-0" />
                     {item}
                   </li>
