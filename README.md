@@ -10,11 +10,13 @@ View your app in AI Studio: https://ai.studio/apps/3125ea99-753c-492f-80ea-f6db7
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
+**Prerequisites:** Node.js
 
+1. Install dependencies: `npm install`
+2. Run the app: `npm run dev` (opens on port 3000)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Deploy to Vercel
+
+1. Push this repo to GitHub (or GitLab / Bitbucket) and import the project in [Vercel](https://vercel.com).
+2. Use the default settings: **Install** `npm install`, **Build** `next build`, **Output** managed by Next.js.
+3. **Environment variables:** Add secrets only in the Vercel project dashboard when your app reads them on the **server** (for example in a [Route Handler](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)). Do **not** use the `NEXT_PUBLIC_` prefix for API keys you must keep private—those are exposed in the browser bundle.
