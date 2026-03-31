@@ -264,23 +264,6 @@ export default function App() {
               </div>
             </div>
           </motion.div>
-
-          {/* Trusted By */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1 }}
-            className="mt-24 text-center"
-          >
-            <p className="text-zinc-500 text-xs font-medium uppercase tracking-[0.2em] mb-8">Trusted by teams at</p>
-            <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 opacity-30 grayscale invert">
-              <span className="text-xl font-bold tracking-tighter">Vercel</span>
-              <span className="text-xl font-bold tracking-tighter">Linear</span>
-              <span className="text-xl font-bold tracking-tighter">Supabase</span>
-              <span className="text-xl font-bold tracking-tighter">Stripe</span>
-              <span className="text-xl font-bold tracking-tighter">Clerk</span>
-            </div>
-          </motion.div>
         </div>
       </section>
 
