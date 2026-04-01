@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="py-14 border-t border-white/10 bg-zinc-950">
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
-        <DeslopWordmark />
+        <DeslopWordmark scrollToTopOnClick />
         <div className="flex flex-wrap justify-center gap-8 text-base text-zinc-400">
           <a href="/privacy" className="hover:text-white transition-colors">
             Privacy

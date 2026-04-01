@@ -1,3 +1,5 @@
+'use client';
+
 import type { ReactNode } from 'react';
 import { textPresets, tw } from '@/components/design-system';
 
@@ -11,13 +13,40 @@ export function DeslopLogo(): ReactNode {
   );
 }
 
-export function DeslopWordmark(): ReactNode {
-  return (
-    <div className="flex items-center gap-2.5 group cursor-pointer">
+export type DeslopWordmarkProps = {
+  onClick?: () => void;
+  scrollToTopOnClick?: boolean;
+};
+
+export function DeslopWordmark({
+  onClick,
+  scrollToTopOnClick,
+}: DeslopWordmarkProps = {}): ReactNode {
+  const scrollToTop = () =>
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const resolvedOnClick =
+    onClick ?? (scrollToTopOnClick ? scrollToTop : undefined);
+
+  const inner = (
+    <>
       <DeslopLogo />
       <span className={`${textPresets.navBrand} ${tw.text.primary}`}>
         Deslop
       </span>
-    </div>
+    </>
   );
+
+  const className =
+    'flex items-center gap-2.5 group cursor-pointer bg-transparent border-0 p-0 font-inherit text-inherit';
+
+  if (resolvedOnClick) {
+    return (
+      <button type="button" onClick={resolvedOnClick} className={className}>
+        {inner}
+      </button>
+    );
+  }
+
+  return <div className="flex items-center gap-2.5 group cursor-pointer">{inner}</div>;
 }
