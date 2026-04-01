@@ -318,7 +318,7 @@ function HeroCodePreview(): ReactNode {
             <span
               className={`${textPresets.codeFilename} ${baseTw.text.muted}`}
             >
-              deslop.config.yaml
+              deslop/rules/architecture.yaml
             </span>
           </div>
           <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-zinc-500">
@@ -351,49 +351,45 @@ function HeroCodeLines(): ReactNode {
       </div>
       <div className="flex gap-4">
         <span className={lineNumberClass}>3</span>
-        <span className="pl-4 text-zinc-600"># P0</span>
-      </div>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>4</span>
         <span className="pl-4">
           - <span className={baseTw.text.brandBlue}>id:</span> no-react-in-core
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={lineNumberClass}>5</span>
+        <span className={lineNumberClass}>4</span>
         <span className="pl-8">
-          <span className={baseTw.text.brandBlue}>description:</span> &quot;The
-          core must not have React dependencies&quot;
+          <span className={baseTw.text.brandBlue}>description:</span> The core
+          must not have React dependencies.
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={lineNumberClass}>6</span>
+        <span className={lineNumberClass}>5</span>
         <span className="pl-8">
           <span className={baseTw.text.brandBlue}>target:</span>
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={lineNumberClass}>7</span>
+        <span className={lineNumberClass}>6</span>
         <span className="pl-12 text-zinc-400">- @/client/core{'**/*'}</span>
       </div>
       <div className="flex gap-4">
-        <span className={lineNumberClass}>8</span>
+        <span className={lineNumberClass}>7</span>
         <span className="pl-12 text-zinc-400">- @/server{'**/*'}</span>
       </div>
       <div className="flex gap-4">
-        <span className={lineNumberClass}>9</span>
+        <span className={lineNumberClass}>8</span>
         <span className="pl-8">
           <span className={baseTw.text.brandBlue}>forbidden:</span>
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={lineNumberClass}>10</span>
+        <span className={lineNumberClass}>9</span>
         <span className="pl-12">
           - <span className={baseTw.text.brandBlue}>import:</span> react
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={lineNumberClass}>11</span>
+        <span className={lineNumberClass}>10</span>
         <span className="pl-16">
           <span className={baseTw.text.brandBlue}>transitive:</span>{' '}
           <span className="text-amber-200/80">true</span>
