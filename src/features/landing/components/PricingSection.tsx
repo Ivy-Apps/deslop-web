@@ -9,11 +9,11 @@ export default function PricingSection(): ReactNode {
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-20 text-center">
           <h2 className={`${typeScale.displayXl} mb-6 ${baseTw.text.primary}`}>
-            Simple, Transparent Pricing
+            Simple, transparent pricing
           </h2>
           <p className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}>
-            Choose the plan that fits your workflow. From solopreneurs to
-            engineering teams.
+            Per-user pricing for local tooling and CI. No hidden tiers—what you
+            see is what you pay.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
@@ -34,20 +34,25 @@ function PersonalPlanCard(): ReactNode {
         </span>
       </div>
       <h3 className={`${typeScale.titleLg} mb-2`}>Personal License</h3>
-      <div className="flex items-baseline gap-1 mb-6">
+      <div className="flex items-baseline gap-1 mb-1">
         <span className="text-5xl font-bold text-white">$10.99</span>
-        <span className="text-zinc-500 text-xl">/mo</span>
+        <span className="text-zinc-500 text-xl">/mo per user</span>
       </div>
-      <p className={`${typeScale.bodyLg} ${baseTw.text.muted} mb-8`}>
-        Perfect for solo developers using AI agents to build faster.
+      <p className={`${typeScale.bodySm} ${baseTw.text.muted} mb-6`}>
+        Local Deslop CLI and MCP server.
+      </p>
+      <p
+        className={`${typeScale.bodySm} ${baseTw.text.muted} mb-8 pb-8 border-b border-white/10`}
+      >
+        Sign in with your Deslop account to activate this plan.
       </p>
       <ul className="space-y-4 mb-10">
         {[
-          'Local CLI + MCP Server',
-          'Unlimited local refactors',
-          'Personal RuleBook config',
-          'Step-Down Ordering engine',
-          'Relative Import Fixer',
+          'Deslop RuleBook',
+          'Enforce architecture',
+          'MCP server for Cursor and Claude Code—native agent communication',
+          'LLM-friendly Markdown reporting, optimized for AI workflows',
+          'Code smells: reporting and fixes (e.g. relative imports)',
         ].map((item) => (
           <li
             key={item}
@@ -77,15 +82,15 @@ function TeamPlanCard(): ReactNode {
         <span className="text-zinc-500 text-xl">/mo</span>
       </div>
       <p className={`${typeScale.bodyLg} ${baseTw.text.muted} mb-8`}>
-        For teams that want to adopt AI without sacrificing integrity.
+        Includes one Personal License (full local CLI + MCP). Add seats as your
+        team grows.
       </p>
-      <ul className="space-y-4 mb-10">
+      <ul className="space-y-4 mb-8">
         {[
-          'Includes everything from Personal',
-          'GitHub Action CI integration',
-          'Per-Repository enforcement',
-          'Team-wide RuleBook',
-          'Easier to review and cleaner PRs',
+          'Everything in Personal License',
+          'GitHub Actions CI integration',
+          'Project-wide RuleBook',
+          'Easier reviews and cleaner PRs',
         ].map((item) => (
           <li
             key={item}
@@ -96,6 +101,13 @@ function TeamPlanCard(): ReactNode {
           </li>
         ))}
       </ul>
+      <p
+        className={`${typeScale.bodySm} ${baseTw.text.secondary} mb-10 p-4 rounded-2xl bg-white/[0.03] border border-white/10`}
+      >
+        <span className="font-semibold text-white">Additional seats: </span>
+        each extra Personal License is{' '}
+        <span className="text-white">$10.99/mo</span> per user.
+      </p>
       <button
         type="button"
         className="w-full bg-white/5 border border-white/10 text-white py-5 rounded-full text-lg font-bold hover:bg-white/10 transition-all"
