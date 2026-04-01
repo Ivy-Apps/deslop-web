@@ -80,7 +80,7 @@ function Navbar(): ReactNode {
             type="button"
             className="ml-3 bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium hover:bg-zinc-100 transition-colors ring-1 ring-white/10"
           >
-            Get Personal License
+            Get Deslop
           </button>
         </div>
 
@@ -264,7 +264,7 @@ function HeroCopyBlock(): ReactNode {
           type="button"
           className={`w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-10 py-4 text-lg font-bold text-zinc-950 ring-1 ring-white/20 transition-all hover:bg-zinc-100 ${baseTw.effects.brandShadow} ${baseTw.effects.brandShadowHover}`}
         >
-          Get Personal License — $10.99/mo
+          Get Deslop! Stop the slop
           <ArrowRight className="w-6 h-6 opacity-90 shrink-0" />
         </button>
         <button
@@ -411,9 +411,7 @@ function BigThreeSection(): ReactNode {
           <h2 className={`${typeScale.displayXl} mb-6 ${baseTw.text.primary}`}>
             The Big Three
           </h2>
-          <p
-            className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}
-          >
+          <p className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}>
             Deslop bridges the gap between high-speed AI code generation and
             senior-level architectural standards.
           </p>
@@ -558,9 +556,7 @@ function IntegrationConsoleCard(): ReactNode {
           <div className="w-3 h-3 rounded-full bg-red-500" />
           <div className="w-3 h-3 rounded-full bg-yellow-500" />
           <div className="w-3 h-3 rounded-full bg-green-500" />
-          <span
-            className={`${textPresets.codeSm} ${baseTw.text.subtle} ml-2`}
-          >
+          <span className={`${textPresets.codeSm} ${baseTw.text.subtle} ml-2`}>
             Cursor / Claude Code Console
           </span>
         </div>
@@ -589,9 +585,7 @@ function PricingSection(): ReactNode {
           <h2 className={`${typeScale.displayXl} mb-6 ${baseTw.text.primary}`}>
             Simple, Transparent Pricing
           </h2>
-          <p
-            className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}
-          >
+          <p className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}>
             Choose the plan that fits your workflow. From solo power-users to
             engineering teams.
           </p>
@@ -642,7 +636,7 @@ function PersonalPlanCard(): ReactNode {
         type="button"
         className="w-full bg-white text-black py-5 rounded-full text-lg font-bold hover:bg-zinc-200 transition-all"
       >
-        Get Personal License
+        Get Deslop MCP
       </button>
     </div>
   );
@@ -724,10 +718,7 @@ function ErrorReportingCopy(): ReactNode {
           'Context-aware error reporting',
           'Seamless CI/CD integration',
         ].map((item) => (
-          <li
-            key={item}
-            className={`${textPresets.bodyListLg} text-zinc-200`}
-          >
+          <li key={item} className={`${textPresets.bodyListLg} text-zinc-200`}>
             <Check className="w-6 h-6 text-green-500 shrink-0" />
             {item}
           </li>
@@ -857,7 +848,7 @@ function CtaSection(): ReactNode {
             type="button"
             className="w-full sm:w-auto bg-white text-black px-14 py-6 rounded-full text-2xl font-bold hover:bg-zinc-200 transition-all"
           >
-            Get Personal License — $10.99/mo
+            Get Deslop! Stop the slop
           </button>
           <button
             type="button"
