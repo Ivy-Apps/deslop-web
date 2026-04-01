@@ -22,8 +22,7 @@ export function DeslopWordmark({
   onClick,
   scrollToTopOnClick,
 }: DeslopWordmarkProps = {}): ReactNode {
-  const scrollToTop = () =>
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   const resolvedOnClick =
     onClick ?? (scrollToTopOnClick ? scrollToTop : undefined);
@@ -48,5 +47,9 @@ export function DeslopWordmark({
     );
   }
 
-  return <div className="flex items-center gap-2.5 group cursor-pointer">{inner}</div>;
+  return (
+    <div className="flex items-center gap-2.5 group cursor-pointer">
+      {inner}
+    </div>
+  );
 }
