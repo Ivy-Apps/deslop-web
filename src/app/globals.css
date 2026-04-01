@@ -2,6 +2,13 @@
 
 html {
   scroll-behavior: smooth;
+  /* Match page surface so overscroll (rubber-band) isn’t white */
+  background-color: #09090b;
+  color-scheme: dark;
+}
+
+body {
+  background-color: #09090b;
 }
 
 @keyframes hero-beam {
