@@ -1,4 +1,5 @@
 import CodeBlock from "@/components/CodeBlock";
+import { textPresets, typeScale } from "@/components/design-system/typography";
 
 type BeforeAfterProps = {
   before: string;
@@ -18,7 +19,7 @@ export default function BeforeAfter({
   return (
     <div className="space-y-4">
       {title && (
-        <h4 className="text-zinc-400 text-base font-medium uppercase tracking-wider">
+        <h4 className={`${typeScale.labelCaps} text-zinc-400`}>
           {title}
         </h4>
       )}
@@ -26,7 +27,7 @@ export default function BeforeAfter({
         <div className="space-y-2">
           <div className="flex items-center gap-2 px-2">
             <div className="w-2 h-2 rounded-full bg-red-500" />
-            <span className="text-sm font-medium text-zinc-500 uppercase">
+            <span className={`${textPresets.codeSm} font-medium text-zinc-500 uppercase`}>
               Before AI Slop
             </span>
           </div>
@@ -35,7 +36,7 @@ export default function BeforeAfter({
         <div className="space-y-2">
           <div className="flex items-center gap-2 px-2">
             <div className="w-2 h-2 rounded-full bg-green-500" />
-            <span className="text-sm font-medium text-zinc-500 uppercase">
+            <span className={`${textPresets.codeSm} font-medium text-zinc-500 uppercase`}>
               After Deslop
             </span>
           </div>

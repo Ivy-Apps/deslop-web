@@ -4,6 +4,8 @@ import { motion } from "motion/react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { typeScale } from "@/components/design-system/typography";
+
 type FeatureCardProps = {
   icon: LucideIcon;
   title: string;
@@ -27,7 +29,7 @@ export default function FeatureCard({
       <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
         <Icon className="w-7 h-7 text-white" />
       </div>
-      <h3 className="text-3xl font-bold text-white mb-4">{title}</h3>
+      <h3 className={typeScale.titleLg}>{title}</h3>
       <p className="text-zinc-300 text-lg leading-relaxed mb-8">{description}</p>
       {children}
     </motion.div>
