@@ -16,6 +16,11 @@ export default function Navbar(): ReactNode {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navigateToSection = (sectionId: string) => {
+    setIsMobileMenuOpen(false);
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-zinc-950/85 backdrop-blur-xl border-b border-white/[0.06] py-3' : 'bg-transparent py-5 md:py-6'}`}
@@ -74,45 +79,31 @@ export default function Navbar(): ReactNode {
           >
             <button
               type="button"
-              className="text-xl text-zinc-400 text-left"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                document
-                  .getElementById('features')
-                  ?.scrollIntoView({ behavior: 'smooth' });
-              }}
+              className="text-xl text-zinc-400 hover:text-zinc-100 transition-colors text-left py-1"
+              onClick={() => navigateToSection('features')}
             >
               Features
             </button>
             <button
               type="button"
-              className="text-xl text-zinc-400 text-left"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                document
-                  .getElementById('rules')
-                  ?.scrollIntoView({ behavior: 'smooth' });
-              }}
+              className="text-xl text-zinc-400 hover:text-zinc-100 transition-colors text-left py-1"
+              onClick={() => navigateToSection('integrations')}
             >
-              Rulebook
+              Integrations
             </button>
             <button
               type="button"
-              className="text-xl text-zinc-400 text-left"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                document
-                  .getElementById('integrations')
-                  ?.scrollIntoView({ behavior: 'smooth' });
-              }}
+              className="text-xl text-zinc-400 hover:text-zinc-100 transition-colors text-left py-1"
+              onClick={() => navigateToSection('pricing')}
             >
-              Docs
+              Pricing
             </button>
             <button
               type="button"
-              className="bg-white text-black px-8 py-4 rounded-full text-xl font-medium"
+              className="mt-2 bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium hover:bg-zinc-100 transition-colors ring-1 ring-white/10 text-left w-fit"
+              onClick={() => setIsMobileMenuOpen(false)}
             >
-              Add Deslop to my CI
+              Get Deslop
             </button>
           </motion.div>
         )}
