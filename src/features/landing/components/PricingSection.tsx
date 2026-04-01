@@ -12,7 +12,7 @@ export default function PricingSection(): ReactNode {
             Simple, Transparent Pricing
           </h2>
           <p className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}>
-            Choose the plan that fits your workflow. From solo power-users to
+            Choose the plan that fits your workflow. From solopreneurs to
             engineering teams.
           </p>
         </div>
