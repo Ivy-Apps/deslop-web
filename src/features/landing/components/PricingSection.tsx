@@ -65,7 +65,7 @@ function PersonalPlanCard(): ReactNode {
       </ul>
       <button
         type="button"
-        className="w-full bg-white text-black py-5 rounded-full text-lg font-bold hover:bg-zinc-200 transition-all"
+        className={`w-full inline-flex items-center justify-center rounded-full bg-white px-10 py-5 text-lg font-bold text-zinc-950 ring-1 ring-white/20 transition-all duration-300 hover:bg-zinc-100 ${baseTw.effects.brandShadow} hover:shadow-[0_0_46px_-2px_rgba(62,153,245,0.56),0_0_56px_-2px_rgba(92,61,245,0.58),0_0_96px_-10px_rgba(62,153,245,0.32)]`}
       >
         Get Deslop MCP
       </button>
@@ -110,7 +110,7 @@ function TeamPlanCard(): ReactNode {
       </p>
       <button
         type="button"
-        className="w-full bg-white/5 border border-white/10 text-white py-5 rounded-full text-lg font-bold hover:bg-white/10 transition-all"
+        className="w-full inline-flex items-center justify-center rounded-full border border-[#3E99F5]/25 bg-gradient-to-r from-[#3E99F5]/10 to-[#5C3DF5]/10 px-10 py-5 text-lg font-bold text-zinc-100 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-sm ring-1 ring-[#3E99F5]/15 transition-all duration-300 hover:border-[#3E99F5]/45 hover:ring-[#5C3DF5]/25 hover:from-[#3E99F5]/15 hover:to-[#5C3DF5]/15 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_0_46px_-2px_rgba(62,153,245,0.56),0_0_56px_-2px_rgba(92,61,245,0.58),0_0_96px_-10px_rgba(62,153,245,0.32)]"
       >
         Request Team Access
       </button>
