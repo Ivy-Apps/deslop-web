@@ -192,7 +192,8 @@ function HeroCodeLines(): ReactNode {
       <div className="flex gap-4">
         <span className={lineNumberClass}>1</span>
         <span>
-          <span className={baseTw.text.brandBlue}>name:</span> Demo Rulebook
+          <span className={baseTw.text.brandBlue}>name:</span> Clean
+          Architecture
         </span>
       </div>
       <div className="flex gap-4">
@@ -222,11 +223,11 @@ function HeroCodeLines(): ReactNode {
       </div>
       <div className="flex gap-4">
         <span className={lineNumberClass}>6</span>
-        <span className="pl-12 text-zinc-400">- @/client/core{'**/*'}</span>
+        <span className="pl-12 text-zinc-400">- @/client/core{'/**/*'}</span>
       </div>
       <div className="flex gap-4">
         <span className={lineNumberClass}>7</span>
-        <span className="pl-12 text-zinc-400">- @/server{'**/*'}</span>
+        <span className="pl-12 text-zinc-400">- @/server{'/**/*'}</span>
       </div>
       <div className="flex gap-4">
         <span className={lineNumberClass}>8</span>
