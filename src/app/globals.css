@@ -2,6 +2,17 @@
 
 html {
   scroll-behavior: smooth;
+  /* Match page surface so overscroll (rubber-band) isn’t white */
+  background-color: #09090b;
+  color-scheme: dark;
+  min-height: 100dvh;
+}
+
+body {
+  background-color: #09090b;
+  min-height: 100dvh;
+  /* Extend background into iOS / PWA safe areas (Android gesture inset is mostly theme-color) */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @keyframes hero-beam {

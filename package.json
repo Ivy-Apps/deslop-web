@@ -3,11 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "next dev --port 3000",
+    "dev": "next dev --turbopack --port 3000",
     "build": "next build",
     "start": "next start",
     "clean": "rm -rf .next dist",
-    "lint": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check . --write",
+    "deslop": "deslop --check",
+    "deslop:fix": "deslop && npm run lint:fix",
+    "check": "npm run typecheck && npm run deslop && npm run lint"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",
@@ -20,6 +25,8 @@
     "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.10",
+    "@ivy-apps/deslop": "^0.4.10",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
