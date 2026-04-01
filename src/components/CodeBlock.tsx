@@ -1,5 +1,5 @@
-import { tw } from "@/components/design-system/colors";
-import { textPresets } from "@/components/design-system/typography";
+import { tw } from '@/components/design-system/colors';
+import { textPresets } from '@/components/design-system/typography';
 
 type CodeBlockProps = {
   code: string;
@@ -10,7 +10,7 @@ type CodeBlockProps = {
 export default function CodeBlock({
   code,
   filename,
-  className = "",
+  className = '',
 }: CodeBlockProps) {
   return (
     <div
@@ -18,7 +18,9 @@ export default function CodeBlock({
     >
       {filename && (
         <div className="bg-white/5 border-b border-white/10 px-4 py-2 flex items-center justify-between">
-          <span className={`${textPresets.codeSm} ${tw.text.muted} font-medium`}>
+          <span
+            className={`${textPresets.codeSm} ${tw.text.muted} font-medium`}
+          >
             {filename}
           </span>
           <div className="flex gap-1.5">

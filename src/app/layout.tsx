@@ -1,8 +1,8 @@
-import type {Metadata} from 'next';
-import type {ReactNode} from 'react';
+import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 
 import Footer from '@/components/Footer';
-import './globals.css';
+import '@/app/globals.css';
 
 export const metadata: Metadata = {
   title: 'Deslop',

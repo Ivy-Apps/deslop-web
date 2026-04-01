@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { textPresets, tw } from "./design-system";
+import type { ReactNode } from 'react';
+import { textPresets, tw } from '@/components/design-system';
 
 export function DeslopLogo(): ReactNode {
   return (

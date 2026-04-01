@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { motion } from "motion/react";
-import type { LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import type { LucideIcon } from 'lucide-react';
+import { motion } from 'motion/react';
+import type { ReactNode } from 'react';
 
-import { typeScale } from "@/components/design-system/typography";
+import { typeScale } from '@/components/design-system/typography';
 
 type FeatureCardProps = {
   icon: LucideIcon;
@@ -30,7 +30,9 @@ export default function FeatureCard({
         <Icon className="w-7 h-7 text-white" />
       </div>
       <h3 className={typeScale.titleLg}>{title}</h3>
-      <p className="text-zinc-300 text-lg leading-relaxed mb-8">{description}</p>
+      <p className="text-zinc-300 text-lg leading-relaxed mb-8">
+        {description}
+      </p>
       {children}
     </motion.div>
   );

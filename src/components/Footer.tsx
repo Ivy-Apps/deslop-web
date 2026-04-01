@@ -1,4 +1,4 @@
-import { DeslopLogo } from "./DeslopLogo";
+import { DeslopLogo } from '@/components/DeslopLogo';
 
 export default function Footer() {
   return (

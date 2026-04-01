@@ -1,49 +1,49 @@
-"use client";
+'use client';
 
-import { useEffect, useState, type ReactNode } from "react";
-import { AnimatePresence, motion } from "motion/react";
 import {
-  Shield,
-  Zap,
-  Code2,
-  Terminal,
-  Check,
   ArrowRight,
+  Check,
+  Code2,
   Github,
   Menu,
+  Shield,
+  Terminal,
   X,
-} from "lucide-react";
+  Zap,
+} from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { type ReactNode, useEffect, useState } from 'react';
 
-import BeforeAfter from "@/components/BeforeAfter";
-import CodeBlock from "@/components/CodeBlock";
-import FeatureCard from "@/components/FeatureCard";
-import { inlineStyle, tw as baseTw } from "@/components/design-system/colors";
+import BeforeAfter from '@/components/BeforeAfter';
+import CodeBlock from '@/components/CodeBlock';
+import { DeslopLogo } from '@/components/DeslopLogo';
+import { tw as baseTw, inlineStyle } from '@/components/design-system/colors';
 import {
   appText,
   textPresets,
   typeScale,
-} from "@/components/design-system/typography";
-import { DeslopLogo } from "@/components/DeslopLogo";
+} from '@/components/design-system/typography';
+import FeatureCard from '@/components/FeatureCard';
 
 const landingEffects = {
   ambientRadial:
-    "pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_55%_45%_at_15%_5%,rgba(62,153,245,0.14),transparent_55%),radial-gradient(ellipse_50%_45%_at_85%_0%,rgba(92,61,245,0.15),transparent_55%)]",
+    'pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_55%_45%_at_15%_5%,rgba(62,153,245,0.14),transparent_55%),radial-gradient(ellipse_50%_45%_at_85%_0%,rgba(92,61,245,0.15),transparent_55%)]',
   blurBlobLeft:
-    "pointer-events-none absolute -left-[20%] top-[5%] z-0 h-[min(70vw,32rem)] w-[min(70vw,32rem)] rounded-full bg-[#3E99F5]/25 blur-[120px]",
+    'pointer-events-none absolute -left-[20%] top-[5%] z-0 h-[min(70vw,32rem)] w-[min(70vw,32rem)] rounded-full bg-[#3E99F5]/25 blur-[120px]',
   blurBlobRight:
-    "pointer-events-none absolute -right-[15%] top-[25%] z-0 h-[min(60vw,28rem)] w-[min(60vw,28rem)] rounded-full bg-[#5C3DF5]/20 blur-[110px]",
+    'pointer-events-none absolute -right-[15%] top-[25%] z-0 h-[min(60vw,28rem)] w-[min(60vw,28rem)] rounded-full bg-[#5C3DF5]/20 blur-[110px]',
   gridOverlay:
-    "absolute inset-0 bg-[linear-gradient(to_right,rgba(62,153,245,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(92,61,245,0.1)_1px,transparent_1px)] bg-[size:40px_40px]",
+    'absolute inset-0 bg-[linear-gradient(to_right,rgba(62,153,245,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(92,61,245,0.1)_1px,transparent_1px)] bg-[size:40px_40px]',
   scanBeam:
-    "pointer-events-none absolute inset-x-0 top-0 z-[1] h-[min(60vh,28rem)] bg-[linear-gradient(180deg,transparent_0%,rgba(62,153,245,0.03)_22%,rgba(92,61,245,0.045)_78%,transparent_100%)] [animation:hero-beam_14s_ease-in-out_infinite]",
+    'pointer-events-none absolute inset-x-0 top-0 z-[1] h-[min(60vh,28rem)] bg-[linear-gradient(180deg,transparent_0%,rgba(62,153,245,0.03)_22%,rgba(92,61,245,0.045)_78%,transparent_100%)] [animation:hero-beam_14s_ease-in-out_infinite]',
   badgeDot:
-    "h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-[#3E99F5] to-[#5C3DF5] shadow-[0_0_10px_rgba(62,153,245,0.85),0_0_12px_rgba(92,61,245,0.75)]",
+    'h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-[#3E99F5] to-[#5C3DF5] shadow-[0_0_10px_rgba(62,153,245,0.85),0_0_12px_rgba(92,61,245,0.75)]',
   previewGlowBottom:
-    "pointer-events-none absolute -inset-[1px] rounded-3xl bg-gradient-to-b from-[#3E99F5]/22 via-[#5C3DF5]/08 to-[#4A2DD4]/16 opacity-80 blur-[1px]",
+    'pointer-events-none absolute -inset-[1px] rounded-3xl bg-gradient-to-b from-[#3E99F5]/22 via-[#5C3DF5]/08 to-[#4A2DD4]/16 opacity-80 blur-[1px]',
   previewGlowTop:
-    "pointer-events-none absolute -inset-1 rounded-3xl bg-gradient-to-tr from-[#3E99F5]/16 via-transparent to-[#5C3DF5]/14 opacity-70",
+    'pointer-events-none absolute -inset-1 rounded-3xl bg-gradient-to-tr from-[#3E99F5]/16 via-transparent to-[#5C3DF5]/14 opacity-70',
   previewCard:
-    "relative rounded-3xl border border-[#3E99F5]/15 bg-zinc-950/85 shadow-[0_28px_100px_-28px_rgba(0,0,0,0.9),0_0_50px_-18px_rgba(62,153,245,0.12),0_0_55px_-16px_rgba(92,61,245,0.18)] ring-1 ring-[#5C3DF5]/10 backdrop-blur-md overflow-hidden",
+    'relative rounded-3xl border border-[#3E99F5]/15 bg-zinc-950/85 shadow-[0_28px_100px_-28px_rgba(0,0,0,0.9),0_0_50px_-18px_rgba(62,153,245,0.12),0_0_55px_-16px_rgba(92,61,245,0.18)] ring-1 ring-[#5C3DF5]/10 backdrop-blur-md overflow-hidden',
 } as const;
 
 const tw = {
@@ -63,29 +63,29 @@ const tw = {
     ctaPrimaryShadow: baseTw.effects.brandShadow,
     ctaPrimaryShadowHover: baseTw.effects.brandShadowHover,
     secondaryButton:
-      "w-full sm:w-auto inline-flex items-center justify-center rounded-full border border-[#3E99F5]/25 bg-gradient-to-r from-[#3E99F5]/10 to-[#5C3DF5]/10 px-10 py-4 text-lg font-semibold text-zinc-100 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-sm ring-1 ring-[#3E99F5]/15 transition-all hover:border-[#3E99F5]/45 hover:ring-[#5C3DF5]/25 hover:from-[#3E99F5]/15 hover:to-[#5C3DF5]/15",
+      'w-full sm:w-auto inline-flex items-center justify-center rounded-full border border-[#3E99F5]/25 bg-gradient-to-r from-[#3E99F5]/10 to-[#5C3DF5]/10 px-10 py-4 text-lg font-semibold text-zinc-100 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-sm ring-1 ring-[#3E99F5]/15 transition-all hover:border-[#3E99F5]/45 hover:ring-[#5C3DF5]/25 hover:from-[#3E99F5]/15 hover:to-[#5C3DF5]/15',
     previewGlowBottom: landingEffects.previewGlowBottom,
     previewGlowTop: landingEffects.previewGlowTop,
     previewCard: landingEffects.previewCard,
   },
   integration: {
     iconTile:
-      "w-12 h-12 rounded-xl bg-[#5C3DF5]/20 flex items-center justify-center mb-4",
-    icon: "w-6 h-6 text-[#5C3DF5]",
+      'w-12 h-12 rounded-xl bg-[#5C3DF5]/20 flex items-center justify-center mb-4',
+    icon: 'w-6 h-6 text-[#5C3DF5]',
     consoleInfoLine: baseTw.text.brandSecondary,
   },
   stepDown: {
     iconCircle:
-      "w-12 h-12 rounded-full bg-[#5C3DF5]/20 flex items-center justify-center",
-    icon: "w-6 h-6 text-[#5C3DF5]",
+      'w-12 h-12 rounded-full bg-[#5C3DF5]/20 flex items-center justify-center',
+    icon: 'w-6 h-6 text-[#5C3DF5]',
   },
   button: {
     heroPrimary:
-      "w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-10 py-4 text-lg font-bold text-zinc-950 ring-1 ring-white/20 transition-all hover:bg-zinc-100",
+      'w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-10 py-4 text-lg font-bold text-zinc-950 ring-1 ring-white/20 transition-all hover:bg-zinc-100',
     ctaPrimary:
-      "w-full sm:w-auto bg-white text-black px-14 py-6 rounded-full text-2xl font-bold hover:bg-zinc-200 transition-all",
+      'w-full sm:w-auto bg-white text-black px-14 py-6 rounded-full text-2xl font-bold hover:bg-zinc-200 transition-all',
     ctaSecondary:
-      "w-full sm:w-auto bg-transparent border border-white/20 text-white px-14 py-6 rounded-full text-2xl font-bold hover:bg-white/5 transition-all",
+      'w-full sm:w-auto bg-transparent border border-white/20 text-white px-14 py-6 rounded-full text-2xl font-bold hover:bg-white/5 transition-all',
   },
 } as const;
 
@@ -155,13 +155,13 @@ function Navbar(): ReactNode {
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-zinc-950/85 backdrop-blur-xl border-b border-white/[0.06] py-3" : "bg-transparent py-5 md:py-6"}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-zinc-950/85 backdrop-blur-xl border-b border-white/[0.06] py-3' : 'bg-transparent py-5 md:py-6'}`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <DeslopLogo />
@@ -193,7 +193,7 @@ function Navbar(): ReactNode {
         <button
           className="md:hidden text-white p-1"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
         >
           {isMobileMenuOpen ? (
             <X className="h-7 w-7" />
@@ -265,7 +265,7 @@ function HeroVisualEffects(): ReactNode {
       <motion.div
         className={tw.hero.blurBlobLeft}
         animate={{ opacity: [0.35, 0.55, 0.35], scale: [1, 1.05, 1] }}
-        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
         aria-hidden
       />
       <motion.div
@@ -274,7 +274,7 @@ function HeroVisualEffects(): ReactNode {
         transition={{
           duration: 13,
           repeat: Infinity,
-          ease: "easeInOut",
+          ease: 'easeInOut',
           delay: 0.5,
         }}
         aria-hidden
@@ -282,7 +282,7 @@ function HeroVisualEffects(): ReactNode {
       <motion.div
         className="pointer-events-none absolute bottom-[-10%] left-1/2 z-0 h-[22rem] w-[min(95vw,44rem)] -translate-x-1/2 rounded-full blur-[130px]"
         animate={{ opacity: [0.25, 0.42, 0.25] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
         style={inlineStyle.brandBloom}
         aria-hidden
       />
@@ -446,7 +446,7 @@ function HeroCodeLines(): ReactNode {
       <div className="flex gap-4">
         <span className={code.lineNumber}>11</span>
         <span className="pl-16">
-          <span className={tw.text.brandBlue}>transitive:</span>{" "}
+          <span className={tw.text.brandBlue}>transitive:</span>{' '}
           <span className="text-amber-200/80">true</span>
         </span>
       </div>
@@ -604,7 +604,7 @@ function IntegrationConsoleCard(): ReactNode {
           <span className={code.windowTitle}>Cursor / Claude Code Console</span>
         </div>
         <div className={code.console}>
-          <p className="text-zinc-500">{">"} deslop --fix</p>
+          <p className="text-zinc-500">{'>'} deslop --fix</p>
           <p className="text-green-400">√ Analyzing project structure...</p>
           <p className="text-green-400">
             √ Reordering functions in AuthProvider.tsx
@@ -658,11 +658,11 @@ function PersonalPlanCard(): ReactNode {
       </p>
       <ul className="space-y-4 mb-10">
         {[
-          "Local CLI + MCP Server",
-          "Unlimited local refactors",
-          "Personal RuleBook config",
-          "Step-Down Ordering engine",
-          "Relative Import Fixer",
+          'Local CLI + MCP Server',
+          'Unlimited local refactors',
+          'Personal RuleBook config',
+          'Step-Down Ordering engine',
+          'Relative Import Fixer',
         ].map((item, i) => (
           <li key={i} className={body.list}>
             <Check className="w-5 h-5 text-green-500 shrink-0" />
@@ -690,11 +690,11 @@ function TeamPlanCard(): ReactNode {
       </p>
       <ul className="space-y-4 mb-10">
         {[
-          "Includes everything from Personal",
-          "GitHub Action CI integration",
-          "Per-Repository enforcement",
-          "Team-wide RuleBook",
-          "Easier to review and cleaner PRs",
+          'Includes everything from Personal',
+          'GitHub Action CI integration',
+          'Per-Repository enforcement',
+          'Team-wide RuleBook',
+          'Easier to review and cleaner PRs',
         ].map((item, i) => (
           <li key={i} className={body.list}>
             <Check className="w-5 h-5 text-green-500 shrink-0" />
@@ -740,10 +740,10 @@ function ErrorReportingCopy(): ReactNode {
       </p>
       <ul className="space-y-4">
         {[
-          "Machine-readable Markdown output",
+          'Machine-readable Markdown output',
           "Clear 'FIX' instructions for agents",
-          "Context-aware error reporting",
-          "Seamless CI/CD integration",
+          'Context-aware error reporting',
+          'Seamless CI/CD integration',
         ].map((item, i) => (
           <li key={i} className={body.listLarge}>
             <Check className="w-6 h-6 text-green-500 shrink-0" />

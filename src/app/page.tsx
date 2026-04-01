@@ -1,4 +1,4 @@
-import LandingView from "@/features/landing/LandingView";
+import LandingView from '@/features/landing/LandingView';
 
 export default function HomePage() {
   return <LandingView />;
