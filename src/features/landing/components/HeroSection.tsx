@@ -114,7 +114,7 @@ function HeroCopyBlock(): ReactNode {
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-10">
         <button
           type="button"
-          className={`w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-10 py-4 text-lg font-bold text-zinc-950 ring-1 ring-white/20 transition-all hover:bg-zinc-100 ${baseTw.effects.brandShadow} ${baseTw.effects.brandShadowHover}`}
+          className={`w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-10 py-4 text-lg font-bold text-zinc-950 ring-1 ring-white/20 transition-all duration-300 hover:bg-zinc-100 ${baseTw.effects.brandShadow} hover:shadow-[0_0_46px_-2px_rgba(62,153,245,0.56),0_0_56px_-2px_rgba(92,61,245,0.58),0_0_96px_-10px_rgba(62,153,245,0.32)]`}
         >
           Get Deslop! Stop the slop
           <ArrowRight className="w-6 h-6 opacity-90 shrink-0" />
