@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
 import Footer from '@/components/Footer';
@@ -7,6 +7,13 @@ import '@/app/globals.css';
 export const metadata: Metadata = {
   title: 'Deslop',
   description: 'Remove the slop from your codebase.',
+};
+
+/** Paints Android Chrome’s bottom nav / gesture bar to match the page (avoids a white strip). */
+export const viewport: Viewport = {
+  themeColor: '#09090b',
+  colorScheme: 'dark',
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
