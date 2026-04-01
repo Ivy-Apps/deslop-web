@@ -1,13 +1,10 @@
+import { DeslopLogo } from "./DeslopLogo";
+
 export default function Footer() {
   return (
     <footer className="py-14 border-t border-white/10 bg-zinc-950">
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-white rounded flex items-center justify-center">
-            <span className="text-black font-bold text-sm">δ</span>
-          </div>
-          <span className="text-xl font-bold">Deslop</span>
-        </div>
+        <DeslopLogo />
         <div className="flex flex-wrap justify-center gap-8 text-base text-zinc-400">
           <a href="#" className="hover:text-white transition-colors">
             Privacy
@@ -22,7 +19,9 @@ export default function Footer() {
             GitHub
           </a>
         </div>
-        <p className="text-base text-zinc-500">© 2026 Deslop Inc. All rights reserved.</p>
+        <p className="text-base text-zinc-500">
+          © 2026 Deslop Inc. All rights reserved.
+        </p>
       </div>
     </footer>
   );

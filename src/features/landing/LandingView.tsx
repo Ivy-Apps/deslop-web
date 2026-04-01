@@ -18,7 +18,12 @@ import BeforeAfter from "@/components/BeforeAfter";
 import CodeBlock from "@/components/CodeBlock";
 import FeatureCard from "@/components/FeatureCard";
 import { inlineStyle, tw as baseTw } from "@/components/design-system/colors";
-import { appText, textPresets, typeScale } from "@/components/design-system/typography";
+import {
+  appText,
+  textPresets,
+  typeScale,
+} from "@/components/design-system/typography";
+import { DeslopLogo } from "@/components/DeslopLogo";
 
 const landingEffects = {
   ambientRadial:
@@ -64,12 +69,14 @@ const tw = {
     previewCard: landingEffects.previewCard,
   },
   integration: {
-    iconTile: "w-12 h-12 rounded-xl bg-[#5C3DF5]/20 flex items-center justify-center mb-4",
+    iconTile:
+      "w-12 h-12 rounded-xl bg-[#5C3DF5]/20 flex items-center justify-center mb-4",
     icon: "w-6 h-6 text-[#5C3DF5]",
     consoleInfoLine: baseTw.text.brandSecondary,
   },
   stepDown: {
-    iconCircle: "w-12 h-12 rounded-full bg-[#5C3DF5]/20 flex items-center justify-center",
+    iconCircle:
+      "w-12 h-12 rounded-full bg-[#5C3DF5]/20 flex items-center justify-center",
     icon: "w-6 h-6 text-[#5C3DF5]",
   },
   button: {
@@ -157,16 +164,7 @@ function Navbar(): ReactNode {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-zinc-950/85 backdrop-blur-xl border-b border-white/[0.06] py-3" : "bg-transparent py-5 md:py-6"}`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <div className="flex items-center gap-2.5 group cursor-pointer">
-          <div className="w-9 h-9 rounded-md bg-white flex items-center justify-center ring-1 ring-white/10 transition-transform group-hover:scale-[1.02]">
-            <span className="text-zinc-950 font-semibold text-xl leading-none">
-              δ
-            </span>
-          </div>
-          <span className={`${textPresets.navBrand} ${tw.text.primary}`}>
-            Deslop
-          </span>
-        </div>
+        <DeslopLogo />
 
         <div className="hidden md:flex items-center gap-1">
           <a
@@ -321,20 +319,11 @@ function HeroCopyBlock(): ReactNode {
           </div>
         </div>
         <h1 className={display.hero}>
-          <span className={gradientText.heroLight}>
-            Your AI writes code.
-          </span>
+          <span className={gradientText.heroLight}>Your AI writes code.</span>
           <span className={display.heroLine}>
-            <span className={tw.hero.titleGradientBrandForward}>
-              Deslop
-            </span>
-            <span className={gradientText.heroFiller}>
-              {" "}
-              makes it{" "}
-            </span>
-            <span className={tw.hero.titleGradientBrandReverse}>
-              good.
-            </span>
+            <span className={tw.hero.titleGradientBrandForward}>Deslop</span>
+            <span className={gradientText.heroFiller}> makes it </span>
+            <span className={tw.hero.titleGradientBrandReverse}>good.</span>
           </span>
         </h1>
       </div>
@@ -349,9 +338,7 @@ function HeroCopyBlock(): ReactNode {
           Get Personal License — $10.99/mo
           <ArrowRight className="w-6 h-6 opacity-90 shrink-0" />
         </button>
-        <button className={tw.hero.secondaryButton}>
-          Request Team Access
-        </button>
+        <button className={tw.hero.secondaryButton}>Request Team Access</button>
       </div>
       <p className={body.smMuted}>
         Embrace the full potential of vibe-coding without sacrificing quality.
@@ -376,13 +363,15 @@ function HeroCodePreview(): ReactNode {
         <div className="flex items-center justify-between gap-4 border-b border-white/[0.06] bg-zinc-900/50 px-4 py-3 md:px-5">
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex shrink-0 gap-1.5">
-              <div className={`h-2.5 w-2.5 rounded-full ${tw.terminal.close}`} />
-              <div className={`h-2.5 w-2.5 rounded-full ${tw.terminal.minimize}`} />
+              <div
+                className={`h-2.5 w-2.5 rounded-full ${tw.terminal.close}`}
+              />
+              <div
+                className={`h-2.5 w-2.5 rounded-full ${tw.terminal.minimize}`}
+              />
               <div className={`h-2.5 w-2.5 rounded-full ${tw.terminal.zoom}`} />
             </div>
-            <span className={code.filenameHeader}>
-              deslop.config.yaml
-            </span>
+            <span className={code.filenameHeader}>deslop.config.yaml</span>
           </div>
           <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-zinc-500">
             <Terminal className="h-4 w-4 opacity-70" />
@@ -400,84 +389,62 @@ function HeroCodeLines(): ReactNode {
   return (
     <div className={code.heroYaml}>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          1
-        </span>
+        <span className={code.lineNumber}>1</span>
         <span>
           <span className={tw.text.brandBlue}>name:</span> Demo Rulebook
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          2
-        </span>
+        <span className={code.lineNumber}>2</span>
         <span>
           <span className={tw.text.brandBlue}>rules:</span>
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          3
-        </span>
+        <span className={code.lineNumber}>3</span>
         <span className="pl-4 text-zinc-600"># P0</span>
       </div>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          4
-        </span>
+        <span className={code.lineNumber}>4</span>
         <span className="pl-4">
           - <span className={tw.text.brandBlue}>id:</span> no-react-in-core
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          5
-        </span>
+        <span className={code.lineNumber}>5</span>
         <span className="pl-8">
           <span className={tw.text.brandBlue}>description:</span> &quot;The core
           must not have React dependencies&quot;
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          6
-        </span>
+        <span className={code.lineNumber}>6</span>
         <span className="pl-8">
           <span className={tw.text.brandBlue}>target:</span>
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          7
-        </span>
+        <span className={code.lineNumber}>7</span>
         <span className="pl-12 text-zinc-400">- @/client/core/**/*</span>
       </div>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          8
-        </span>
+        <span className={code.lineNumber}>8</span>
         <span className="pl-12 text-zinc-400">- @/server/**/*</span>
       </div>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          9
-        </span>
+        <span className={code.lineNumber}>9</span>
         <span className="pl-8">
           <span className={tw.text.brandBlue}>forbidden:</span>
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          10
-        </span>
+        <span className={code.lineNumber}>10</span>
         <span className="pl-12">
           - <span className={tw.text.brandBlue}>import:</span> react
         </span>
       </div>
       <div className="flex gap-4">
-        <span className={code.lineNumber}>
-          11
-        </span>
+        <span className={code.lineNumber}>11</span>
         <span className="pl-16">
           <span className={tw.text.brandBlue}>transitive:</span>{" "}
           <span className="text-amber-200/80">true</span>
@@ -492,9 +459,7 @@ function BigThreeSection(): ReactNode {
     <section id="features" className="py-24 md:py-32 bg-zinc-950">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-20 text-center">
-          <h2 className={display.sectionXl}>
-            The Big Three
-          </h2>
+          <h2 className={display.sectionXl}>The Big Three</h2>
           <p className={lead.sectionMuted}>
             Deslop bridges the gap between high-speed AI code generation and
             senior-level architectural standards.
@@ -596,9 +561,7 @@ function IntegrationCopyColumn(): ReactNode {
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
     >
-      <h2 className={display.sectionLg}>
-        Integration Ecosystem
-      </h2>
+      <h2 className={display.sectionLg}>Integration Ecosystem</h2>
       <p className={lead.section}>
         Deslop lives where you code. Whether it&apos;s real-time feedback in
         your editor or automated gatekeeping in your CI.
@@ -608,9 +571,7 @@ function IntegrationCopyColumn(): ReactNode {
           <div className={tw.integration.iconTile}>
             <Terminal className={tw.integration.icon} />
           </div>
-          <h4 className={heading.integrationCard}>
-            Local MCP Server
-          </h4>
+          <h4 className={heading.integrationCard}>Local MCP Server</h4>
           <p className={body.integrationMuted}>
             Native integration with Cursor and Claude Code for real-time
             sanitization.
@@ -640,9 +601,7 @@ function IntegrationConsoleCard(): ReactNode {
           <div className="w-3 h-3 rounded-full bg-red-500" />
           <div className="w-3 h-3 rounded-full bg-yellow-500" />
           <div className="w-3 h-3 rounded-full bg-green-500" />
-          <span className={code.windowTitle}>
-            Cursor / Claude Code Console
-          </span>
+          <span className={code.windowTitle}>Cursor / Claude Code Console</span>
         </div>
         <div className={code.console}>
           <p className="text-zinc-500">{">"} deslop --fix</p>
@@ -651,7 +610,9 @@ function IntegrationConsoleCard(): ReactNode {
             √ Reordering functions in AuthProvider.tsx
           </p>
           <p className="text-green-400">√ Resolving 12 relative imports</p>
-          <p className={tw.integration.consoleInfoLine}>i RuleBook: 0 violations found.</p>
+          <p className={tw.integration.consoleInfoLine}>
+            i RuleBook: 0 violations found.
+          </p>
           <p className="text-white">Done. Your code is now Senior-grade.</p>
         </div>
       </div>
@@ -664,9 +625,7 @@ function PricingSection(): ReactNode {
     <section id="pricing" className="py-24 md:py-32 bg-zinc-950">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-20 text-center">
-          <h2 className={display.sectionXl}>
-            Simple, Transparent Pricing
-          </h2>
+          <h2 className={display.sectionXl}>Simple, Transparent Pricing</h2>
           <p className={lead.sectionMuted}>
             Choose the plan that fits your workflow. From solo power-users to
             engineering teams.
@@ -705,10 +664,7 @@ function PersonalPlanCard(): ReactNode {
           "Step-Down Ordering engine",
           "Relative Import Fixer",
         ].map((item, i) => (
-          <li
-            key={i}
-            className={body.list}
-          >
+          <li key={i} className={body.list}>
             <Check className="w-5 h-5 text-green-500 shrink-0" />
             {item}
           </li>
@@ -740,10 +696,7 @@ function TeamPlanCard(): ReactNode {
           "Team-wide RuleBook",
           "Easier to review and cleaner PRs",
         ].map((item, i) => (
-          <li
-            key={i}
-            className={body.list}
-          >
+          <li key={i} className={body.list}>
             <Check className="w-5 h-5 text-green-500 shrink-0" />
             {item}
           </li>
@@ -779,9 +732,7 @@ function ErrorReportingCopy(): ReactNode {
       <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6">
         <Terminal className="w-7 h-7 text-white" />
       </div>
-      <h2 className={display.sectionLgSpaced}>
-        Optimized for AI and MCP
-      </h2>
+      <h2 className={display.sectionLgSpaced}>Optimized for AI and MCP</h2>
       <p className={lead.section}>
         Deslop reports errors in a LLM-friendly Markdown format with clear
         instructions on how to fix them. Perfect for integration with Cursor,
@@ -870,9 +821,7 @@ function StepDownCopy(): ReactNode {
       <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6">
         <Code2 className="w-7 h-7 text-white" />
       </div>
-      <h2 className={display.sectionLgSpaced}>
-        Step-Down Ordering
-      </h2>
+      <h2 className={display.sectionLgSpaced}>Step-Down Ordering</h2>
       <p className={lead.section}>
         Deslop reorders your functions so the &quot;story&quot; reads
         top-to-bottom. High-level logic first, implementation details last.
