@@ -1,24 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, type ReactNode } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import {
-  Shield,
-  Zap,
-  Code2,
-  Terminal,
-  Check,
-  ArrowRight,
-  Menu,
-  X,
-  Github,
-} from "lucide-react";
+import type { ReactNode } from "react";
+import { motion } from "motion/react";
+import { Shield, Zap, Code2, Terminal, Check, ArrowRight, Github } from "lucide-react";
 
-export default function App() {
-  return <Page />;
-}
+import BeforeAfter from "@/components/BeforeAfter";
+import CodeBlock from "@/components/CodeBlock";
+import FeatureCard from "@/components/FeatureCard";
+import Navbar from "@/components/Navbar";
 
-function Page(): ReactNode {
+export default function LandingView() {
   return (
     <div className="min-h-screen bg-zinc-950 text-white selection:bg-white selection:text-black font-sans text-[17px] md:text-[18px] antialiased">
       <Navbar />
@@ -240,8 +231,8 @@ function HeroCodeLines(): ReactNode {
           5
         </span>
         <span className="pl-8">
-          <span className="text-[#3E99F5]">description:</span> &quot;The core
-          must not have React dependencies&quot;
+          <span className="text-[#3E99F5]">description:</span> &quot;The core must
+          not have React dependencies&quot;
         </span>
       </div>
       <div className="flex gap-4">
@@ -344,9 +335,7 @@ function StepDownFeature(): ReactNode {
     >
       <div className="mt-4 space-y-2">
         <div className="p-3.5 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between">
-          <span className="text-sm font-mono text-zinc-400">
-            1. Main Function
-          </span>
+          <span className="text-sm font-mono text-zinc-400">1. Main Function</span>
           <Check className="w-5 h-5 text-green-500" />
         </div>
         <div className="p-3.5 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between">
@@ -406,17 +395,15 @@ function IntegrationCopyColumn(): ReactNode {
         Integration Ecosystem
       </h2>
       <p className="text-2xl text-zinc-300 mb-8 leading-relaxed">
-        Deslop lives where you code. Whether it&apos;s real-time feedback in
-        your editor or automated gatekeeping in your CI.
+        Deslop lives where you code. Whether it&apos;s real-time feedback in your
+        editor or automated gatekeeping in your CI.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="p-7 bg-white/5 rounded-2xl border border-white/10">
           <div className="w-12 h-12 rounded-xl bg-[#5C3DF5]/20 flex items-center justify-center mb-4">
             <Terminal className="w-6 h-6 text-[#5C3DF5]" />
           </div>
-          <h4 className="text-xl font-bold text-white mb-2">
-            Local MCP Server
-          </h4>
+          <h4 className="text-xl font-bold text-white mb-2">Local MCP Server</h4>
           <p className="text-base text-zinc-400 leading-relaxed">
             Native integration with Cursor and Claude Code for real-time
             sanitization.
@@ -428,8 +415,7 @@ function IntegrationCopyColumn(): ReactNode {
           </div>
           <h4 className="text-xl font-bold text-white mb-2">CI Mode</h4>
           <p className="text-base text-zinc-400 leading-relaxed">
-            Deslop GitHub Action for automated PR gatekeeping and slop
-            detection.
+            Deslop GitHub Action for automated PR gatekeeping and slop detection.
           </p>
         </div>
       </div>
@@ -511,10 +497,7 @@ function PersonalPlanCard(): ReactNode {
           "Step-Down Ordering engine",
           "Relative Import Fixer",
         ].map((item, i) => (
-          <li
-            key={i}
-            className="flex items-center gap-3 text-zinc-300 text-base"
-          >
+          <li key={i} className="flex items-center gap-3 text-zinc-300 text-base">
             <Check className="w-5 h-5 text-green-500 shrink-0" />
             {item}
           </li>
@@ -546,10 +529,7 @@ function TeamPlanCard(): ReactNode {
           "Team-wide RuleBook",
           "Easier to review and cleaner PRs",
         ].map((item, i) => (
-          <li
-            key={i}
-            className="flex items-center gap-3 text-zinc-300 text-base"
-          >
+          <li key={i} className="flex items-center gap-3 text-zinc-300 text-base">
             <Check className="w-5 h-5 text-green-500 shrink-0" />
             {item}
           </li>
@@ -691,9 +671,7 @@ function StepDownCopy(): ReactNode {
           </div>
           <div>
             <p className="text-base font-bold text-white">Haskell Engine</p>
-            <p className="text-sm text-zinc-400">
-              Purely Functional | AST-Safe
-            </p>
+            <p className="text-sm text-zinc-400">Purely Functional | AST-Safe</p>
           </div>
         </div>
         <p className="text-base text-zinc-300 leading-relaxed">
@@ -756,221 +734,8 @@ function Footer(): ReactNode {
             GitHub
           </a>
         </div>
-        <p className="text-base text-zinc-500">
-          © 2026 Deslop Inc. All rights reserved.
-        </p>
+        <p className="text-base text-zinc-500">© 2026 Deslop Inc. All rights reserved.</p>
       </div>
     </footer>
   );
 }
-// --- Components ---
-
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-zinc-950/85 backdrop-blur-xl border-b border-white/[0.06] py-3" : "bg-transparent py-5 md:py-6"}`}
-    >
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <div className="flex items-center gap-2.5 group cursor-pointer">
-          <div className="w-9 h-9 rounded-md bg-white flex items-center justify-center ring-1 ring-white/10 transition-transform group-hover:scale-[1.02]">
-            <span className="text-zinc-950 font-semibold text-xl leading-none">
-              δ
-            </span>
-          </div>
-          <span className="text-[17px] md:text-lg font-semibold tracking-[-0.02em] text-zinc-100">
-            Deslop
-          </span>
-        </div>
-
-        <div className="hidden md:flex items-center gap-1">
-          <a
-            href="#features"
-            className="text-base text-zinc-400 hover:text-zinc-100 transition-colors px-3 py-2 rounded-md hover:bg-white/[0.04]"
-          >
-            Features
-          </a>
-          <a
-            href="#integrations"
-            className="text-base text-zinc-400 hover:text-zinc-100 transition-colors px-3 py-2 rounded-md hover:bg-white/[0.04]"
-          >
-            Integrations
-          </a>
-          <a
-            href="#pricing"
-            className="text-base text-zinc-400 hover:text-zinc-100 transition-colors px-3 py-2 rounded-md hover:bg-white/[0.04]"
-          >
-            Pricing
-          </a>
-          <button className="ml-3 bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium hover:bg-zinc-100 transition-colors ring-1 ring-white/10">
-            Get Personal License
-          </button>
-        </div>
-
-        <button
-          className="md:hidden text-white p-1"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {isMobileMenuOpen ? (
-            <X className="h-7 w-7" />
-          ) : (
-            <Menu className="h-7 w-7" />
-          )}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-zinc-950 border-b border-white/10 p-6 flex flex-col gap-4 md:hidden"
-          >
-            <a
-              href="#features"
-              className="text-xl text-zinc-400"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Features
-            </a>
-            <a
-              href="#rules"
-              className="text-xl text-zinc-400"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Rulebook
-            </a>
-            <a
-              href="#docs"
-              className="text-xl text-zinc-400"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Docs
-            </a>
-            <button className="bg-white text-black px-8 py-4 rounded-full text-xl font-medium">
-              Add Deslop to my CI
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
-  );
-};
-
-const CodeBlock = ({
-  code,
-  filename,
-  className = "",
-}: {
-  code: string;
-  language?: string;
-  filename?: string;
-  className?: string;
-}) => {
-  return (
-    <div
-      className={`bg-[#0A0A0A] border border-white/10 rounded-xl overflow-hidden font-mono text-base ${className}`}
-    >
-      {filename && (
-        <div className="bg-white/5 border-b border-white/10 px-4 py-2 flex items-center justify-between">
-          <span className="text-zinc-400 text-sm font-medium">{filename}</span>
-          <div className="flex gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-            <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-            <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-          </div>
-        </div>
-      )}
-      <div className="p-5 overflow-x-auto">
-        <pre className="text-zinc-200">
-          <code>{code}</code>
-        </pre>
-      </div>
-    </div>
-  );
-};
-
-const BeforeAfter = ({
-  before,
-  after,
-  beforeFilename,
-  afterFilename,
-  title,
-}: {
-  before: string;
-  after: string;
-  beforeFilename: string;
-  afterFilename: string;
-  title?: string;
-}) => {
-  return (
-    <div className="space-y-4">
-      {title && (
-        <h4 className="text-zinc-400 text-base font-medium uppercase tracking-wider">
-          {title}
-        </h4>
-      )}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 px-2">
-            <div className="w-2 h-2 rounded-full bg-red-500" />
-            <span className="text-sm font-medium text-zinc-500 uppercase">
-              Before AI Slop
-            </span>
-          </div>
-          <CodeBlock code={before} filename={beforeFilename} />
-        </div>
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 px-2">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
-            <span className="text-sm font-medium text-zinc-500 uppercase">
-              After Deslop
-            </span>
-          </div>
-          <CodeBlock code={after} filename={afterFilename} />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const FeatureCard = ({
-  icon: Icon,
-  title,
-  description,
-  children,
-}: {
-  icon: any;
-  title: string;
-  description: string;
-  children?: React.ReactNode;
-}) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="bg-white/[0.02] border border-white/5 rounded-3xl p-9 md:p-10 hover:bg-white/[0.04] transition-all group"
-    >
-      <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-        <Icon className="w-7 h-7 text-white" />
-      </div>
-      <h3 className="text-3xl font-bold text-white mb-4">{title}</h3>
-      <p className="text-zinc-300 text-lg leading-relaxed mb-8">
-        {description}
-      </p>
-      {children}
-    </motion.div>
-  );
-};

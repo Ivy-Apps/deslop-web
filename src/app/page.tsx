@@ -1,5 +1,5 @@
-import App from '@/App';
+import LandingView from "@/features/landing/LandingView";
 
-export default function Home() {
-  return <App />;
+export default function HomePage() {
+  return <LandingView />;
 }
