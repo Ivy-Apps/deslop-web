@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { type ReactNode, useEffect, useState } from 'react';
 
 import { DeslopWordmark } from '@/components/DeslopLogo';
+import { tw as baseTw } from '@/components/design-system/colors';
 
 export default function Navbar(): ReactNode {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -56,7 +57,7 @@ export default function Navbar(): ReactNode {
           </a>
           <button
             type="button"
-            className="ml-3 bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium hover:bg-zinc-100 transition-colors ring-1 ring-white/10"
+            className={`ml-3 inline-flex items-center justify-center bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium ring-1 ring-white/20 transition-all hover:bg-zinc-100 ${baseTw.effects.brandShadowHover}`}
           >
             Get Deslop
           </button>
@@ -107,7 +108,7 @@ export default function Navbar(): ReactNode {
             </button>
             <button
               type="button"
-              className="mt-2 bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium hover:bg-zinc-100 transition-colors ring-1 ring-white/10 text-left w-fit"
+              className={`mt-2 inline-flex items-center justify-center bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium text-left w-fit ring-1 ring-white/20 transition-all hover:bg-zinc-100 ${baseTw.effects.brandShadowHover}`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Get Deslop
