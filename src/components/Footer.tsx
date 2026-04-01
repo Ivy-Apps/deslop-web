@@ -6,16 +6,26 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
         <DeslopLogo />
         <div className="flex flex-wrap justify-center gap-8 text-base text-zinc-400">
-          <a href="#" className="hover:text-white transition-colors">
+          <a href="/privacy" className="hover:text-white transition-colors">
             Privacy
           </a>
-          <a href="#" className="hover:text-white transition-colors">
+          <a href="/terms" className="hover:text-white transition-colors">
             Terms
           </a>
-          <a href="#" className="hover:text-white transition-colors">
+          <a
+            href="https://twitter.com"
+            className="hover:text-white transition-colors"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             Twitter
           </a>
-          <a href="#" className="hover:text-white transition-colors">
+          <a
+            href="https://github.com"
+            className="hover:text-white transition-colors"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             GitHub
           </a>
         </div>

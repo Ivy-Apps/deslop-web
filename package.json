@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
-    "deslop:fix": "deslop && npm run lint:fix"
+    "deslop": "deslop --check",
+    "deslop:fix": "deslop && npm run lint:fix",
+    "check": "npm run typecheck && npm run deslop && npm run lint"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",

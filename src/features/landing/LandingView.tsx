@@ -185,12 +185,16 @@ function Navbar(): ReactNode {
           >
             Pricing
           </a>
-          <button className="ml-3 bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium hover:bg-zinc-100 transition-colors ring-1 ring-white/10">
+          <button
+            type="button"
+            className="ml-3 bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium hover:bg-zinc-100 transition-colors ring-1 ring-white/10"
+          >
             Get Personal License
           </button>
         </div>
 
         <button
+          type="button"
           className="md:hidden text-white p-1"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
@@ -211,28 +215,46 @@ function Navbar(): ReactNode {
             exit={{ opacity: 0, y: -20 }}
             className="absolute top-full left-0 right-0 bg-zinc-950 border-b border-white/10 p-6 flex flex-col gap-4 md:hidden"
           >
-            <a
-              href="#features"
-              className="text-xl text-zinc-400"
-              onClick={() => setIsMobileMenuOpen(false)}
+            <button
+              type="button"
+              className="text-xl text-zinc-400 text-left"
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                document
+                  .getElementById('features')
+                  ?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               Features
-            </a>
-            <a
-              href="#rules"
-              className="text-xl text-zinc-400"
-              onClick={() => setIsMobileMenuOpen(false)}
+            </button>
+            <button
+              type="button"
+              className="text-xl text-zinc-400 text-left"
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                document
+                  .getElementById('rules')
+                  ?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               Rulebook
-            </a>
-            <a
-              href="#docs"
-              className="text-xl text-zinc-400"
-              onClick={() => setIsMobileMenuOpen(false)}
+            </button>
+            <button
+              type="button"
+              className="text-xl text-zinc-400 text-left"
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                document
+                  .getElementById('integrations')
+                  ?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               Docs
-            </a>
-            <button className="bg-white text-black px-8 py-4 rounded-full text-xl font-medium">
+            </button>
+            <button
+              type="button"
+              className="bg-white text-black px-8 py-4 rounded-full text-xl font-medium"
+            >
               Add Deslop to my CI
             </button>
           </motion.div>
@@ -333,12 +355,15 @@ function HeroCopyBlock(): ReactNode {
       </p>
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-10">
         <button
+          type="button"
           className={`${tw.button.heroPrimary} ${tw.hero.ctaPrimaryShadow} ${tw.hero.ctaPrimaryShadowHover}`}
         >
           Get Personal License — $10.99/mo
           <ArrowRight className="w-6 h-6 opacity-90 shrink-0" />
         </button>
-        <button className={tw.hero.secondaryButton}>Request Team Access</button>
+        <button type="button" className={tw.hero.secondaryButton}>
+          Request Team Access
+        </button>
       </div>
       <p className={body.smMuted}>
         Embrace the full potential of vibe-coding without sacrificing quality.
@@ -425,11 +450,11 @@ function HeroCodeLines(): ReactNode {
       </div>
       <div className="flex gap-4">
         <span className={code.lineNumber}>7</span>
-        <span className="pl-12 text-zinc-400">- @/client/core/**/*</span>
+        <span className="pl-12 text-zinc-400">- @/client/core{'**/*'}</span>
       </div>
       <div className="flex gap-4">
         <span className={code.lineNumber}>8</span>
-        <span className="pl-12 text-zinc-400">- @/server/**/*</span>
+        <span className="pl-12 text-zinc-400">- @/server{'**/*'}</span>
       </div>
       <div className="flex gap-4">
         <span className={code.lineNumber}>9</span>
@@ -523,18 +548,20 @@ function StepDownFeature(): ReactNode {
 
 function RulebookFeature(): ReactNode {
   return (
-    <FeatureCard
-      icon={Shield}
-      title="Architectural RuleBook"
-      description="Enforces dependency boundaries and bans 'bad' imports. High-speed Haskell engine ensures your rules are never ignored."
-    >
-      <div className="mt-4">
-        <CodeBlock
-          code={`rules:\n  - id: no-react-in-core\n    forbidden:\n      - import: react\n        transitive: true`}
-          filename="deslop.config.yaml"
-        />
-      </div>
-    </FeatureCard>
+    <div id="rules">
+      <FeatureCard
+        icon={Shield}
+        title="Architectural RuleBook"
+        description="Enforces dependency boundaries and bans 'bad' imports. High-speed Haskell engine ensures your rules are never ignored."
+      >
+        <div className="mt-4">
+          <CodeBlock
+            code={`rules:\n  - id: no-react-in-core\n    forbidden:\n      - import: react\n        transitive: true`}
+            filename="deslop.config.yaml"
+          />
+        </div>
+      </FeatureCard>
+    </div>
   );
 }
 
@@ -663,14 +690,17 @@ function PersonalPlanCard(): ReactNode {
           'Personal RuleBook config',
           'Step-Down Ordering engine',
           'Relative Import Fixer',
-        ].map((item, i) => (
-          <li key={i} className={body.list}>
+        ].map((item) => (
+          <li key={item} className={body.list}>
             <Check className="w-5 h-5 text-green-500 shrink-0" />
             {item}
           </li>
         ))}
       </ul>
-      <button className="w-full bg-white text-black py-5 rounded-full text-lg font-bold hover:bg-zinc-200 transition-all">
+      <button
+        type="button"
+        className="w-full bg-white text-black py-5 rounded-full text-lg font-bold hover:bg-zinc-200 transition-all"
+      >
         Get Personal License
       </button>
     </div>
@@ -695,14 +725,17 @@ function TeamPlanCard(): ReactNode {
           'Per-Repository enforcement',
           'Team-wide RuleBook',
           'Easier to review and cleaner PRs',
-        ].map((item, i) => (
-          <li key={i} className={body.list}>
+        ].map((item) => (
+          <li key={item} className={body.list}>
             <Check className="w-5 h-5 text-green-500 shrink-0" />
             {item}
           </li>
         ))}
       </ul>
-      <button className="w-full bg-white/5 border border-white/10 text-white py-5 rounded-full text-lg font-bold hover:bg-white/10 transition-all">
+      <button
+        type="button"
+        className="w-full bg-white/5 border border-white/10 text-white py-5 rounded-full text-lg font-bold hover:bg-white/10 transition-all"
+      >
         Request Team Access
       </button>
     </div>
@@ -744,8 +777,8 @@ function ErrorReportingCopy(): ReactNode {
           "Clear 'FIX' instructions for agents",
           'Context-aware error reporting',
           'Seamless CI/CD integration',
-        ].map((item, i) => (
-          <li key={i} className={body.listLarge}>
+        ].map((item) => (
+          <li key={item} className={body.listLarge}>
             <Check className="w-6 h-6 text-green-500 shrink-0" />
             {item}
           </li>
@@ -863,10 +896,10 @@ function CtaSection(): ReactNode {
           maintainable, and architectural code.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-          <button className={tw.button.ctaPrimary}>
+          <button type="button" className={tw.button.ctaPrimary}>
             Get Personal License — $10.99/mo
           </button>
-          <button className={tw.button.ctaSecondary}>
+          <button type="button" className={tw.button.ctaSecondary}>
             Request Team Access
           </button>
         </div>
