@@ -1,6 +1,10 @@
 import { Check } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { tw as baseTw } from '@/components/design-system/colors';
+import {
+  tw as baseTw,
+  GlowPrimaryButton,
+  GlowSecondaryButton,
+} from '@/components/design-system';
 import { textPresets, typeScale } from '@/components/design-system/typography';
 
 export default function PricingSection(): ReactNode {
@@ -63,12 +67,9 @@ function PersonalPlanCard(): ReactNode {
           </li>
         ))}
       </ul>
-      <button
-        type="button"
-        className={`w-full inline-flex items-center justify-center rounded-full bg-white px-10 py-5 text-lg font-bold text-zinc-950 ring-1 ring-white/20 transition-all duration-300 hover:bg-zinc-100 ${baseTw.effects.brandShadow} hover:shadow-[0_0_46px_-2px_rgba(62,153,245,0.56),0_0_56px_-2px_rgba(92,61,245,0.58),0_0_96px_-10px_rgba(62,153,245,0.32)]`}
-      >
+      <GlowPrimaryButton className="w-full" size="lg">
         Get Deslop MCP
-      </button>
+      </GlowPrimaryButton>
     </div>
   );
 }
@@ -108,12 +109,9 @@ function TeamPlanCard(): ReactNode {
         each extra Personal License is{' '}
         <span className="text-white">$10.99/mo</span> per user.
       </p>
-      <button
-        type="button"
-        className="w-full inline-flex items-center justify-center rounded-full border border-[#3E99F5]/25 bg-gradient-to-r from-[#3E99F5]/10 to-[#5C3DF5]/10 px-10 py-5 text-lg font-bold text-zinc-100 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-sm ring-1 ring-[#3E99F5]/15 transition-all duration-300 hover:border-[#3E99F5]/45 hover:ring-[#5C3DF5]/25 hover:from-[#3E99F5]/15 hover:to-[#5C3DF5]/15 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_0_46px_-2px_rgba(62,153,245,0.56),0_0_56px_-2px_rgba(92,61,245,0.58),0_0_96px_-10px_rgba(62,153,245,0.32)]"
-      >
+      <GlowSecondaryButton className="w-full" size="lg">
         Request Team Access
-      </button>
+      </GlowSecondaryButton>
     </div>
   );
 }

@@ -4,7 +4,12 @@ import { ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 
-import { tw as baseTw, inlineStyle } from '@/components/design-system/colors';
+import {
+  tw as baseTw,
+  GlowPrimaryButton,
+  GlowSecondaryButton,
+  inlineStyle,
+} from '@/components/design-system';
 import { textPresets, typeScale } from '@/components/design-system/typography';
 import { HeroDemo } from '@/components/HeroDemo';
 
@@ -113,19 +118,13 @@ function HeroCopyBlock(): ReactNode {
         enforces architectural boundaries via MCP for Cursor and Claude Code.
       </p>
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-10">
-        <button
-          type="button"
-          className={`w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-10 py-4 text-lg font-bold text-zinc-950 ring-1 ring-white/20 transition-all duration-300 hover:bg-zinc-100 ${baseTw.effects.brandShadow} hover:shadow-[0_0_46px_-2px_rgba(62,153,245,0.56),0_0_56px_-2px_rgba(92,61,245,0.58),0_0_96px_-10px_rgba(62,153,245,0.32)]`}
-        >
+        <GlowPrimaryButton className="w-full sm:w-auto">
           Get Deslop! Stop the slop
           <ArrowRight className="w-6 h-6 opacity-90 shrink-0" />
-        </button>
-        <button
-          type="button"
-          className="w-full sm:w-auto inline-flex items-center justify-center rounded-full border border-[#3E99F5]/25 bg-gradient-to-r from-[#3E99F5]/10 to-[#5C3DF5]/10 px-10 py-4 text-lg font-semibold text-zinc-100 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-sm ring-1 ring-[#3E99F5]/15 transition-all hover:border-[#3E99F5]/45 hover:ring-[#5C3DF5]/25 hover:from-[#3E99F5]/15 hover:to-[#5C3DF5]/15"
-        >
+        </GlowPrimaryButton>
+        <GlowSecondaryButton className="w-full sm:w-auto">
           Request Team Access
-        </button>
+        </GlowSecondaryButton>
       </div>
       <p
         className={`${typeScale.bodySm} ${baseTw.text.subtle} max-w-xl mx-auto`}
