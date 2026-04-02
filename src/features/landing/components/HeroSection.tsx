@@ -1,7 +1,4 @@
-'use client';
-
 import { ArrowRight } from 'lucide-react';
-import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 
 import {
@@ -36,27 +33,16 @@ function HeroVisualEffects(): ReactNode {
         className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_55%_45%_at_15%_5%,rgba(62,153,245,0.14),transparent_55%),radial-gradient(ellipse_50%_45%_at_85%_0%,rgba(92,61,245,0.15),transparent_55%)]"
         aria-hidden
       />
-      <motion.div
-        className="pointer-events-none absolute -left-[20%] top-[5%] z-0 h-[min(70vw,32rem)] w-[min(70vw,32rem)] rounded-full bg-[#3E99F5]/25 blur-[120px]"
-        animate={{ opacity: [0.35, 0.55, 0.35], scale: [1, 1.05, 1] }}
-        transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut' }}
+      <div
+        className="hero-blob-left pointer-events-none absolute -left-[20%] top-[5%] z-0 h-[min(70vw,32rem)] w-[min(70vw,32rem)] rounded-full bg-[#3E99F5]/25 blur-[120px]"
         aria-hidden
       />
-      <motion.div
-        className="pointer-events-none absolute -right-[15%] top-[25%] z-0 h-[min(60vw,28rem)] w-[min(60vw,28rem)] rounded-full bg-[#5C3DF5]/20 blur-[110px]"
-        animate={{ opacity: [0.28, 0.48, 0.28], scale: [1.02, 1, 1.02] }}
-        transition={{
-          duration: 13,
-          repeat: Infinity,
-          ease: 'easeInOut',
-          delay: 0.5,
-        }}
+      <div
+        className="hero-blob-right pointer-events-none absolute -right-[15%] top-[25%] z-0 h-[min(60vw,28rem)] w-[min(60vw,28rem)] rounded-full bg-[#5C3DF5]/20 blur-[110px]"
         aria-hidden
       />
-      <motion.div
-        className="pointer-events-none absolute bottom-[-10%] left-1/2 z-0 h-[22rem] w-[min(95vw,44rem)] -translate-x-1/2 rounded-full blur-[130px]"
-        animate={{ opacity: [0.25, 0.42, 0.25] }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+      <div
+        className="hero-bloom pointer-events-none absolute bottom-[-10%] left-1/2 z-0 h-[22rem] w-[min(95vw,44rem)] -translate-x-1/2 rounded-full blur-[130px]"
         style={inlineStyle.brandBloom}
         aria-hidden
       />
@@ -80,12 +66,7 @@ function HeroVisualEffects(): ReactNode {
 
 function HeroCopyBlock(): ReactNode {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="text-center max-w-4xl mx-auto"
-    >
+    <div className="hero-copy-in text-center max-w-4xl mx-auto">
       <div className="mb-8 flex flex-col items-center gap-6">
         <div
           className={`${baseTw.gradient.brandBadge} rounded-full p-px shadow-[0_0_40px_-6px_rgba(62,153,245,0.4),0_0_44px_-6px_rgba(92,61,245,0.45)]`}
@@ -133,6 +114,6 @@ function HeroCopyBlock(): ReactNode {
         Add Deslop to your CI and stop the AI slop tech-debt via advanced static
         analysis.
       </p>
-    </motion.div>
+    </div>
   );
 }

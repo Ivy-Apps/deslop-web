@@ -1,20 +1,137 @@
-'use client';
-
 import { Terminal } from 'lucide-react';
-import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 
 import { tw as baseTw } from '@/components/design-system/colors';
 import { textPresets } from '@/components/design-system/typography';
 
+type YamlSegment =
+  | { readonly kind: 'key'; readonly text: string }
+  | { readonly kind: 'path'; readonly text: string }
+  | { readonly kind: 'comment'; readonly text: string }
+  | { readonly kind: 'bool'; readonly value: boolean }
+  | { readonly kind: 'plain'; readonly text: string };
+
+type YamlLine = {
+  readonly indent: 0 | 1 | 2 | 3 | 4;
+  readonly segments: readonly YamlSegment[];
+};
+
+const INDENT_CLASS: Record<YamlLine['indent'], string> = {
+  0: '',
+  1: 'pl-4',
+  2: 'pl-8',
+  3: 'pl-12',
+  4: 'pl-16',
+};
+
+/** RuleBook example — line numbers in the UI are `index + 1` over this array. */
+const CLEAN_ARCHITECTURE_RULEBOOK: readonly YamlLine[] = [
+  {
+    indent: 0,
+    segments: [
+      { kind: 'key', text: 'name:' },
+      { kind: 'plain', text: ' Clean Architecture' },
+    ],
+  },
+  { indent: 0, segments: [{ kind: 'key', text: 'rules:' }] },
+  {
+    indent: 1,
+    segments: [
+      { kind: 'plain', text: '- ' },
+      { kind: 'key', text: 'id:' },
+      { kind: 'plain', text: ' enforce-pure-domain' },
+    ],
+  },
+  { indent: 2, segments: [{ kind: 'key', text: 'target:' }] },
+  {
+    indent: 3,
+    segments: [
+      { kind: 'plain', text: '- ' },
+      { kind: 'path', text: '"@/domain/**/*.ts"' },
+    ],
+  },
+  { indent: 2, segments: [{ kind: 'key', text: 'forbidden:' }] },
+  {
+    indent: 3,
+    segments: [
+      {
+        kind: 'comment',
+        text: '# Core logic must not depend on UI or Frameworks',
+      },
+    ],
+  },
+  {
+    indent: 3,
+    segments: [
+      { kind: 'plain', text: '- ' },
+      { kind: 'key', text: 'import:' },
+      { kind: 'plain', text: ' ' },
+      { kind: 'path', text: '"@/components/**/*"' },
+    ],
+  },
+  {
+    indent: 4,
+    segments: [
+      { kind: 'key', text: 'transitive:' },
+      { kind: 'plain', text: ' ' },
+      { kind: 'bool', value: true },
+    ],
+  },
+  {
+    indent: 3,
+    segments: [
+      { kind: 'plain', text: '- ' },
+      { kind: 'key', text: 'import:' },
+      { kind: 'plain', text: ' ' },
+      { kind: 'path', text: '"next/*"' },
+    ],
+  },
+  {
+    indent: 4,
+    segments: [
+      { kind: 'key', text: 'transitive:' },
+      { kind: 'plain', text: ' ' },
+      { kind: 'bool', value: true },
+    ],
+  },
+  {
+    indent: 3,
+    segments: [
+      { kind: 'plain', text: '- ' },
+      { kind: 'key', text: 'import:' },
+      { kind: 'plain', text: ' ' },
+      { kind: 'path', text: '"react"' },
+    ],
+  },
+  {
+    indent: 4,
+    segments: [
+      { kind: 'key', text: 'transitive:' },
+      { kind: 'plain', text: ' ' },
+      { kind: 'bool', value: true },
+    ],
+  },
+];
+
+function YamlSegmentView(props: { segment: YamlSegment }): ReactNode {
+  const { segment } = props;
+  switch (segment.kind) {
+    case 'key':
+      return <span className={baseTw.text.brandBlue}>{segment.text}</span>;
+    case 'path':
+      return <span className="text-zinc-400">{segment.text}</span>;
+    case 'comment':
+      return <span className="text-zinc-500">{segment.text}</span>;
+    case 'bool':
+      return <span className="text-amber-200/80">{String(segment.value)}</span>;
+    case 'plain':
+      return <span>{segment.text}</span>;
+  }
+}
+
 export function HeroDemo(): ReactNode {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.12, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-      className="mt-16 md:mt-20 relative max-w-5xl mx-auto"
-    >
+    <div className="hero-demo-in mt-16 md:mt-20 relative max-w-5xl mx-auto">
       <div
         className="pointer-events-none absolute -inset-[1px] rounded-3xl bg-gradient-to-b from-[#3E99F5]/22 via-[#5C3DF5]/08 to-[#4A2DD4]/16 opacity-80 blur-[1px]"
         aria-hidden
@@ -48,76 +165,66 @@ export function HeroDemo(): ReactNode {
             <span>CI / CD</span>
           </div>
         </div>
-        <HeroCodeLines />
+        <HeroCodeLines lines={CLEAN_ARCHITECTURE_RULEBOOK} />
       </div>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent z-[1]" />
-    </motion.div>
+    </div>
   );
 }
 
-function HeroCodeLines(): ReactNode {
+function yamlSegmentKey(segment: YamlSegment): string {
+  switch (segment.kind) {
+    case 'bool':
+      return `bool:${segment.value}`;
+    case 'key':
+      return `key:${segment.text}`;
+    case 'path':
+      return `path:${segment.text}`;
+    case 'comment':
+      return `comment:${segment.text}`;
+    case 'plain':
+      return `plain:${segment.text}`;
+  }
+}
+
+function yamlLineKey(line: YamlLine): string {
+  return `${line.indent}:${line.segments.map(yamlSegmentKey).join('\u241e')}`;
+}
+
+/** Stable unique keys when the same fingerprint appears more than once in a list. */
+function uniqueKeysByFingerprint<T>(
+  items: readonly T[],
+  fingerprint: (item: T) => string
+): Array<{ key: string; item: T }> {
+  const counts = new Map<string, number>();
+  return items.map((item) => {
+    const base = fingerprint(item);
+    const n = (counts.get(base) ?? 0) + 1;
+    counts.set(base, n);
+    const key = n === 1 ? base : `${base}#${n}`;
+    return { key, item };
+  });
+}
+
+function HeroCodeLines(props: { lines: readonly YamlLine[] }): ReactNode {
+  const { lines } = props;
   const lineNumberClass = `${textPresets.codeLineNumber} text-zinc-600`;
   return (
     <div className={`${textPresets.codePanel} ${baseTw.text.subtle}`}>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>1</span>
-        <span>
-          <span className={baseTw.text.brandBlue}>name:</span> Clean
-          Architecture
-        </span>
-      </div>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>2</span>
-        <span>
-          <span className={baseTw.text.brandBlue}>rules:</span>
-        </span>
-      </div>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>3</span>
-        <span className="pl-4">
-          - <span className={baseTw.text.brandBlue}>id:</span> no-react-in-core
-        </span>
-      </div>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>4</span>
-        <span className="pl-8">
-          <span className={baseTw.text.brandBlue}>description:</span> The core
-          must not have React dependencies.
-        </span>
-      </div>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>5</span>
-        <span className="pl-8">
-          <span className={baseTw.text.brandBlue}>target:</span>
-        </span>
-      </div>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>6</span>
-        <span className="pl-12 text-zinc-400">- @/client/core{'/**/*'}</span>
-      </div>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>7</span>
-        <span className="pl-12 text-zinc-400">- @/server{'/**/*'}</span>
-      </div>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>8</span>
-        <span className="pl-8">
-          <span className={baseTw.text.brandBlue}>forbidden:</span>
-        </span>
-      </div>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>9</span>
-        <span className="pl-12">
-          - <span className={baseTw.text.brandBlue}>import:</span> react
-        </span>
-      </div>
-      <div className="flex gap-4">
-        <span className={lineNumberClass}>10</span>
-        <span className="pl-16">
-          <span className={baseTw.text.brandBlue}>transitive:</span>{' '}
-          <span className="text-amber-200/80">true</span>
-        </span>
-      </div>
+      {uniqueKeysByFingerprint(lines, yamlLineKey).map(
+        ({ key: lineKey, item: line }, index) => (
+          <div key={lineKey} className="flex gap-4">
+            <span className={lineNumberClass}>{index + 1}</span>
+            <span className={INDENT_CLASS[line.indent]}>
+              {uniqueKeysByFingerprint(line.segments, yamlSegmentKey).map(
+                ({ key: segmentKey, item: segment }) => (
+                  <YamlSegmentView key={segmentKey} segment={segment} />
+                )
+              )}
+            </span>
+          </div>
+        )
+      )}
     </div>
   );
 }

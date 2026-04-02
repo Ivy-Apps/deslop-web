@@ -1,17 +1,29 @@
 import { tw } from '@/components/design-system/colors';
 import { textPresets } from '@/components/design-system/typography';
 
-type CodeBlockProps = {
+export type CodeBlockProps = {
   code: string;
   filename?: string;
   className?: string;
+  /**
+   * Output of `await highlightCode(code, lang)` from `@/lib/highlight-code`.
+   * Omit to render plain `<pre>` (no highlighting).
+   */
+  highlightedHtml?: string;
 };
 
+/**
+ * Sync Server Component — highlighting is done by callers via `highlightCode`
+ * so Turbopack does not treat this module as an async CJS boundary.
+ */
 export default function CodeBlock({
   code,
   filename,
   className = '',
+  highlightedHtml,
 }: CodeBlockProps) {
+  const trimmed = code.trimEnd();
+
   return (
     <div
       className={`${tw.bg.code} border border-white/10 rounded-xl overflow-hidden font-mono text-base ${className}`}
@@ -30,10 +42,19 @@ export default function CodeBlock({
           </div>
         </div>
       )}
-      <div className="p-5 overflow-x-auto">
-        <pre className="text-zinc-200">
-          <code>{code}</code>
-        </pre>
+      <div
+        className={`p-5 overflow-x-auto code-block-shiki ${!highlightedHtml ? 'text-zinc-200' : ''}`}
+      >
+        {highlightedHtml ? (
+          <div
+            className="[&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0 [&_pre]:text-[0.9375rem] [&_pre]:leading-[1.65] [&_code]:font-mono"
+            dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+          />
+        ) : (
+          <pre className="text-zinc-200 m-0">
+            <code>{trimmed}</code>
+          </pre>
+        )}
       </div>
     </div>
   );

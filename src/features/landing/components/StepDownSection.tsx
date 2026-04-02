@@ -1,14 +1,12 @@
-'use client';
-
 import { ArrowRight, Code2, Shield } from 'lucide-react';
-import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 
 import CodeBlock from '@/components/CodeBlock';
 import { tw as baseTw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
+import { highlightCode } from '@/lib/highlight-code';
 
-export default function StepDownSection(): ReactNode {
+export default async function StepDownSection(): Promise<ReactNode> {
   return (
     <section className="py-24 md:py-32 bg-zinc-900 border-y border-white/5">
       <div className="max-w-7xl mx-auto px-6">
@@ -21,28 +19,34 @@ export default function StepDownSection(): ReactNode {
   );
 }
 
-function StepDownCodeExample(): ReactNode {
+async function StepDownCodeExample(): Promise<ReactNode> {
+  const codeBefore = `export const fetchUser = async (id: string) => {\n  const res = await fetch(\`/api/users/\${id}\`);\n  return res.json();\n};\n\nexport const UserProfile = () => {\n  // ... component logic\n};`;
+  const codeAfter = `export const UserProfile = () => {\n  // ... component logic\n};\n\nexport const fetchUser = async (id: string) => {\n  const res = await fetch(\`/api/users/\${id}\`);\n  return res.json();\n};`;
+  const [htmlBefore, htmlAfter] = await Promise.all([
+    highlightCode(codeBefore, 'tsx'),
+    highlightCode(codeAfter, 'tsx'),
+  ]);
+
   return (
     <div className="order-2 lg:order-1">
       <div className="space-y-4">
         <div className="grid grid-cols-1 gap-3">
           <CodeBlock
-            code={`export const fetchUser = async (id: string) => {\n  const res = await fetch(\`/api/users/\${id}\`);\n  return res.json();\n};\n\nexport const UserProfile = () => {\n  // ... component logic\n};`}
+            code={codeBefore}
             filename="user-profile.tsx"
             className="opacity-90"
+            highlightedHtml={htmlBefore}
           />
           <div className="flex justify-center">
-            <motion.div
-              animate={{ y: [0, 5, 0] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-            >
+            <div className="step-arrow-bob">
               <ArrowRight className="w-5 h-5 text-zinc-600 rotate-90" />
-            </motion.div>
+            </div>
           </div>
           <CodeBlock
-            code={`export const UserProfile = () => {\n  // ... component logic\n};\n\nexport const fetchUser = async (id: string) => {\n  const res = await fetch(\`/api/users/\${id}\`);\n  return res.json();\n};`}
+            code={codeAfter}
             filename="user-profile.tsx"
             className="border-green-500/30"
+            highlightedHtml={htmlAfter}
           />
         </div>
       </div>
@@ -52,12 +56,7 @@ function StepDownCodeExample(): ReactNode {
 
 function StepDownCopy(): ReactNode {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      className="order-1 lg:order-2"
-    >
+    <div className="landing-reveal order-1 lg:order-2">
       <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6">
         <Code2 className="w-7 h-7 text-white" />
       </div>
@@ -90,6 +89,6 @@ function StepDownCopy(): ReactNode {
           reordering never breaks your logic.
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 }

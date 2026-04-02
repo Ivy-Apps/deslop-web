@@ -1,7 +1,11 @@
 import type { ReactNode } from 'react';
 
 import { tw as baseTw } from '@/components/design-system/colors';
-import { textPresets, typeScale } from '@/components/design-system/typography';
+import {
+  GlowPrimaryButton,
+  GlowSecondaryButton,
+} from '@/components/design-system/glow-buttons';
+import { typeScale } from '@/components/design-system/typography';
 
 export default function CtaSection(): ReactNode {
   return (
@@ -13,25 +17,24 @@ export default function CtaSection(): ReactNode {
         >
           Your AI writes code.
           <br />
-          Deslop makes it Senior-grade.
+          Deslop makes it{' '}
+          <span className={baseTw.gradient.brandTextReverse}>
+            Senior-grade.
+          </span>
         </h2>
-        <p className={`${textPresets.ctaLead} ${baseTw.text.muted} mb-12`}>
+        <p
+          className={`text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed ${baseTw.text.muted} mb-12`}
+        >
           Join 500+ developers turning fragmented AI output into clean,
           maintainable, and architectural code.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
-          <button
-            type="button"
-            className="w-full sm:w-auto bg-white text-black px-14 py-6 rounded-full text-2xl font-bold hover:bg-zinc-200 transition-all"
-          >
+          <GlowPrimaryButton size="lg" className="w-full sm:w-auto">
             Get Deslop! Stop the slop
-          </button>
-          <button
-            type="button"
-            className="w-full sm:w-auto bg-transparent border border-white/20 text-white px-14 py-6 rounded-full text-2xl font-bold hover:bg-white/5 transition-all"
-          >
+          </GlowPrimaryButton>
+          <GlowSecondaryButton size="lg" className="w-full sm:w-auto">
             Request Team Access
-          </button>
+          </GlowSecondaryButton>
         </div>
       </div>
     </section>
