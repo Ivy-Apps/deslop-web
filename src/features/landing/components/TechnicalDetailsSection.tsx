@@ -36,8 +36,17 @@ export default function TechnicalDetailsSection(): ReactNode {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-start">
-          <PipelineColumn />
-          <TechnicalCopyColumn />
+          <div className="order-1 lg:order-none lg:col-start-1">
+            <PipelineColumn />
+          </div>
+          <div className="order-2 max-lg:contents lg:flex lg:flex-col lg:gap-8 lg:order-none lg:col-start-2">
+            <div className="order-2 space-y-8 landing-reveal lg:order-none">
+              <TechnicalCopyColumn />
+            </div>
+            <div className="order-3 lg:order-none">
+              <HaskellBadge />
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -104,7 +113,7 @@ function PipelineColumn(): ReactNode {
   ] as const;
 
   return (
-    <div className="order-2 lg:order-1 space-y-0">
+    <div className="space-y-0">
       {steps.map((step, index) => (
         <div key={step.title}>
           <div
@@ -144,7 +153,7 @@ function PipelineColumn(): ReactNode {
 
 function TechnicalCopyColumn(): ReactNode {
   return (
-    <div className="landing-reveal order-1 lg:order-2 space-y-8">
+    <div className="space-y-8">
       <div>
         <h3
           className={`${typeScale.titleLg} ${baseTw.text.primary} mb-4 tracking-tight`}
@@ -199,8 +208,6 @@ function TechnicalCopyColumn(): ReactNode {
           rules.
         </p>
       </div>
-
-      <HaskellBadge />
     </div>
   );
 }
