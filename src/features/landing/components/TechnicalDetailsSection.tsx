@@ -56,8 +56,8 @@ function PipelineColumn(): ReactNode {
           <strong className="text-zinc-200 font-semibold">
             round-trip to the exact original source
           </strong>{' '}
-          and apply edits with surgical precision—no noisy reformatting just to
-          satisfy the tool.
+          and apply edits with surgical precision - no noisy reformatting just
+          to satisfy the tool.
         </>
       ),
     },
@@ -93,7 +93,7 @@ function PipelineColumn(): ReactNode {
           </strong>{' '}
           across the entire codebase. That global view is what lets the RuleBook
           enforce architecture, dependency boundaries, and “big picture”
-          invariants—not just isolated file warnings.
+          invariants - not just isolated file warnings.
         </>
       ),
     },
@@ -178,7 +178,7 @@ function TechnicalCopyColumn(): ReactNode {
           <strong className="text-zinc-200 font-semibold">
             approximate and incomplete
           </strong>
-          —retrieval can miss the exact import edge, the boundary violation, or
+          - retrieval can miss the exact import edge, the boundary violation, or
           the cross-file invariant that matters for your change.
         </p>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary}`}>
@@ -188,7 +188,7 @@ function TechnicalCopyColumn(): ReactNode {
           <strong className="text-zinc-200 font-semibold">
             complete, deterministic graph
           </strong>{' '}
-          of the project—not a probabilistic sample. Same structures power CI,
+          of the project-not a probabilistic sample. Same structures power CI,
           so what the agent sees aligns with what the pipeline enforces.
         </p>
       </div>
@@ -199,56 +199,31 @@ function TechnicalCopyColumn(): ReactNode {
 }
 
 function HaskellBadge(): ReactNode {
-  const advantages = [
-    'Strong static types model syntax trees, graphs, and transformations precisely.',
-    'Pure, immutable data structures make analysis and refactors easier to reason about.',
-    'Referential transparency supports deterministic, repeatable tooling behavior.',
-  ] as const;
-
   return (
-    <div className="rounded-2xl border border-white/10 bg-zinc-950/80 p-7 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
-      <div className="flex flex-col sm:flex-row sm:items-start gap-6">
-        <div className="shrink-0 flex flex-col items-center sm:items-start gap-3">
-          <div
-            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#5d4f85] to-[#453a66] flex items-center justify-center shadow-lg ring-1 ring-white/10"
-            aria-hidden
-          >
-            <span className="font-serif text-3xl text-white leading-none select-none">
-              λ
-            </span>
-          </div>
-          <div>
-            <p
-              className={`${typeScale.bodyMd} ${baseTw.text.primary} font-semibold`}
-            >
-              Haskell engine
-            </p>
-            <p className={`${typeScale.bodySm} ${baseTw.text.muted}`}>
-              Parse · analyze · enforce
-            </p>
-          </div>
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className={`${typeScale.bodySm} ${baseTw.text.muted} mb-4`}>
-            Deslop&apos;s core is written in Haskell so heavy static analysis
-            stays correct, composable, and maintainable as rules grow.
-          </p>
-          <ul className="space-y-3">
-            {advantages.map((line) => (
-              <li
-                key={line}
-                className={`${typeScale.bodySm} ${baseTw.text.secondary} flex gap-3`}
-              >
-                <span
-                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8b7ec8]"
-                  aria-hidden
-                />
-                <span>{line}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+    <div className="flex items-start gap-5 sm:gap-6 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-5 sm:px-6 sm:py-6 max-w-xl">
+      <div
+        className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#5d4f85] to-[#453a66] shadow-lg ring-1 ring-white/10 sm:h-[4.5rem] sm:w-[4.5rem]"
+        aria-hidden
+      >
+        <span className="select-none font-serif text-4xl leading-none text-white sm:text-[2.75rem]">
+          λ
+        </span>
       </div>
+      <p
+        className={`${typeScale.bodyMd} ${baseTw.text.secondary} min-w-0 pt-0.5`}
+      >
+        <span className={`${baseTw.text.primary} font-semibold`}>
+          Built in Haskell.
+        </span>{' '}
+        <span className={`${baseTw.text.primary} font-semibold`}>
+          Purely functional
+        </span>{' '}
+        and{' '}
+        <span className={`${baseTw.text.primary} font-semibold`}>
+          mathematically correct{' '}
+        </span>
+        - bringing determinism to our non-deterministic LLM world.
+      </p>
     </div>
   );
 }
