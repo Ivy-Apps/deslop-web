@@ -126,12 +126,14 @@ function CodeSmellsFeature(): ReactNode {
       description={
         <>
           <p>
-            Goes beyond Biome and ESLint with project-wide, AST-aware checks
-            and fixes.
+            Goes beyond Biome and ESLint with project-wide, AST-aware checks and
+            fixes.
           </p>
           <p>
             For example, the Relative Import Fixer replaces brittle{' '}
-            <code className="text-zinc-200 font-mono text-[0.95em]">../../</code>{' '}
+            <code className="text-zinc-200 font-mono text-[0.95em]">
+              ../../
+            </code>{' '}
             paths in one pass—keep your existing linters and add Deslop as an
             extra quality gate.
           </p>

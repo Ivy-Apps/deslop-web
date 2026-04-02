@@ -126,9 +126,7 @@ function YamlSegmentView(props: { segment: YamlSegment }): ReactNode {
     case 'comment':
       return <span className="text-zinc-500">{segment.text}</span>;
     case 'bool':
-      return (
-        <span className="text-amber-200/80">{String(segment.value)}</span>
-      );
+      return <span className="text-amber-200/80">{String(segment.value)}</span>;
     case 'plain':
       return <span>{segment.text}</span>;
   }
@@ -182,21 +180,59 @@ export function HeroDemo(): ReactNode {
   );
 }
 
+function yamlSegmentKey(segment: YamlSegment): string {
+  switch (segment.kind) {
+    case 'bool':
+      return `bool:${segment.value}`;
+    case 'key':
+      return `key:${segment.text}`;
+    case 'path':
+      return `path:${segment.text}`;
+    case 'comment':
+      return `comment:${segment.text}`;
+    case 'plain':
+      return `plain:${segment.text}`;
+  }
+}
+
+function yamlLineKey(line: YamlLine): string {
+  return `${line.indent}:${line.segments.map(yamlSegmentKey).join('\u241e')}`;
+}
+
+/** Stable unique keys when the same fingerprint appears more than once in a list. */
+function uniqueKeysByFingerprint<T>(
+  items: readonly T[],
+  fingerprint: (item: T) => string
+): Array<{ key: string; item: T }> {
+  const counts = new Map<string, number>();
+  return items.map((item) => {
+    const base = fingerprint(item);
+    const n = (counts.get(base) ?? 0) + 1;
+    counts.set(base, n);
+    const key = n === 1 ? base : `${base}#${n}`;
+    return { key, item };
+  });
+}
+
 function HeroCodeLines(props: { lines: readonly YamlLine[] }): ReactNode {
   const { lines } = props;
   const lineNumberClass = `${textPresets.codeLineNumber} text-zinc-600`;
   return (
     <div className={`${textPresets.codePanel} ${baseTw.text.subtle}`}>
-      {lines.map((line, index) => (
-        <div key={index} className="flex gap-4">
-          <span className={lineNumberClass}>{index + 1}</span>
-          <span className={INDENT_CLASS[line.indent]}>
-            {line.segments.map((segment, segIndex) => (
-              <YamlSegmentView key={segIndex} segment={segment} />
-            ))}
-          </span>
-        </div>
-      ))}
+      {uniqueKeysByFingerprint(lines, yamlLineKey).map(
+        ({ key: lineKey, item: line }, index) => (
+          <div key={lineKey} className="flex gap-4">
+            <span className={lineNumberClass}>{index + 1}</span>
+            <span className={INDENT_CLASS[line.indent]}>
+              {uniqueKeysByFingerprint(line.segments, yamlSegmentKey).map(
+                ({ key: segmentKey, item: segment }) => (
+                  <YamlSegmentView key={segmentKey} segment={segment} />
+                )
+              )}
+            </span>
+          </div>
+        )
+      )}
     </div>
   );
 }
