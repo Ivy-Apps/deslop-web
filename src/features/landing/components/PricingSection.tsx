@@ -38,17 +38,13 @@ function PersonalPlanCard(): ReactNode {
         </span>
       </div>
       <h3 className={`${typeScale.titleLg} mb-2`}>Personal License</h3>
-      <div className="flex items-baseline gap-1 mb-1">
+      <div className="flex items-baseline gap-1 mb-6">
         <span className="text-5xl font-bold text-white">$10.99</span>
         <span className="text-zinc-500 text-xl">/mo per user</span>
       </div>
-      <p className={`${typeScale.bodySm} ${baseTw.text.muted} mb-6`}>
-        Local Deslop CLI and MCP server.
-      </p>
-      <p
-        className={`${typeScale.bodySm} ${baseTw.text.muted} mb-8 pb-8 border-b border-white/10`}
-      >
-        Sign in with your Deslop account to activate this plan.
+      <p className={`${typeScale.bodyLg} ${baseTw.text.muted} mb-8`}>
+        Local Deslop CLI and MCP server. Sign in with your Deslop account to
+        activate this plan.
       </p>
       <ul className="space-y-4">
         {[
