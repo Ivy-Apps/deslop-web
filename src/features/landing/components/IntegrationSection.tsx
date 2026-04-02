@@ -67,26 +67,84 @@ function IntegrationConsoleCard(): ReactNode {
   return (
     <div className="relative">
       <div className="absolute -inset-4 bg-white/5 blur-3xl rounded-full opacity-30" />
-      <div className="relative bg-zinc-950 border border-white/10 rounded-3xl p-8 shadow-2xl">
-        <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-4">
+      <div className="relative bg-zinc-950 border border-white/10 rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl">
+        <div className="flex items-center gap-3 mb-6 md:mb-8 border-b border-white/10 pb-4">
           <div className="w-3 h-3 rounded-full bg-red-500" />
           <div className="w-3 h-3 rounded-full bg-yellow-500" />
           <div className="w-3 h-3 rounded-full bg-green-500" />
-          <span className={`${textPresets.codeSm} ${baseTw.text.subtle} ml-2`}>
-            Cursor / Claude Code Console
+          <span
+            className={`${textPresets.codeSm} md:text-base ${baseTw.text.subtle} ml-2`}
+          >
+            Console
           </span>
         </div>
-        <div className={`space-y-4 ${typeScale.codeMd}`}>
-          <p className="text-zinc-500">{'>'} deslop --fix</p>
-          <p className="text-green-400">√ Analyzing project structure...</p>
-          <p className="text-green-400">
-            √ Reordering functions in AuthProvider.tsx
-          </p>
-          <p className="text-green-400">√ Resolving 12 relative imports</p>
-          <p className={baseTw.text.brandSecondary}>
-            i RuleBook: 0 violations found.
-          </p>
-          <p className="text-white">Done. Your code is now Senior-grade.</p>
+        <div className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#111827] to-[#0a0c10] p-6 sm:p-7 md:p-8 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
+          <div className="font-mono text-sm sm:text-base md:text-lg leading-[1.65] tracking-tight space-y-5">
+            <div className="space-y-1">
+              <p className="text-gray-200">
+                <span className="text-gray-400">&gt;</span> deslop --check
+              </p>
+              <p className="text-zinc-500 text-xs sm:text-sm md:text-base font-normal">
+                deslop 0.4.10 · check · workspace default
+              </p>
+            </div>
+
+            <div className="h-px bg-white/[0.06]" aria-hidden />
+
+            <div className="space-y-3">
+              <p>
+                <span className="mr-1.5" aria-hidden>
+                  🚀
+                </span>
+                <span className="text-violet-400">Deslopping project:</span>{' '}
+                <span className="text-gray-200">.</span>
+              </p>
+              <p className="text-zinc-500 text-xs sm:text-sm md:text-base pl-0 sm:pl-1 border-l-2 border-violet-500/25 sm:ml-0.5 py-0.5">
+                <span className="text-zinc-400">847 files</span> in scope ·{' '}
+                <span className="text-zinc-500">acme-dashboard</span>
+              </p>
+            </div>
+
+            <div className="space-y-2 text-xs sm:text-sm md:text-base text-zinc-400">
+              <p>
+                <span className="text-emerald-400/90 mr-2" aria-hidden>
+                  ✓
+                </span>
+                RuleBook loaded · 58 rules
+              </p>
+              <p>
+                <span className="text-emerald-400/90 mr-2" aria-hidden>
+                  ✓
+                </span>
+                Imports &amp; dependency boundaries checked
+              </p>
+              <p>
+                <span className="text-emerald-400/90 mr-2" aria-hidden>
+                  ✓
+                </span>
+                0 violations · 0 warnings
+              </p>
+            </div>
+
+            <div className="h-px bg-white/[0.06]" aria-hidden />
+
+            <div>
+              <p className="text-emerald-400 font-medium">
+                <span className="mr-1.5" aria-hidden>
+                  ✅
+                </span>
+                Success: No problems found.
+              </p>
+            </div>
+
+            <p className="text-zinc-400 text-xs sm:text-sm md:text-base pt-1">
+              <span className="mr-1.5" aria-hidden>
+                ⏱
+              </span>
+              Finished in <span className="text-gray-300 tabular-nums">50.89</span>
+              ms
+            </p>
+          </div>
         </div>
       </div>
     </div>
