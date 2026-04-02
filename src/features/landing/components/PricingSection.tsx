@@ -31,7 +31,7 @@ export default function PricingSection(): ReactNode {
 
 function PersonalPlanCard(): ReactNode {
   return (
-    <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-10 relative overflow-hidden group">
+    <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-10 relative overflow-hidden group flex flex-col h-full">
       <div className="absolute top-0 right-0 p-4">
         <span className="bg-white/10 text-white text-xs font-bold px-2.5 py-1.5 rounded uppercase tracking-widest">
           Most Popular
@@ -50,7 +50,7 @@ function PersonalPlanCard(): ReactNode {
       >
         Sign in with your Deslop account to activate this plan.
       </p>
-      <ul className="space-y-4 mb-10">
+      <ul className="space-y-4">
         {[
           'Deslop RuleBook',
           'Enforce architecture',
@@ -67,16 +67,18 @@ function PersonalPlanCard(): ReactNode {
           </li>
         ))}
       </ul>
-      <GlowPrimaryButton className="w-full" size="lg">
-        Get Deslop MCP
-      </GlowPrimaryButton>
+      <div className="mt-auto pt-10 w-full">
+        <GlowPrimaryButton className="w-full" size="lg">
+          Get Deslop MCP
+        </GlowPrimaryButton>
+      </div>
     </div>
   );
 }
 
 function TeamPlanCard(): ReactNode {
   return (
-    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-10 group">
+    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-10 group flex flex-col h-full">
       <h3 className={`${typeScale.titleLg} mb-2`}>CI / Team License</h3>
       <div className="flex items-baseline gap-1 mb-6">
         <span className="text-5xl font-bold text-white">$24.99</span>
@@ -103,15 +105,17 @@ function TeamPlanCard(): ReactNode {
         ))}
       </ul>
       <p
-        className={`${typeScale.bodySm} ${baseTw.text.secondary} mb-10 p-4 rounded-2xl bg-white/[0.03] border border-white/10`}
+        className={`${typeScale.bodySm} ${baseTw.text.secondary} p-4 rounded-2xl bg-white/[0.03] border border-white/10`}
       >
         <span className="font-semibold text-white">Additional seats: </span>
         each extra Personal License is{' '}
         <span className="text-white">$10.99/mo</span> per user.
       </p>
-      <GlowSecondaryButton className="w-full" size="lg">
-        Request Team Access
-      </GlowSecondaryButton>
+      <div className="mt-auto pt-10 w-full">
+        <GlowSecondaryButton className="w-full" size="lg">
+          Request Team Access
+        </GlowSecondaryButton>
+      </div>
     </div>
   );
 }
