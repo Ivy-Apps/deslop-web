@@ -9,7 +9,7 @@ import { typeScale } from '@/components/design-system/typography';
 type FeatureCardProps = {
   icon: LucideIcon;
   title: string;
-  description: string;
+  description: ReactNode;
   children?: ReactNode;
 };
 
@@ -30,9 +30,9 @@ export default function FeatureCard({
         <Icon className="w-7 h-7 text-white" />
       </div>
       <h3 className={typeScale.titleLg}>{title}</h3>
-      <p className="text-zinc-300 text-lg leading-relaxed mb-8">
-        {description}
-      </p>
+      <div className="text-zinc-300 text-lg leading-relaxed mb-8 space-y-4">
+        {typeof description === 'string' ? <p>{description}</p> : description}
+      </div>
       {children}
     </motion.div>
   );
