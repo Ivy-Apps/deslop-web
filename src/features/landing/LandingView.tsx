@@ -17,8 +17,8 @@ export default function LandingView() {
       <FeaturesSection />
       <IntegrationSection />
       <PricingSection />
-      <ErrorReportingSection />
       <TechnicalDetailsSection />
+      <ErrorReportingSection />
       <CtaSection />
     </div>
   );
