@@ -67,6 +67,22 @@
           }
         }
       }
+    },
+    {
+      "includes": ["src/app/globals.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["next-env.d.ts"],
+      "formatter": {
+        "enabled": false
+      }
     }
   ]
 }

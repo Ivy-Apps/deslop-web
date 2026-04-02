@@ -3,9 +3,9 @@ import type { ReactNode } from 'react';
 import BeforeAfter from '@/components/BeforeAfter';
 import CodeBlock from '@/components/CodeBlock';
 import { tw as baseTw } from '@/components/design-system/colors';
-import { highlightCode } from '@/lib/highlight-code';
 import { textPresets, typeScale } from '@/components/design-system/typography';
 import FeatureCard from '@/components/FeatureCard';
+import { highlightCode } from '@/lib/highlight-code';
 
 export default async function FeaturesSection(): Promise<ReactNode> {
   return (

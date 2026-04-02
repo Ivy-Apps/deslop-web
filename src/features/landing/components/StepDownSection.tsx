@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 
 import CodeBlock from '@/components/CodeBlock';
 import { tw as baseTw } from '@/components/design-system/colors';
-import { highlightCode } from '@/lib/highlight-code';
 import { typeScale } from '@/components/design-system/typography';
+import { highlightCode } from '@/lib/highlight-code';
 
 export default async function StepDownSection(): Promise<ReactNode> {
   return (
