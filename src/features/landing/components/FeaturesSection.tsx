@@ -18,11 +18,6 @@ export default function FeaturesSection(): ReactNode {
       />
       <div className="relative max-w-7xl mx-auto px-6">
         <div className="mb-16 md:mb-20 text-center max-w-4xl mx-auto">
-          <p
-            className={`${typeScale.bodySm} text-zinc-500 font-medium uppercase tracking-[0.22em] mb-4`}
-          >
-            Features
-          </p>
           <h2 className={`${typeScale.displayLg} mb-6 ${baseTw.text.primary}`}>
             The Big Three
           </h2>
