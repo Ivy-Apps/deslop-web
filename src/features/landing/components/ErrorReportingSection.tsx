@@ -26,7 +26,7 @@ function ErrorReportingCopy(): ReactNode {
         <Terminal className="w-7 h-7 text-white" />
       </div>
       <h2 className={`${typeScale.displayLg} mb-6 ${baseTw.text.primary}`}>
-        Optimized for AI and MCP
+        LLM-friendly reporting
       </h2>
       <p className={`${typeScale.bodyXl} ${baseTw.text.secondary} mb-8`}>
         Deslop reports errors in a LLM-friendly Markdown format with clear
