@@ -49,6 +49,12 @@ export default function Navbar(): ReactNode {
             Integrations
           </a>
           <a
+            href="#how-it-works"
+            className="text-base text-zinc-400 hover:text-zinc-100 transition-colors px-3 py-2 rounded-md hover:bg-white/[0.04]"
+          >
+            How it works
+          </a>
+          <a
             href="#pricing"
             className="text-base text-zinc-400 hover:text-zinc-100 transition-colors px-3 py-2 rounded-md hover:bg-white/[0.04]"
           >
@@ -91,6 +97,13 @@ export default function Navbar(): ReactNode {
             onClick={() => navigateToSection('integrations')}
           >
             Integrations
+          </button>
+          <button
+            type="button"
+            className="text-xl text-zinc-400 hover:text-zinc-100 transition-colors text-left py-1"
+            onClick={() => navigateToSection('how-it-works')}
+          >
+            How it works
           </button>
           <button
             type="button"
