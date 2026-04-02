@@ -21,14 +21,15 @@ export default function TechnicalDetailsSection(): ReactNode {
             How Deslop understands your codebase
           </h2>
           <p className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}>
-            A Haskell engine parses TypeScript together with your{' '}
+            A purpose-built Haskell engine parses your TypeScript files
+            alongside your{' '}
             <code className="text-zinc-300 font-mono text-[0.9em]">
               tsconfig.json
             </code>{' '}
-            (including how Next.js and other projects wire paths, modules, and
-            compilation options). It then builds layered representations from
-            exact source text up to a whole-repo graph—so fixes are precise and
-            architectural rules are enforceable.
+            (resolving Next.js aliases, module paths, and compiler flags). It
+            builds layered representations—from exact source tokens to a
+            whole-repo semantic graph—enabling surgically precise automated
+            fixes and strict architectural enforcement.
           </p>
         </header>
 
@@ -51,13 +52,13 @@ function PipelineColumn(): ReactNode {
       iconColor: 'text-violet-400',
       body: (
         <>
-          Deslop builds a lossless CST: every token and piece of whitespace is
-          accounted for. That means lint output can{' '}
+          Deslop builds a fully lossless CST, retaining all compiler
+          trivia—every whitespace character and comment is accounted for. This
+          allows the engine to{' '}
           <strong className="text-zinc-200 font-semibold">
-            round-trip to the exact original source
+            round-trip edits directly to the original source text
           </strong>{' '}
-          and apply edits with surgical precision - no noisy reformatting just
-          to satisfy the tool.
+          without destroying your formatting or causing noisy diffs.
         </>
       ),
     },
@@ -69,31 +70,32 @@ function PipelineColumn(): ReactNode {
       iconColor: 'text-sky-400',
       body: (
         <>
-          On top of the CST, Deslop derives an AST for semantic work: structure,
-          bindings, and{' '}
+          The CST is lowered into a semantic AST. This is where structural
+          bindings,{' '}
           <strong className="text-zinc-200 font-semibold">
-            control flow and data flow
-          </strong>
-          . That is the layer used for deep analysis beyond what text- or
-          regex-based checks can see reliably.
+            control flow, and data flow
+          </strong>{' '}
+          are computed. It provides a deeper layer of static analysis that goes
+          far beyond the capabilities of standard regex or purely text-based
+          grep tools.
         </>
       ),
     },
     {
       icon: Network,
-      title: 'Whole-program dependency graph',
+      title: 'Whole-Program Dependency Graph',
       accent: 'from-emerald-500/20 to-transparent',
       iconBg: 'bg-emerald-500/20',
       iconColor: 'text-emerald-400',
       body: (
         <>
-          Deslop then assembles a{' '}
+          Finally, Deslop resolves cross-file references to assemble a{' '}
           <strong className="text-zinc-200 font-semibold">
-            graph of modules, imports, symbols, and cross-file relationships
+            global topological graph of modules, imports, and symbols.
           </strong>{' '}
-          across the entire codebase. That global view is what lets the RuleBook
-          enforce architecture, dependency boundaries, and “big picture”
-          invariants - not just isolated file warnings.
+          This overarching view allows your RuleBook to enforce complex
+          architectural boundaries and systemic invariants that single-file
+          linters simply cannot see.
         </>
       ),
     },
@@ -145,23 +147,24 @@ function TechnicalCopyColumn(): ReactNode {
         <h3
           className={`${typeScale.titleLg} ${baseTw.text.primary} mb-4 tracking-tight`}
         >
-          Why Biome and ESLint are not enough
+          Why Biome and ESLint aren't enough
         </h3>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary} mb-4`}>
-          Biome and ESLint excel at fast, local feedback: style, many bug
-          patterns, and plugin ecosystems. They are essential in a modern
-          stack—but they are not designed to own a{' '}
+          Linters like Biome and ESLint are phenomenal at single-file AST
+          traversal, stylistic formatting, and localized bug detection. However,
+          they lack a{' '}
           <strong className="text-zinc-200 font-semibold">
-            lossless syntactic representation plus a whole-program graph
+            unified, cross-file semantic model.
           </strong>{' '}
-          of your repo. Without that combined model, enforcing strict
-          architectural contracts across modules and validating how the codebase
-          fits together is inherently limited.
+          They operate in isolation. When you need to enforce complex
+          architectural contracts—like preventing your domain layer from
+          importing React components—localized AST visitors fall short.
         </p>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary}`}>
-          Deslop complements them: keep your existing linters, and add a
-          deterministic layer that understands TypeScript and project config
-          end-to-end for RuleBook-grade enforcement and fixes.
+          Deslop isn't a replacement; it's a structural complement. Keep your
+          linters for fast, local feedback, and use Deslop as the deterministic,
+          project-wide enforcement layer that guarantees architectural
+          integrity.
         </p>
       </div>
 
@@ -169,27 +172,29 @@ function TechnicalCopyColumn(): ReactNode {
         <h3
           className={`${typeScale.titleLg} ${baseTw.text.primary} mb-4 tracking-tight`}
         >
-          Why AI coding agents need this
+          The blind spot of AI coding agents
         </h3>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary} mb-4`}>
-          Harnesses like Cursor, Codex, and Claude Code often lean on RAG:
-          embeddings and vector search over chunks of code. That is fast and
-          flexible, but it is{' '}
+          Modern AI harnesses like Cursor and Claude Code rely on RAG
+          (Retrieval-Augmented Generation) to understand your repository. They
+          chunk code based on text embeddings, which is inherently{' '}
           <strong className="text-zinc-200 font-semibold">
-            approximate and incomplete
-          </strong>
-          - retrieval can miss the exact import edge, the boundary violation, or
-          the cross-file invariant that matters for your change.
+            probabilistic and easily fragmented.
+          </strong>{' '}
+          Vector search frequently misses crucial edge cases, buried import
+          chains, or implicit type dependencies, resulting in hallucinatory
+          refactors.
         </p>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary}`}>
-          Deslop exposes tools and context through{' '}
-          <strong className="text-zinc-200 font-semibold">MCP</strong> so agents
-          can query a{' '}
+          Deslop solves this by exposing a{' '}
           <strong className="text-zinc-200 font-semibold">
             complete, deterministic graph
           </strong>{' '}
-          of the project-not a probabilistic sample. Same structures power CI,
-          so what the agent sees aligns with what the pipeline enforces.
+          via <strong className="text-zinc-200 font-semibold">MCP</strong>{' '}
+          (Model Context Protocol). Instead of guessing based on semantic
+          similarity, agents can query exact topological contexts, ensuring
+          AI-generated code perfectly aligns with your pipeline's architectural
+          rules.
         </p>
       </div>
 
@@ -222,7 +227,8 @@ function HaskellBadge(): ReactNode {
         <span className={`${baseTw.text.primary} font-semibold`}>
           mathematically correct{' '}
         </span>
-        - bringing determinism to our non-deterministic LLM world.
+        — bringing strict determinism to our increasingly non-deterministic,
+        LLM-driven world.
       </p>
     </div>
   );
