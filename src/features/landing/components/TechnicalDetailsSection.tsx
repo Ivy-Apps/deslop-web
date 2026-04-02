@@ -21,15 +21,17 @@ export default function TechnicalDetailsSection(): ReactNode {
             How Deslop understands your codebase
           </h2>
           <p className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}>
-            Deslop operates like a true compiler frontend. A pure Haskell engine
-            ingests your TypeScript alongside your{' '}
+            Deslop operates like a true <b>compiler</b> frontend. A pure Haskell
+            engine ingests your TypeScript alongside your{' '}
             <code className="text-zinc-300 font-mono text-[0.9em]">
               tsconfig.json
-            </code>{' '}
-            to natively resolve aliases and module boundaries. By building a
-            lossless pipeline from raw tokens to a whole-repo semantic graph, it
-            unlocks surgical automated fixes and unbreakable architectural
-            rules.
+            </code>
+            {', '}
+            distilling raw syntax into normalized semantics—where superficial
+            code variations resolve into a single, unified model. By building a
+            lossless pipeline from exact source tokens to a fully connected,
+            whole-repo graph, it unlocks surgical automated fixes and
+            unbreakable architectural rules.
           </p>
         </header>
 
