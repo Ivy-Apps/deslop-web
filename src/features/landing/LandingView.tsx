@@ -7,7 +7,7 @@ import HeroSection from '@/features/landing/components/HeroSection';
 import IntegrationSection from '@/features/landing/components/IntegrationSection';
 import Navbar from '@/features/landing/components/Navbar';
 import PricingSection from '@/features/landing/components/PricingSection';
-import StepDownSection from '@/features/landing/components/StepDownSection';
+import TechnicalDetailsSection from './components/TechnicalDetailsSection';
 
 export default function LandingView() {
   return (
@@ -18,7 +18,7 @@ export default function LandingView() {
       <IntegrationSection />
       <PricingSection />
       <ErrorReportingSection />
-      <StepDownSection />
+      <TechnicalDetailsSection />
       <CtaSection />
     </div>
   );
