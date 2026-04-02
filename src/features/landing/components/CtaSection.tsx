@@ -18,7 +18,9 @@ export default function CtaSection(): ReactNode {
           Your AI writes code.
           <br />
           Deslop makes it{' '}
-          <span className={baseTw.gradient.brandTextReverse}>Senior-grade.</span>
+          <span className={baseTw.gradient.brandTextReverse}>
+            Senior-grade.
+          </span>
         </h2>
         <p
           className={`text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed ${baseTw.text.muted} mb-12`}
