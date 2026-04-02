@@ -58,6 +58,7 @@ function ArchitecturalRulebookFeature(): ReactNode {
       >
         <div className="-mt-2">
           <CodeBlock
+            language="yaml"
             code={`rules:\n  - id: no-react-in-core\n    forbidden:\n      - import: react\n        transitive: true`}
             filename="deslop.config.yaml"
           />
@@ -149,6 +150,7 @@ function CodeSmellsFeature(): ReactNode {
           ))}
         </div>
         <BeforeAfter
+          codeLanguage="tsx"
           before={`import { User } from '../../../../types';`}
           after={`import { User } from '@/types';`}
           beforeFilename="Profile.tsx"

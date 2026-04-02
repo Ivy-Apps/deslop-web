@@ -7,6 +7,8 @@ type BeforeAfterProps = {
   beforeFilename: string;
   afterFilename: string;
   title?: string;
+  /** Prism language for syntax highlighting (e.g. `tsx`). */
+  codeLanguage?: string;
 };
 
 export default function BeforeAfter({
@@ -15,6 +17,7 @@ export default function BeforeAfter({
   beforeFilename,
   afterFilename,
   title,
+  codeLanguage,
 }: BeforeAfterProps) {
   return (
     <div className="space-y-4">
@@ -31,7 +34,11 @@ export default function BeforeAfter({
               Before AI Slop
             </span>
           </div>
-          <CodeBlock code={before} filename={beforeFilename} />
+          <CodeBlock
+            code={before}
+            filename={beforeFilename}
+            language={codeLanguage}
+          />
         </div>
         <div className="space-y-2">
           <div className="flex items-center gap-2 px-2">
@@ -42,7 +49,11 @@ export default function BeforeAfter({
               After Deslop
             </span>
           </div>
-          <CodeBlock code={after} filename={afterFilename} />
+          <CodeBlock
+            code={after}
+            filename={afterFilename}
+            language={codeLanguage}
+          />
         </div>
       </div>
     </div>
