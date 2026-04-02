@@ -31,7 +31,7 @@ function ErrorReportingCopy(): ReactNode {
       <p className={`${typeScale.bodyXl} ${baseTw.text.secondary} mb-8`}>
         Deslop reports errors in a LLM-friendly Markdown format with clear
         instructions on how to fix them. Perfect for integration with Cursor,
-        Windsurf, or your custom MCP server.
+        Claude Code, Codex, or your custom MCP server.
       </p>
       <ul className="space-y-4">
         {[
@@ -51,7 +51,7 @@ function ErrorReportingCopy(): ReactNode {
 }
 
 async function ErrorReportPreview(): Promise<ReactNode> {
-  const report = `# /src/app/[locale]/login/page.tsx: no-relative-imports\nRelative imports are not allowed. Use absolute path aliased ones.\n\n\`\`\`ts\nimport { validateUsername } from '@/features/login/login-form';\n\`\`\`\n\nFIX: Use \`import { validateUsername } from '@/features/login/login-form';\` instead.\n---------`;
+  const report = `# /src/app/[locale]/dashboard/settings/security/mfa/page.tsx: no-relative-imports\nRelative imports are not allowed. Use absolute path aliased ones.\n\n\`\`\`ts\nimport { assertOrgRole } from '../../../../lib/auth/rbac';\n\`\`\`\n\nFIX: Use \`import { assertOrgRole } from '@/lib/auth/rbac';\` instead.\n---------`;
   const highlightedHtml = await highlightCode(report, 'md');
 
   return (
