@@ -85,7 +85,7 @@ function PipelineColumn(): ReactNode {
     },
     {
       icon: Network,
-      title: 'Whole-Program Dependency Graph',
+      title: 'Whole-Repo Dependency Graph',
       accent: 'from-emerald-500/20 to-transparent',
       iconBg: 'bg-emerald-500/20',
       iconColor: 'text-emerald-400',
