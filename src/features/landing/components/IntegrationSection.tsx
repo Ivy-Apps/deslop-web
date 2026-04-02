@@ -141,7 +141,8 @@ function IntegrationConsoleCard(): ReactNode {
               <span className="mr-1.5" aria-hidden>
                 ⏱
               </span>
-              Finished in <span className="text-gray-300 tabular-nums">50.89</span>
+              Finished in{' '}
+              <span className="text-gray-300 tabular-nums">50.89</span>
               ms
             </p>
           </div>
