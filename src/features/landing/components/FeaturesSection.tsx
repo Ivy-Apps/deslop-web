@@ -47,7 +47,7 @@ async function ArchitecturalRulebookFeature(): Promise<ReactNode> {
         icon={Shield}
         title="Architectural Rulebook"
         description={
-          <>
+          <div className="pt-3">
             <p>
               Enforces dependency boundaries and bans problematic imports,
               function calls, and more. Define your own rules or start from
@@ -57,7 +57,7 @@ async function ArchitecturalRulebookFeature(): Promise<ReactNode> {
               A high-speed Haskell engine enforces them algorithmically with
               correctness guarantees.
             </p>
-          </>
+          </div>
         }
       >
         <div className="-mt-2">
@@ -78,7 +78,7 @@ function McpCiFeature(): ReactNode {
       icon={Plug}
       title="Native MCP and CI integration"
       description={
-        <>
+        <div className="pt-3">
           <p>
             Expose tools, context, and prompts to your AI agent through a local
             MCP server—so generated code stays aligned with your rulebook.
@@ -87,7 +87,7 @@ function McpCiFeature(): ReactNode {
             When the model drifts, the Deslop GitHub Action enforces the same
             rules in CI.
           </p>
-        </>
+        </div>
       }
     >
       <div className="-mt-2 grid grid-cols-1 gap-3">
@@ -128,7 +128,7 @@ function CodeSmellsFeature(): ReactNode {
       icon={Sparkles}
       title="Code Smells Fixer"
       description={
-        <>
+        <div className="pt-3">
           <p>
             Goes beyond Biome and ESLint with project-wide, AST-aware checks and
             fixes.
@@ -141,7 +141,7 @@ function CodeSmellsFeature(): ReactNode {
             paths in one pass—keep your existing linters and add Deslop as an
             extra quality gate.
           </p>
-        </>
+        </div>
       }
     >
       <div className="-mt-2 space-y-4">
