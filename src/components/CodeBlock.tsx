@@ -1,25 +1,29 @@
-'use client';
-
-import { Highlight, themes } from 'prism-react-renderer';
 import { tw } from '@/components/design-system/colors';
 import { textPresets } from '@/components/design-system/typography';
 
-type CodeBlockProps = {
+export type CodeBlockProps = {
   code: string;
   filename?: string;
   className?: string;
-  /** Prism language id (e.g. `yaml`, `tsx`). Omit for plain text. */
-  language?: string;
+  /**
+   * Output of `await highlightCode(code, lang)` from `@/lib/highlight-code`.
+   * Omit to render plain `<pre>` (no highlighting).
+   */
+  highlightedHtml?: string;
 };
 
-const highlightTheme = themes.oneDark;
-
+/**
+ * Sync Server Component — highlighting is done by callers via `highlightCode`
+ * so Turbopack does not treat this module as an async CJS boundary.
+ */
 export default function CodeBlock({
   code,
   filename,
   className = '',
-  language,
+  highlightedHtml,
 }: CodeBlockProps) {
+  const trimmed = code.trimEnd();
+
   return (
     <div
       className={`${tw.bg.code} border border-white/10 rounded-xl overflow-hidden font-mono text-base ${className}`}
@@ -38,39 +42,17 @@ export default function CodeBlock({
           </div>
         </div>
       )}
-      <div className="p-5 overflow-x-auto">
-        {language ? (
-          <Highlight
-            theme={highlightTheme}
-            code={code.trimEnd()}
-            language={language}
-          >
-            {({
-              className: preClass,
-              style,
-              tokens,
-              getLineProps,
-              getTokenProps,
-            }) => (
-              <pre
-                className={`${preClass} m-0 p-0 bg-transparent text-[0.9375rem] leading-[1.65]`}
-                style={{ ...style, background: 'transparent' }}
-              >
-                {tokens.map((line, i) => (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: Prism line order is fixed for static code
-                  <div key={i} {...getLineProps({ line })}>
-                    {line.map((token, key) => (
-                      // biome-ignore lint/suspicious/noArrayIndexKey: Prism token order is fixed for static code
-                      <span key={key} {...getTokenProps({ token })} />
-                    ))}
-                  </div>
-                ))}
-              </pre>
-            )}
-          </Highlight>
+      <div
+        className={`p-5 overflow-x-auto code-block-shiki ${!highlightedHtml ? 'text-zinc-200' : ''}`}
+      >
+        {highlightedHtml ? (
+          <div
+            className="[&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0 [&_pre]:text-[0.9375rem] [&_pre]:leading-[1.65] [&_code]:font-mono"
+            dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+          />
         ) : (
-          <pre className="text-zinc-200">
-            <code>{code}</code>
+          <pre className="text-zinc-200 m-0">
+            <code>{trimmed}</code>
           </pre>
         )}
       </div>

@@ -1,7 +1,4 @@
-'use client';
-
 import { Github, Terminal } from 'lucide-react';
-import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 
 import { tw as baseTw } from '@/components/design-system/colors';
@@ -25,11 +22,7 @@ export default function IntegrationSection(): ReactNode {
 
 function IntegrationCopyColumn(): ReactNode {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-    >
+    <div className="landing-reveal">
       <h2 className={`${typeScale.displayLg} mb-6 ${baseTw.text.primary}`}>
         Integration Ecosystem
       </h2>
@@ -59,7 +52,7 @@ function IntegrationCopyColumn(): ReactNode {
           </p>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

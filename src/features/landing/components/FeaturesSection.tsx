@@ -3,10 +3,11 @@ import type { ReactNode } from 'react';
 import BeforeAfter from '@/components/BeforeAfter';
 import CodeBlock from '@/components/CodeBlock';
 import { tw as baseTw } from '@/components/design-system/colors';
+import { highlightCode } from '@/lib/highlight-code';
 import { textPresets, typeScale } from '@/components/design-system/typography';
 import FeatureCard from '@/components/FeatureCard';
 
-export default function FeaturesSection(): ReactNode {
+export default async function FeaturesSection(): Promise<ReactNode> {
   return (
     <section
       id="features"
@@ -36,7 +37,10 @@ export default function FeaturesSection(): ReactNode {
   );
 }
 
-function ArchitecturalRulebookFeature(): ReactNode {
+async function ArchitecturalRulebookFeature(): Promise<ReactNode> {
+  const yaml = `rules:\n  - id: no-react-in-core\n    forbidden:\n      - import: react\n        transitive: true`;
+  const highlightedHtml = await highlightCode(yaml, 'yaml');
+
   return (
     <div id="rules">
       <FeatureCard
@@ -58,8 +62,8 @@ function ArchitecturalRulebookFeature(): ReactNode {
       >
         <div className="-mt-2">
           <CodeBlock
-            language="yaml"
-            code={`rules:\n  - id: no-react-in-core\n    forbidden:\n      - import: react\n        transitive: true`}
+            code={yaml}
+            highlightedHtml={highlightedHtml}
             filename="deslop.config.yaml"
           />
         </div>

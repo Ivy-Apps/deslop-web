@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Shiki: many themes (e.g. github-dark) set per-token background-color — looks like a text selection */
+.code-block-shiki :is(pre.shiki, code) {
+  background-color: transparent !important;
+}
+
+.code-block-shiki .shiki span,
+.code-block-shiki .shiki .line {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
 html {
   scroll-behavior: smooth;
   /* Match page surface so overscroll (rubber-band) isn’t white */
@@ -25,4 +36,114 @@ body {
     opacity: 0.08;
     transform: translateY(8%);
   }
+}
+
+@keyframes hero-blob-pulse-a {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes hero-blob-pulse-b {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(1.02);
+  }
+  50% {
+    opacity: 0.48;
+    transform: scale(1);
+  }
+}
+
+@keyframes hero-bloom-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.42;
+  }
+}
+
+@keyframes hero-copy-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-demo-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes step-arrow-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .landing-reveal {
+    animation: landing-reveal 0.65s ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+  }
+}
+
+@keyframes landing-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-blob-left {
+  animation: hero-blob-pulse-a 11s ease-in-out infinite;
+}
+
+.hero-blob-right {
+  animation: hero-blob-pulse-b 13s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+.hero-bloom {
+  animation: hero-bloom-pulse 9s ease-in-out infinite;
+}
+
+.hero-copy-in {
+  animation: hero-copy-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-demo-in {
+  animation: hero-demo-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+.step-arrow-bob {
+  animation: step-arrow-bob 2s ease-in-out infinite;
 }

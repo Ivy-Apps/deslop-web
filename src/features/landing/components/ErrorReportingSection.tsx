@@ -1,14 +1,12 @@
-'use client';
-
 import { Check, Terminal } from 'lucide-react';
-import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 
 import CodeBlock from '@/components/CodeBlock';
 import { tw as baseTw } from '@/components/design-system/colors';
+import { highlightCode } from '@/lib/highlight-code';
 import { textPresets, typeScale } from '@/components/design-system/typography';
 
-export default function ErrorReportingSection(): ReactNode {
+export default async function ErrorReportingSection(): Promise<ReactNode> {
   return (
     <section className="py-24 md:py-32 bg-zinc-950">
       <div className="max-w-7xl mx-auto px-6">
@@ -23,11 +21,7 @@ export default function ErrorReportingSection(): ReactNode {
 
 function ErrorReportingCopy(): ReactNode {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-    >
+    <div className="landing-reveal">
       <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6">
         <Terminal className="w-7 h-7 text-white" />
       </div>
@@ -52,18 +46,22 @@ function ErrorReportingCopy(): ReactNode {
           </li>
         ))}
       </ul>
-    </motion.div>
+    </div>
   );
 }
 
-function ErrorReportPreview(): ReactNode {
+async function ErrorReportPreview(): Promise<ReactNode> {
+  const report = `# /src/app/[locale]/login/page.tsx: no-relative-imports\nRelative imports are not allowed. Use absolute path aliased ones.\n\n\`\`\`ts\nimport { validateUsername } from '@/features/login/login-form';\n\`\`\`\n\nFIX: Use \`import { validateUsername } from '@/features/login/login-form';\` instead.\n---------`;
+  const highlightedHtml = await highlightCode(report, 'md');
+
   return (
     <div className="relative">
       <div className="absolute -inset-4 bg-white/5 blur-2xl rounded-full opacity-50" />
       <CodeBlock
-        code={`# /src/app/[locale]/login/page.tsx: no-relative-imports\nRelative imports are not allowed. Use absolute path aliased ones.\n\n\`\`\`ts\nimport { validateUsername } from '@/features/login/login-form';\n\`\`\`\n\nFIX: Use \`import { validateUsername } from '@/features/login/login-form';\` instead.\n---------`}
+        code={report}
         filename="deslop-report.md"
         className="relative z-10"
+        highlightedHtml={highlightedHtml}
       />
     </div>
   );

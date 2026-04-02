@@ -1,7 +1,6 @@
 'use client';
 
 import { Menu, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
 import { type ReactNode, useEffect, useState } from 'react';
 
 import { DeslopWordmark } from '@/components/DeslopLogo';
@@ -77,45 +76,38 @@ export default function Navbar(): ReactNode {
         </button>
       </div>
 
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-zinc-950 border-b border-white/10 p-6 flex flex-col gap-4 md:hidden"
+      {isMobileMenuOpen && (
+        <div className="absolute top-full left-0 right-0 bg-zinc-950 border-b border-white/10 p-6 flex flex-col gap-4 md:hidden">
+          <button
+            type="button"
+            className="text-xl text-zinc-400 hover:text-zinc-100 transition-colors text-left py-1"
+            onClick={() => navigateToSection('features')}
           >
-            <button
-              type="button"
-              className="text-xl text-zinc-400 hover:text-zinc-100 transition-colors text-left py-1"
-              onClick={() => navigateToSection('features')}
-            >
-              Features
-            </button>
-            <button
-              type="button"
-              className="text-xl text-zinc-400 hover:text-zinc-100 transition-colors text-left py-1"
-              onClick={() => navigateToSection('integrations')}
-            >
-              Integrations
-            </button>
-            <button
-              type="button"
-              className="text-xl text-zinc-400 hover:text-zinc-100 transition-colors text-left py-1"
-              onClick={() => navigateToSection('pricing')}
-            >
-              Pricing
-            </button>
-            <button
-              type="button"
-              className={`mt-2 inline-flex items-center justify-center bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium text-left w-fit ring-1 ring-white/20 transition-all hover:bg-zinc-100 ${baseTw.effects.brandShadowHover}`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Get Deslop
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            Features
+          </button>
+          <button
+            type="button"
+            className="text-xl text-zinc-400 hover:text-zinc-100 transition-colors text-left py-1"
+            onClick={() => navigateToSection('integrations')}
+          >
+            Integrations
+          </button>
+          <button
+            type="button"
+            className="text-xl text-zinc-400 hover:text-zinc-100 transition-colors text-left py-1"
+            onClick={() => navigateToSection('pricing')}
+          >
+            Pricing
+          </button>
+          <button
+            type="button"
+            className={`mt-2 inline-flex items-center justify-center bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium text-left w-fit ring-1 ring-white/20 transition-all hover:bg-zinc-100 ${baseTw.effects.brandShadowHover}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Get Deslop
+          </button>
+        </div>
+      )}
     </nav>
   );
 }

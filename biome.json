@@ -56,5 +56,17 @@
     "actions": {
       "source": { "organizeImports": "on" }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/components/CodeBlock.tsx"],
+      "linter": {
+        "rules": {
+          "security": {
+            "noDangerouslySetInnerHtml": "off"
+          }
+        }
+      }
+    }
+  ]
 }

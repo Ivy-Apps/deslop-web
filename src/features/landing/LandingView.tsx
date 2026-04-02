@@ -1,5 +1,3 @@
-'use client';
-
 import { tw as baseTw } from '@/components/design-system/colors';
 import { appText } from '@/components/design-system/typography';
 import CtaSection from '@/features/landing/components/CtaSection';

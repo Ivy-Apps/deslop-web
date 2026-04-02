@@ -1,5 +1,6 @@
 import CodeBlock from '@/components/CodeBlock';
 import { textPresets, typeScale } from '@/components/design-system/typography';
+import { highlightCode } from '@/lib/highlight-code';
 
 type BeforeAfterProps = {
   before: string;
@@ -7,11 +8,11 @@ type BeforeAfterProps = {
   beforeFilename: string;
   afterFilename: string;
   title?: string;
-  /** Prism language for syntax highlighting (e.g. `tsx`). */
+  /** Shiki language id for syntax highlighting (e.g. `tsx`). */
   codeLanguage?: string;
 };
 
-export default function BeforeAfter({
+export default async function BeforeAfter({
   before,
   after,
   beforeFilename,
@@ -19,6 +20,15 @@ export default function BeforeAfter({
   title,
   codeLanguage,
 }: BeforeAfterProps) {
+  const beforeHtml =
+    codeLanguage !== undefined
+      ? await highlightCode(before, codeLanguage)
+      : undefined;
+  const afterHtml =
+    codeLanguage !== undefined
+      ? await highlightCode(after, codeLanguage)
+      : undefined;
+
   return (
     <div className="space-y-4">
       {title && (
@@ -37,7 +47,7 @@ export default function BeforeAfter({
           <CodeBlock
             code={before}
             filename={beforeFilename}
-            language={codeLanguage}
+            highlightedHtml={beforeHtml}
           />
         </div>
         <div className="space-y-2">
@@ -52,7 +62,7 @@ export default function BeforeAfter({
           <CodeBlock
             code={after}
             filename={afterFilename}
-            language={codeLanguage}
+            highlightedHtml={afterHtml}
           />
         </div>
       </div>

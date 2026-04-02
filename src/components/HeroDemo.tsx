@@ -1,7 +1,4 @@
-'use client';
-
 import { Terminal } from 'lucide-react';
-import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 
 import { tw as baseTw } from '@/components/design-system/colors';
@@ -134,12 +131,7 @@ function YamlSegmentView(props: { segment: YamlSegment }): ReactNode {
 
 export function HeroDemo(): ReactNode {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.12, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-      className="mt-16 md:mt-20 relative max-w-5xl mx-auto"
-    >
+    <div className="hero-demo-in mt-16 md:mt-20 relative max-w-5xl mx-auto">
       <div
         className="pointer-events-none absolute -inset-[1px] rounded-3xl bg-gradient-to-b from-[#3E99F5]/22 via-[#5C3DF5]/08 to-[#4A2DD4]/16 opacity-80 blur-[1px]"
         aria-hidden
@@ -176,7 +168,7 @@ export function HeroDemo(): ReactNode {
         <HeroCodeLines lines={CLEAN_ARCHITECTURE_RULEBOOK} />
       </div>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent z-[1]" />
-    </motion.div>
+    </div>
   );
 }
 

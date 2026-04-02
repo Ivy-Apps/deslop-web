@@ -1,5 +1,7 @@
 import LandingView from '@/features/landing/LandingView';
 
-export default function HomePage() {
+export const dynamic = 'force-static';
+
+export default async function HomePage() {
   return <LandingView />;
 }
