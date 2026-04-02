@@ -25,7 +25,7 @@ export default function Navbar(): ReactNode {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isSolidNav ? 'bg-zinc-950/85 backdrop-blur-xl border-b border-white/[0.06] py-3' : 'bg-transparent py-5 md:py-6'}`}
+      className={`fixed top-0 left-0 right-0 z-50 border-b transition-[background-color,backdrop-filter,padding,border-color] duration-300 ${isSolidNav ? 'border-zinc-800/60 bg-zinc-950/85 backdrop-blur-xl py-3' : 'border-transparent bg-transparent py-5 md:py-6'}`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <DeslopWordmark
