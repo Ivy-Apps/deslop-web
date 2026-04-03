@@ -11,7 +11,7 @@ export default async function FeaturesSection(): Promise<ReactNode> {
   return (
     <section
       id="features"
-      className="relative py-24 md:py-32 bg-zinc-950 overflow-hidden"
+      className="relative py-24 md:py-32 bg-zinc-900 border-t border-white/5 overflow-hidden"
     >
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"

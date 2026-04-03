@@ -8,7 +8,7 @@ import { highlightCode } from '@/lib/highlight-code';
 
 export default async function ErrorReportingSection(): Promise<ReactNode> {
   return (
-    <section className="py-24 md:py-32 bg-zinc-950">
+    <section className="py-24 md:py-32 bg-zinc-900 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <ErrorReportingCopy />

@@ -16,8 +16,8 @@ export default function LandingView() {
       <HeroSection />
       <FeaturesSection />
       <IntegrationSection />
-      <PricingSection />
       <TechnicalDetailsSection />
+      <PricingSection />
       <ErrorReportingSection />
       <CtaSection />
     </div>

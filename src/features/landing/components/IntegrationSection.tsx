@@ -8,7 +8,7 @@ export default function IntegrationSection(): ReactNode {
   return (
     <section
       id="integrations"
-      className="py-24 md:py-32 bg-zinc-900 border-y border-white/5"
+      className="py-24 md:py-32 bg-zinc-950 border-t border-white/5"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
