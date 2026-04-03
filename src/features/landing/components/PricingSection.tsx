@@ -11,8 +11,8 @@ export default function PricingSection(): ReactNode {
   return (
     <section id="pricing" className="py-24 md:py-32 bg-zinc-950">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-20 text-center">
-          <h2 className={`${typeScale.displayXl} mb-6 ${baseTw.text.primary}`}>
+        <div className="mb-8 text-center md:mb-10">
+          <h2 className={`${typeScale.displayXl} mb-4 md:mb-5 ${baseTw.text.primary}`}>
             Simple, transparent pricing
           </h2>
           <p className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}>
@@ -20,12 +20,48 @@ export default function PricingSection(): ReactNode {
             see is what you pay.
           </p>
         </div>
+        <TrialCallout />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           <PersonalPlanCard />
           <TeamPlanCard />
         </div>
       </div>
     </section>
+  );
+}
+
+function TrialCallout(): ReactNode {
+  return (
+    <div className="mb-6 flex justify-center md:mb-8" role="note">
+      <div className="flex max-w-lg flex-col items-center gap-3 text-center sm:max-w-none sm:flex-row sm:items-center sm:gap-8 sm:text-left">
+        <div className="flex items-center gap-2.5 text-sm text-zinc-400">
+          <Check
+            className="h-4 w-4 shrink-0 text-green-500"
+            strokeWidth={2.5}
+            aria-hidden
+          />
+          <span>
+            <span className="font-medium text-zinc-200">7-day free trial</span>
+            {' '}
+            on all plans
+          </span>
+        </div>
+        <div
+          className="hidden h-4 w-px shrink-0 bg-white/10 sm:block"
+          aria-hidden
+        />
+        <div className="flex items-center gap-2.5 text-sm text-zinc-400">
+          <Check
+            className="h-4 w-4 shrink-0 text-green-500"
+            strokeWidth={2.5}
+            aria-hidden
+          />
+          <span className="font-medium text-zinc-200">
+            No credit card required
+          </span>
+        </div>
+      </div>
+    </div>
   );
 }
 
