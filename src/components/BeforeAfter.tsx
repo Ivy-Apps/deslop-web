@@ -1,3 +1,5 @@
+import { use } from 'react';
+
 import CodeBlock from '@/components/CodeBlock';
 import { textPresets, typeScale } from '@/components/design-system/typography';
 import { highlightCode } from '@/lib/highlight-code';
@@ -12,7 +14,17 @@ type BeforeAfterProps = {
   codeLanguage?: string;
 };
 
-export default async function BeforeAfter({
+const highlightCache = new Map<string, Promise<string>>();
+
+function getHighlightedHtml(code: string, language: string): Promise<string> {
+  const key = `${language}:${code}`;
+  if (!highlightCache.has(key)) {
+    highlightCache.set(key, highlightCode(code, language));
+  }
+  return highlightCache.get(key) as Promise<string>;
+}
+
+export default function BeforeAfter({
   before,
   after,
   beforeFilename,
@@ -22,11 +34,11 @@ export default async function BeforeAfter({
 }: BeforeAfterProps) {
   const beforeHtml =
     codeLanguage !== undefined
-      ? await highlightCode(before, codeLanguage)
+      ? use(getHighlightedHtml(before, codeLanguage))
       : undefined;
   const afterHtml =
     codeLanguage !== undefined
-      ? await highlightCode(after, codeLanguage)
+      ? use(getHighlightedHtml(after, codeLanguage))
       : undefined;
 
   return (

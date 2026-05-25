@@ -1,0 +1,17 @@
+id: quality
+name: Quality
+description: Enforces the quality standards of the project (e.g. tests, storybook).
+rules:
+  - id: each-view-has-storybook
+    description: >-
+      Every feature View component must have a corresponding Storybook stories file
+      in the same directory. Views are the top-level UI entry points for features,
+      so having stories ensures they can be developed, reviewed, and visually tested
+      in isolation without needing the full app context.
+    target: "@/features/**/{{FileName}}View"
+    exists:
+      - module: "{{TARGET_DIR}}/{{FileName}}View.stories"
+    fix: >-
+      Create a {{FileName}}View.stories.tsx file next to {{FileName}}View.tsx.
+      Add at least a Default story that renders the View with representative props
+      or mock data so it can be previewed standalone in Storybook.

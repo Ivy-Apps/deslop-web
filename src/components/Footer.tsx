@@ -1,4 +1,5 @@
 import DeslopWordmarkLink from '@/components/DeslopWordmarkLink';
+import { GITHUB_DOCS_URL, POLAR_MANAGE_URL } from '@/lib/deslop';
 
 export default function Footer() {
   return (
@@ -6,31 +7,34 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
         <DeslopWordmarkLink />
         <div className="flex flex-wrap justify-center gap-8 text-base text-zinc-400">
-          <a href="/privacy" className="hover:text-white transition-colors">
+          <a href="/privacy/v1" className="hover:text-white transition-colors">
             Privacy
           </a>
-          <a href="/terms" className="hover:text-white transition-colors">
+          <a href="/terms/v1" className="hover:text-white transition-colors">
             Terms
           </a>
-          <a
-            href="https://twitter.com"
-            className="hover:text-white transition-colors"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Twitter
+          <a href="/contact" className="hover:text-white transition-colors">
+            Contact
           </a>
           <a
-            href="https://github.com"
+            href={GITHUB_DOCS_URL}
             className="hover:text-white transition-colors"
             rel="noopener noreferrer"
             target="_blank"
           >
-            GitHub
+            Docs
+          </a>
+          <a
+            href={POLAR_MANAGE_URL}
+            className="hover:text-white transition-colors"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Manage Subscription
           </a>
         </div>
         <p className="text-base text-zinc-500">
-          © 2026 Deslop Inc. All rights reserved.
+          © 2026 Ivy Apps Ltd. All rights reserved.
         </p>
       </div>
     </footer>

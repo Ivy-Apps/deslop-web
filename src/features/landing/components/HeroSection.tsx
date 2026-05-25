@@ -7,8 +7,8 @@ import {
   GlowSecondaryButton,
   inlineStyle,
 } from '@/components/design-system';
-import { textPresets, typeScale } from '@/components/design-system/typography';
 import { HeroDemo } from '@/components/HeroDemo';
+import { GITHUB_DOCS_URL } from '@/lib/deslop';
 
 export default function HeroSection(): ReactNode {
   return (
@@ -16,9 +16,40 @@ export default function HeroSection(): ReactNode {
       <HeroVisualEffects />
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <HeroCopyBlock />
-        <HeroDemo />
+        <HeroDemoRow />
       </div>
     </section>
+  );
+}
+
+function HeroDemoRow(): ReactNode {
+  return (
+    <div className="mt-16 md:mt-20 flex flex-col items-center gap-6">
+      <DemoCaption />
+      <HeroDemo />
+    </div>
+  );
+}
+
+function DemoCaption(): ReactNode {
+  return (
+    <div className="text-center border-l-2 border-[#3E99F5]/50 pl-4 leading-relaxed text-zinc-300">
+      <p className="text-lg font-medium">
+        {'Deslop '}
+        <span className="text-white font-bold">{'catches'}</span>{' '}
+        <span className="text-white font-bold">
+          {'architectural violations'}
+        </span>
+        {' that result in bugs, security vulnerabilities or serious tech debt '}
+        <span className="text-white font-bold">{'before they happen'}</span>
+        {'.'}
+      </p>
+      <p className="mt-2 text-sm text-zinc-500 leading-relaxed">
+        {
+          'No AI involved — just good old Code Graph & Dependency Analysis algorithms.'
+        }
+      </p>
+    </div>
   );
 }
 
@@ -77,43 +108,48 @@ function HeroCopyBlock(): ReactNode {
               aria-hidden
             />
             <span className="text-sm sm:text-[15px] font-semibold tracking-wide text-zinc-100">
-              Optimized for TypeScript & NextJS
+              Deterministic Architectural Guardrails for the AI era
             </span>
           </div>
         </div>
-        <h1 className={`text-balance ${typeScale.display2xl}`}>
+        <h1
+          className={`text-balance text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-0.04em] leading-[1.05]`}
+        >
           <span
             className={`block ${baseTw.gradient.lightText} drop-shadow-[0_0_48px_rgba(255,255,255,0.12)]`}
           >
             Your AI writes code.
           </span>
-          <span className={`mt-2 md:mt-4 block ${typeScale.display2xl}`}>
+          <span className="mt-2 md:mt-4 block">
             <span className={baseTw.gradient.brandText}>Deslop</span>
             <span className={baseTw.gradient.softLightText}> makes it </span>
             <span className={baseTw.gradient.brandTextReverse}>good.</span>
           </span>
         </h1>
       </div>
-      <p className={`${textPresets.heroLead} ${baseTw.text.secondary} mb-10`}>
-        The Clean Code guardrail for the Agentic era. Removes AI slop and
-        enforces architectural boundaries via MCP for Cursor and Claude Code.
+      <p className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed font-normal text-zinc-300 mb-10">
+        Stop playing architectural whack-a-mole in PR reviews. Enforce
+        deterministic TypeScript guardrails that both humans and AI agents
+        understand — setup in 5 minutes.
       </p>
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-10">
-        <GlowPrimaryButton className="w-full sm:w-auto">
-          Get Deslop! Stop the slop
-          <ArrowRight className="w-6 h-6 opacity-90 shrink-0" />
-        </GlowPrimaryButton>
-        <GlowSecondaryButton className="w-full sm:w-auto">
-          Request Team Access
-        </GlowSecondaryButton>
+        <a href="/get-started" className="contents">
+          <GlowPrimaryButton className="w-full sm:w-auto">
+            Get Started Free
+            <ArrowRight className="w-6 h-6 opacity-90 shrink-0" />
+          </GlowPrimaryButton>
+        </a>
+        <a
+          href={GITHUB_DOCS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="contents"
+        >
+          <GlowSecondaryButton className="w-full sm:w-auto">
+            Read the Docs
+          </GlowSecondaryButton>
+        </a>
       </div>
-      <p
-        className={`${typeScale.bodySm} ${baseTw.text.subtle} max-w-xl mx-auto`}
-      >
-        Embrace the full potential of vibe-coding without sacrificing quality.
-        Add Deslop to your CI and stop the AI slop tech-debt via advanced static
-        analysis.
-      </p>
     </div>
   );
 }

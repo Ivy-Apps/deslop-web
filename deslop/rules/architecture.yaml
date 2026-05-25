@@ -1,0 +1,68 @@
+id: arch
+name: Architecture
+description: Enforces the architecture of the website.
+rules:
+  - id: page-uses-feature-view
+    description: >-
+      Next.js pages are SSR entry points. Their sole purpose is server-side
+      concerns: routing, metadata, and fetching data to pass down. All UI must
+      live in a @/features/**/*View component. Pages must not contain JSX
+      markup or business logic.
+    target: "@/app/**/page"
+    uses:
+      - import: "@/features/**/*View"
+    fix: >-
+      Create a View component under @/features/<feature-name>/<FeatureName>View.tsx
+      and move all JSX and logic from the page file into it. The page should
+      only import and render that View, optionally passing server-fetched props.
+      Example: export default function MyPage() { return <MyFeatureView />; }
+
+  - id: features-isolated
+    description: >-
+      Feature modules must be self-contained. A feature must not import from
+      other features — cross-feature imports create tight coupling, blur
+      ownership boundaries, and make refactoring unpredictable. Each feature
+      owns its own UI and logic exclusively.
+    target: "@/features/**"
+    forbids:
+      - import: "@/features/**"
+    allows:
+      - import: "{{TARGET_DIR}}/**"
+    fix: >-
+      Extract the shared code into a neutral shared layer and import from there
+      instead. Use @/components for shared UI, @/lib for 3rd party integrations, @/types for
+      shared types, @/domain for business logic, or @/data for data layer
+      helpers.
+
+  - id: design-system-self-isolated
+    description: >-
+      The design system must be fully self-contained and must not import anything
+      from the broader application. This ensures it remains a pure, reusable UI
+      primitive layer with no coupling to app-specific logic, features, or routing.
+    target: "@/components/design-system/**"
+    forbids:
+      - import: "@/**"
+    allows:
+      - import: "@/components/design-system/**"
+    fix: >-
+      Remove the offending import. If you need shared logic, extract it into a
+      framework-agnostic utility inside @/components/design-system itself. Never
+      import from @/lib, @/features, @/components (outside design-system), or @/app.
+
+  - id: lib-no-ui-and-features
+    description: >-
+      Library utilities must be pure, framework-agnostic modules. They must not
+      import React, UI components, feature modules, or app-level code. This keeps
+      @/lib usable in server contexts, tests, and non-React environments without
+      pulling in the rendering tree.
+    target: "@/lib/**"
+    forbids:
+      - import: react
+        transitive: true
+      - import: "@/components/**"
+      - import: "@/features/**"
+      - import: "@/app/**"
+    fix: >-
+      Move any UI or React-dependent logic out of @/lib and into the appropriate
+      @/components or @/features module. Keep @/lib strictly for pure functions,
+      data utilities, and server-safe helpers that have no rendering concerns.

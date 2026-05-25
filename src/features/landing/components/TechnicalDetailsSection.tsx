@@ -21,23 +21,31 @@ export default function TechnicalDetailsSection(): ReactNode {
             How Deslop understands your codebase
           </h2>
           <p className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}>
-            Deslop operates like a true <b>compiler</b> frontend. A pure Haskell
-            engine ingests your TypeScript alongside your{' '}
-            <code className="text-zinc-300 font-mono text-[0.9em]">
-              tsconfig.json
-            </code>
-            {', '}
-            distilling raw syntax into normalized semantics—where superficial
-            code variations resolve into a single, unified model. By building a
-            lossless pipeline from exact source tokens to a fully connected,
-            whole-repo graph, it unlocks surgical automated fixes and
-            unbreakable architectural rules.
+            A pure Haskell engine builds a lossless pipeline from exact source
+            tokens to a fully connected, whole-repo dependency graph — the
+            structural foundation that makes architectural guardrails{' '}
+            <b>deterministic, not advisory</b>. Deslop contains no AI: unlike
+            probabilistic code review tools that suggest fixes, it evaluates
+            your RuleBook as{' '}
+            <b>pure static analysis</b> — identical result on every run, zero
+            chance of hallucination or failure. Every rule sees the full
+            transitive import chain, catching violations that single-file tools
+            are architecturally incapable of detecting.
           </p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-start">
-          <PipelineColumn />
-          <TechnicalCopyColumn />
+          <div className="order-1 lg:order-none lg:col-start-1">
+            <PipelineColumn />
+          </div>
+          <div className="order-2 max-lg:contents lg:flex lg:flex-col lg:gap-8 lg:order-none lg:col-start-2">
+            <div className="order-2 space-y-8 landing-reveal lg:order-none">
+              <TechnicalCopyColumn />
+            </div>
+            <div className="order-3 lg:order-none">
+              <HaskellBadge />
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -104,7 +112,7 @@ function PipelineColumn(): ReactNode {
   ] as const;
 
   return (
-    <div className="order-2 lg:order-1 space-y-0">
+    <div className="space-y-0">
       {steps.map((step, index) => (
         <div key={step.title}>
           <div
@@ -144,7 +152,7 @@ function PipelineColumn(): ReactNode {
 
 function TechnicalCopyColumn(): ReactNode {
   return (
-    <div className="landing-reveal order-1 lg:order-2 space-y-8">
+    <div className="space-y-8">
       <div>
         <h3
           className={`${typeScale.titleLg} ${baseTw.text.primary} mb-4 tracking-tight`}
@@ -152,21 +160,21 @@ function TechnicalCopyColumn(): ReactNode {
           Why Biome and ESLint aren't enough
         </h3>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary} mb-4`}>
-          Linters like Biome and ESLint are phenomenal at single-file AST
-          traversal, stylistic formatting, and localized bug detection. However,
-          they lack a{' '}
+          Biome and ESLint are exceptional at single-file AST traversal —
+          formatting, localized bug patterns, and direct-import checks. But they
+          have{' '}
           <strong className="text-zinc-200 font-semibold">
-            unified, cross-file semantic model.
-          </strong>{' '}
-          They operate in isolation. When you need to enforce complex
-          architectural contracts—like preventing your domain layer from
-          importing React components—localized AST visitors fall short.
+            no cross-file semantic model
+          </strong>
+          : each file is analyzed in isolation, with no graph and no transitive
+          reachability. This isn't a plugin gap. You cannot write an ESLint rule
+          that catches a 3-hop transitive dependency violation, because the
+          visitor never crosses file boundaries.
         </p>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary}`}>
-          Deslop isn't a replacement; it's a structural complement. Keep your
-          linters for fast, local feedback, and use Deslop as the deterministic,
-          project-wide enforcement layer that guarantees architectural
-          integrity.
+          Deslop is the structural complement. Keep your linters for fast, local
+          feedback; add Deslop as the deterministic enforcement layer over the
+          full dependency graph.
         </p>
       </div>
 
@@ -174,33 +182,36 @@ function TechnicalCopyColumn(): ReactNode {
         <h3
           className={`${typeScale.titleLg} ${baseTw.text.primary} mb-4 tracking-tight`}
         >
-          The blind spot of AI coding agents
+          Why AGENTS.md can't replace a compiler check
         </h3>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary} mb-4`}>
-          Modern AI harnesses like Cursor and Claude Code rely on RAG
-          (Retrieval-Augmented Generation) to understand your repository. They
-          chunk code based on text embeddings, which is inherently{' '}
+          AGENTS.md tells the model what your architecture looks like. It
+          doesn't verify that the generated code actually conforms to it. When
+          an agent imports{' '}
+          <code className="text-zinc-300 font-mono text-[0.9em]">
+            @/utils/bridge
+          </code>{' '}
+          — which internally imports{' '}
+          <code className="text-zinc-300 font-mono text-[0.9em]">react</code> —
+          no instruction catches that transitive violation, because{' '}
           <strong className="text-zinc-200 font-semibold">
-            probabilistic and easily fragmented.
+            the model is not traversing the dependency graph
           </strong>{' '}
-          Vector search frequently misses crucial edge cases, buried import
-          chains, or implicit type dependencies, resulting in hallucinatory
-          refactors.
+          before writing each import. The violation compiles, passes tests, and
+          ships silently.
         </p>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary}`}>
-          Deslop solves this by exposing a{' '}
+          Beyond that, AGENTS.md compliance is inherently probabilistic. It's a
+          system prompt read once per session, with{' '}
           <strong className="text-zinc-200 font-semibold">
-            complete, deterministic graph
+            no persistent enforcement across context windows.
           </strong>{' '}
-          via <strong className="text-zinc-200 font-semibold">MCP</strong>{' '}
-          (Model Context Protocol). Instead of guessing based on semantic
-          similarity, agents can query exact topological contexts, ensuring
-          AI-generated code perfectly aligns with your pipeline's architectural
-          rules.
+          In a long agentic run, rules are followed until they're quietly
+          forgotten. Deslop closes this with a hard compiler gate: a structured
+          violation report the agent reads, acts on, and retries against —
+          deterministic by design.
         </p>
       </div>
-
-      <HaskellBadge />
     </div>
   );
 }
