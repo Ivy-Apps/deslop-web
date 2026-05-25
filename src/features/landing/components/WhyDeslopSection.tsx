@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import { Suspense, use, type ReactNode } from 'react';
+import { type ReactNode, Suspense, use } from 'react';
 
 import CodeBlock from '@/components/CodeBlock';
 import {
@@ -8,8 +8,8 @@ import {
   GlowSecondaryButton,
 } from '@/components/design-system';
 import { typeScale } from '@/components/design-system/typography';
-import { highlightCode } from '@/lib/highlight-code';
 import { GITHUB_DOCS_URL } from '@/lib/deslop';
+import { highlightCode } from '@/lib/highlight-code';
 
 const DOMAIN_RULE_YAML = `- id: domain-no-ui
   description: >-

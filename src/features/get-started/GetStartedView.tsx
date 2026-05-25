@@ -1,18 +1,28 @@
 import { ArrowRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 
+import AppNavbar from '@/components/AppNavbar';
 import CodeBlock from '@/components/CodeBlock';
 import CopyButton from '@/components/CopyButton';
 import { tw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
+import { GITHUB_DOCS_URL, POLAR_MANAGE_URL } from '@/lib/deslop';
 
 const INSTALL_COMMAND = 'npm install --save-dev @ivy-apps/deslop';
-const DOCS_URL = 'https://github.com/Ivy-Apps/deslop';
+
+const GET_STARTED_NAV_LINKS = [
+  { label: 'Docs', href: GITHUB_DOCS_URL, external: true },
+  { label: 'Manage Subscription', href: POLAR_MANAGE_URL, external: true },
+];
 
 export default function GetStartedView(): ReactNode {
   return (
     <div className="min-h-screen bg-zinc-950">
-      <div className="max-w-2xl mx-auto px-6 py-16 md:py-24">
+      <AppNavbar
+        links={GET_STARTED_NAV_LINKS}
+        cta={{ label: 'Contact Us', href: '/contact' }}
+      />
+      <div className="max-w-2xl mx-auto px-6 pt-28 pb-16 md:pt-32 md:pb-24">
         <p
           className={`text-sm font-medium uppercase tracking-widest ${tw.text.brandPrimary} mb-4`}
         >
@@ -62,7 +72,7 @@ export default function GetStartedView(): ReactNode {
         </div>
 
         <a
-          href={DOCS_URL}
+          href={GITHUB_DOCS_URL}
           target="_blank"
           rel="noopener noreferrer"
           className={`inline-flex items-center gap-2 font-semibold ${tw.text.brandPrimary} hover:underline`}

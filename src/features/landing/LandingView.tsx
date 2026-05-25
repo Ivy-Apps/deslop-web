@@ -1,3 +1,4 @@
+import AppNavbar from '@/components/AppNavbar';
 import { tw as baseTw } from '@/components/design-system/colors';
 import { appText } from '@/components/design-system/typography';
 import AiFleetSection from '@/features/landing/components/AiFleetSection';
@@ -5,17 +6,28 @@ import CapabilityMatrixSection from '@/features/landing/components/CapabilityMat
 import CtaSection from '@/features/landing/components/CtaSection';
 import FaqSection from '@/features/landing/components/FaqSection';
 import HeroSection from '@/features/landing/components/HeroSection';
-import Navbar from '@/features/landing/components/Navbar';
 import PricingSection from '@/features/landing/components/PricingSection';
 import PrTaxSection from '@/features/landing/components/PrTaxSection';
 import TechnicalDetailsSection from '@/features/landing/components/TechnicalDetailsSection';
-import WhyDeslopSection from '@/features/landing/components/WhyDeslopSection';
 import UnifiedDslSection from '@/features/landing/components/UnifiedDslSection';
+import WhyDeslopSection from '@/features/landing/components/WhyDeslopSection';
+import { GITHUB_DOCS_URL } from '@/lib/deslop';
+
+const LANDING_NAV_LINKS = [
+  { label: 'The Problem', href: '#problem' },
+  { label: 'How it Works', href: '#how-it-works' },
+  { label: 'Pricing', href: '#pricing' },
+  { label: 'Docs', href: GITHUB_DOCS_URL, external: true },
+];
 
 export default function LandingView() {
   return (
     <div className={`${appText.shell} ${baseTw.bg.page}`}>
-      <Navbar />
+      <AppNavbar
+        links={LANDING_NAV_LINKS}
+        cta={{ label: 'Get Started', href: '/get-started' }}
+        logoScrollToTop
+      />
       <HeroSection />
       <AiFleetSection />
       <PrTaxSection />
