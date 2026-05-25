@@ -112,8 +112,9 @@ export default function PrTaxSection(): ReactNode {
             Every week without Deslop has a price
           </h2>
           <p className={`text-xl leading-relaxed ${baseTw.text.muted}`}>
-            Whether you enforce architecture manually, build it yourself, or
-            skip it entirely — your team is paying a hidden tax right now.
+            Whether you enforce architecture manually on PR review, build infra
+            yourself, or don't enforce it all — your team is paying a hidden tax
+            right now.
           </p>
         </header>
 
