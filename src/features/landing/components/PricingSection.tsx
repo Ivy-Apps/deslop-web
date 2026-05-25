@@ -18,7 +18,7 @@ export default function PricingSection(): ReactNode {
           <h2
             className={`${typeScale.displayXl} mb-4 md:mb-5 ${baseTw.text.primary}`}
           >
-            Free for local development. Insurance for your pipeline.
+            Simple, Transparent Pricing: free on local, paid on CI
           </h2>
           <p
             className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted} mb-6`}
@@ -31,7 +31,7 @@ export default function PricingSection(): ReactNode {
             You don&apos;t pay for Deslop to format your code; you pay for
             Deslop to reclaim lost engineering hours. It pays for itself the
             very first time it stops a wayward AI agent or a rushed developer
-            from shipping architectural debt to production.
+            from shipping architectural debt and AI slop to production.
           </p>
         </div>
 
