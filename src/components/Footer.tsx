@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
         <DeslopWordmarkLink />
         <div className="flex flex-wrap justify-center gap-8 text-base text-zinc-400">
-          <a href="/privacy" className="hover:text-white transition-colors">
+          <a href="/privacy/v1" className="hover:text-white transition-colors">
             Privacy
           </a>
           <a href="/terms/v1" className="hover:text-white transition-colors">
