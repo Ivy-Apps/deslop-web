@@ -34,7 +34,7 @@ export default function Footer() {
           </a>
         </div>
         <p className="text-base text-zinc-500">
-          © 2026 Deslop Inc. All rights reserved.
+          © 2026 Ivy Apps Ltd. All rights reserved.
         </p>
       </div>
     </footer>
