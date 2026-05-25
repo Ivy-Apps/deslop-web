@@ -17,8 +17,8 @@ export default function LandingView() {
     <div className={`${appText.shell} ${baseTw.bg.page}`}>
       <Navbar />
       <HeroSection />
-      <PrTaxSection />
       <AiFleetSection />
+      <PrTaxSection />
       <UnifiedDslSection />
       <TransitiveDefenseSection />
       <CapabilityMatrixSection />

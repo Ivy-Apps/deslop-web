@@ -7,7 +7,7 @@ export default function PrTaxSection(): ReactNode {
   return (
     <section
       id="problem"
-      className="py-24 md:py-32 bg-zinc-900 border-t border-white/5"
+      className="py-24 md:py-32 bg-zinc-950 border-t border-white/5"
     >
       <div className="max-w-3xl mx-auto px-6">
         <header className="text-center mb-12">
