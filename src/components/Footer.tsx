@@ -12,6 +12,9 @@ export default function Footer() {
           <a href="/terms/v1" className="hover:text-white transition-colors">
             Terms
           </a>
+          <a href="/contact" className="hover:text-white transition-colors">
+            Contact
+          </a>
           <a
             href="https://twitter.com"
             className="hover:text-white transition-colors"
