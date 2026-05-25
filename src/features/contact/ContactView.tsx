@@ -1,15 +1,22 @@
 import { Bug, MessageSquare, Sparkles } from 'lucide-react';
 import type { ReactNode } from 'react';
 
+import AppNavbar from '@/components/AppNavbar';
 import { tw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
 import ContactEmailCard from '@/features/contact/components/ContactEmailCard';
-import { CONTACT_EMAIL, GITHUB_NEW_ISSUE_URL } from '@/lib/deslop';
+import { CONTACT_EMAIL, GITHUB_DOCS_URL, GITHUB_NEW_ISSUE_URL, POLAR_MANAGE_URL } from '@/lib/deslop';
+
+const CONTACT_NAV_LINKS = [
+  { label: 'Docs', href: GITHUB_DOCS_URL, external: true },
+  { label: 'Manage Subscription', href: POLAR_MANAGE_URL, external: true },
+];
 
 export default function ContactView(): ReactNode {
   return (
     <div className="min-h-screen bg-zinc-950">
-      <div className="max-w-2xl mx-auto px-6 py-16 md:py-24">
+      <AppNavbar links={CONTACT_NAV_LINKS} />
+      <div className="max-w-2xl mx-auto px-6 pt-28 pb-16 md:pt-32 md:pb-24">
         <p
           className={`text-sm font-medium uppercase tracking-widest ${tw.text.brandPrimary} mb-4`}
         >
