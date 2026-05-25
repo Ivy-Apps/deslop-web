@@ -5,7 +5,7 @@ import { textPresets } from '@/components/design-system/typography';
 
 export function HeroDemo(): ReactNode {
   return (
-    <div className="hero-demo-in mt-16 md:mt-20 relative max-w-5xl mx-auto">
+    <div className="hero-demo-in relative max-w-5xl mx-auto">
       <div
         className="pointer-events-none absolute -inset-[1px] rounded-3xl bg-gradient-to-b from-[#3E99F5]/22 via-[#5C3DF5]/08 to-[#4A2DD4]/16 opacity-80 blur-[1px]"
         aria-hidden

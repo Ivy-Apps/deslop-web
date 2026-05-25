@@ -16,9 +16,40 @@ export default function HeroSection(): ReactNode {
       <HeroVisualEffects />
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <HeroCopyBlock />
-        <HeroDemo />
+        <HeroDemoRow />
       </div>
     </section>
+  );
+}
+
+function HeroDemoRow(): ReactNode {
+  return (
+    <div className="mt-16 md:mt-20 flex flex-col items-center gap-6">
+      <DemoCaption />
+      <HeroDemo />
+    </div>
+  );
+}
+
+function DemoCaption(): ReactNode {
+  return (
+    <div className="text-center border-l-2 border-[#3E99F5]/50 pl-4 leading-relaxed text-zinc-300">
+      <p className="text-lg font-medium">
+        {'Deslop '}
+        <span className="text-white font-bold">{'catches'}</span>{' '}
+        <span className="text-white font-bold">
+          {'architectural violations'}
+        </span>
+        {' that result in bugs, security vulnerabilities or serious tech debt '}
+        <span className="text-white font-bold">{'before they happen'}</span>
+        {'.'}
+      </p>
+      <p className="mt-2 text-sm text-zinc-500 leading-relaxed">
+        {
+          'No AI involved — just good old Code Graph & Dependency Analysis algorithms.'
+        }
+      </p>
+    </div>
   );
 }
 
