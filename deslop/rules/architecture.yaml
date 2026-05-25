@@ -58,7 +58,7 @@ rules:
     target: "@/lib/**"
     forbids:
       - import: react
-        transtivie: true
+        transitive: true
       - import: "@/components/**"
       - import: "@/features/**"
       - import: "@/app/**"

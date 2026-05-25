@@ -27,13 +27,13 @@ export function HeroDemo(): ReactNode {
             <div className={`h-2.5 w-2.5 rounded-full ${baseTw.window.zoom}`} />
           </div>
           <div className="flex min-w-0 flex-1 items-center gap-4">
-            <Tab label="@/domain/UserService.ts" active />
+            <Tab label="@/proxy.ts" active />
             <Tab label="Terminal" active={false} />
           </div>
         </div>
 
         {/* Split pane body */}
-        <div className="grid grid-cols-1 md:grid-cols-2 md:divide-x md:divide-white/[0.08]">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] md:divide-x md:divide-white/[0.08]">
           <CodePane />
           <TerminalPane />
         </div>
@@ -65,19 +65,19 @@ function CodePane(): ReactNode {
           number={1}
           content={
             <span className="text-zinc-500">
-              {'// UserService.ts — pure domain logic'}
+              {'// Runs on the Edge Runtime'}
             </span>
           }
         />
-        <ViolationLine
+        <CodeLine
           number={2}
           content={
             <>
-              <span className="text-zinc-500">{'import'}</span>
-              <span className="text-zinc-300">{' { useState } '}</span>
-              <span className="text-zinc-500">{'from'}</span>
-              <span className="text-red-400/80">{" 'react'"}</span>
-              <span className="text-zinc-300">;</span>
+              <span className="text-[#3E99F5]">{'import'}</span>
+              <span className="text-zinc-300">{' { NextRequest } '}</span>
+              <span className="text-[#3E99F5]">{'from'}</span>
+              <span className="text-zinc-400">{" 'next/server'"}</span>
+              <span className="text-zinc-400">{';'}</span>
             </>
           }
         />
@@ -85,11 +85,11 @@ function CodePane(): ReactNode {
           number={3}
           content={
             <>
-              <span className="text-zinc-500">{'import'}</span>
-              <span className="text-zinc-300">{' { ReactNode } '}</span>
-              <span className="text-zinc-500">{'from'}</span>
-              <span className="text-red-400/80">{" 'react'"}</span>
-              <span className="text-zinc-300">;</span>
+              <span className="text-[#3E99F5]">{'import'}</span>
+              <span className="text-zinc-300">{' { adminGuard } '}</span>
+              <span className="text-[#3E99F5]">{'from'}</span>
+              <span className="text-red-400/80">{" '@/lib/guards'"}</span>
+              <span className="text-zinc-400">{';'}</span>
             </>
           }
         />
@@ -99,9 +99,9 @@ function CodePane(): ReactNode {
           content={
             <>
               <span className="text-[#3E99F5]">{'export function'}</span>
-              <span className="text-zinc-100">{' getUser'}</span>
-              <span className="text-zinc-400">{'(id: '}</span>
-              <span className="text-[#3E99F5]">{'string'}</span>
+              <span className="text-zinc-100">{' proxy'}</span>
+              <span className="text-zinc-400">{'(req: '}</span>
+              <span className="text-[#3E99F5]">{'NextRequest'}</span>
               <span className="text-zinc-400">{')'}</span>
               <span className="text-zinc-400">{' {'}</span>
             </>
@@ -161,58 +161,83 @@ function ViolationLine({
 function TerminalPane(): ReactNode {
   return (
     <div className={`${textPresets.codePanel} ${baseTw.text.subtle} min-w-0`}>
-      <div className="space-y-4 leading-[1.75]">
+      <div className="space-y-3 leading-[1.75]">
         <p>
           <span className="text-zinc-500">{'> '}</span>
           <span className="text-zinc-200">{'deslop check .'}</span>
         </p>
 
-        <div className="h-px bg-white/[0.06]" aria-hidden />
-
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           <p>
-            <span className="text-red-400">{'✗'}</span>
-            <span className="text-zinc-300 font-semibold">
-              {' domain-no-framework'}
+            <span className="text-[#3E99F5]">{'🚀 Deslopping project: '}</span>
+            <span className="text-zinc-200 font-semibold">{'repo/my-app'}</span>
+          </p>
+          <p>
+            <span className="text-red-400 font-semibold">
+              {'Found 1 problem:'}
             </span>
           </p>
-          <p className="text-zinc-500 pl-4">{'@/domain/UserService.ts'}</p>
         </div>
 
-        <div className="space-y-1 pl-4">
-          <p>
-            <span className="text-zinc-500">{'imports '}</span>
+        <div className="h-px bg-white/[0.08]" aria-hidden />
+
+        <div className="space-y-2">
+          <p className="text-red-400/90 font-semibold">
+            {'# arch#proxy-no-react#@/proxy'}
+          </p>
+          <p className="text-zinc-400 leading-relaxed">
+            {
+              'The Next.js Proxy runs on the Edge Runtime — a V8 isolate with no Node.js APIs and no React support. Transitively importing '
+            }
             <span className="text-red-400/80">{'react'}</span>
-            <span className="text-zinc-500">{' (transitive: true)'}</span>
+            {
+              ' crashes every request at runtime, not at build time. Invisible without static analysis.'
+            }
           </p>
-        </div>
 
-        <div className="rounded-lg bg-[#3E99F5]/[0.07] border border-[#3E99F5]/20 px-4 py-3 space-y-1">
-          <p>
+          <p className="text-zinc-300">
+            {'Module '}
+            <span className="text-zinc-100 font-semibold">{"'@/proxy'"}</span>
+            {' transitively imports '}
+            <span className="text-red-400">{"'react'"}</span>
+            {' via:'}
+          </p>
+          <p className="text-zinc-500 font-mono text-xs pl-2">
+            {'@/proxy → @/lib/guards → @/components/Redirect → react'}
+          </p>
+
+          <div className="rounded bg-zinc-900/60 border border-white/[0.06] px-3 py-2">
+            <p className="text-zinc-500 text-xs mb-1">{'ts'}</p>
+            <p>
+              <span className="text-[#3E99F5]">{'import'}</span>
+              <span className="text-zinc-300">{' { adminGuard } '}</span>
+              <span className="text-[#3E99F5]">{'from'}</span>
+              <span className="text-red-400/80">{" '@/lib/guards'"}</span>
+              <span className="text-zinc-400">{';'}</span>
+            </p>
+          </div>
+
+          <p className="text-zinc-300 leading-relaxed">
             <span className="text-[#3E99F5] font-semibold">{'FIX: '}</span>
-            <span className="text-zinc-300">
-              {'Domain logic is plain TypeScript.'}
-            </span>
-          </p>
-          <p className="text-zinc-400">
-            {'Move React imports to the UI layer.'}
+            {'Replace '}
+            <span className="text-zinc-100">{'@/lib/guards'}</span>
+            {
+              ' with an Edge-safe utility that uses only URL and header manipulation — no '
+            }
+            <span className="text-zinc-100">{'@/components'}</span>
+            {', no React.'}
           </p>
         </div>
 
-        <div className="h-px bg-white/[0.06]" aria-hidden />
+        <div className="h-px bg-white/[0.08]" aria-hidden />
 
-        <div className="space-y-1">
-          <p>
-            <span className="text-emerald-400">{'✔'}</span>
-            <span className="text-zinc-400">{' Checked '}</span>
-            <span className="text-zinc-200 tabular-nums">{'412'}</span>
-            <span className="text-zinc-400">{' modules in '}</span>
-            <span className="text-zinc-200 tabular-nums">{'2.1s'}</span>
-          </p>
-          <p>
-            <span className="text-red-400/80">{'  1 violation found'}</span>
-          </p>
-        </div>
+        <p>
+          <span className="text-emerald-400">{'√'}</span>
+          <span className="text-zinc-400">{' Checked '}</span>
+          <span className="text-zinc-200 tabular-nums">{'412'}</span>
+          <span className="text-zinc-400">{' modules in '}</span>
+          <span className="text-zinc-200 tabular-nums">{'870ms'}</span>
+        </p>
       </div>
     </div>
   );

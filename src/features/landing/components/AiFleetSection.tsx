@@ -75,14 +75,14 @@ function AiFleetVisual(): ReactNode {
       iconBg: 'bg-amber-500/15',
       iconColor: 'text-amber-400',
       label: 'Imports whatever resolves TypeScript',
-      sublabel: 'Silently pulls react into @/domain — no linter catches it',
+      sublabel: 'Transitively pulls react into @/domain — no linter catches it',
     },
     {
       icon: ShieldCheck,
       iconBg: 'bg-emerald-500/15',
       iconColor: 'text-emerald-400',
       label: 'Deslop catches the boundary violation',
-      sublabel: '1 violation found · Checked 412 modules in 2.1s',
+      sublabel: '1 violation found · Checked 18,412 modules in 2.1s',
     },
   ] as const;
 
