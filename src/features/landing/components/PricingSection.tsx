@@ -35,12 +35,13 @@ export default function PricingSection(): ReactNode {
           </p>
         </div>
 
-        <TrialCallout />
-
-        {/* Free plan — centered */}
-        <div className="flex justify-center mb-8">
+        {/* Free plan + Local explainer — side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <FreePlanCard />
+          <LocalExplainer />
         </div>
+
+        <TrialCallout />
 
         {/* Paid plans — 3-col grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -89,7 +90,7 @@ function TrialCallout(): ReactNode {
 
 function FreePlanCard(): ReactNode {
   return (
-    <div className="w-full max-w-md bg-white/[0.02] border border-white/10 rounded-3xl p-8 flex flex-col">
+    <div className="w-full bg-white/[0.02] border border-white/10 rounded-3xl p-8 flex flex-col">
       <h3 className={`${typeScale.titleLg} mb-1`}>Free</h3>
       <p className={`${typeScale.bodySm} ${baseTw.text.muted} mb-4`}>
         Best for local development
@@ -122,6 +123,55 @@ function FreePlanCard(): ReactNode {
             Get Started Free
           </GlowSecondaryButton>
         </a>
+      </div>
+    </div>
+  );
+}
+
+function LocalExplainer(): ReactNode {
+  return (
+    <div className="w-full bg-white/[0.02] border border-white/10 rounded-3xl p-8 flex flex-col gap-6">
+      <div>
+        <h3 className={`${typeScale.titleMd} mb-2`}>What counts as &ldquo;local&rdquo;?</h3>
+        <p className={`${typeScale.bodySm} ${baseTw.text.muted}`}>
+          Deslop is free whenever you run it in an interactive terminal — your
+          everyday shell session. No account, no limits.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 text-green-500 text-base leading-none">✓</span>
+          <p className={`${typeScale.bodySm} ${baseTw.text.secondary}`}>
+            <span className="font-medium text-white">Interactive terminal</span>
+            {' '}— your regular shell, VS Code terminal, iTerm, etc. Always free.
+          </p>
+        </div>
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 text-amber-400 text-base leading-none">⚠</span>
+          <p className={`${typeScale.bodySm} ${baseTw.text.secondary}`}>
+            <span className="font-medium text-white">Headless / automated environments</span>
+            {' '}— CI pipelines, GitHub Actions, and AI coding agents that run
+            Deslop without an interactive session trigger a human verification
+            step. This is intentional to keep the free tier sustainable.
+          </p>
+        </div>
+      </div>
+
+      <div className="rounded-2xl bg-white/[0.03] border border-white/10 p-5 flex flex-col gap-3">
+        <p className={`${typeScale.bodySm} ${baseTw.text.secondary}`}>
+          To lift restrictions in CI or your AI harness, set your license key as
+          an environment variable:
+        </p>
+        <code className="block rounded-xl bg-zinc-900 border border-white/10 px-4 py-3 text-sm font-mono text-[#3E99F5]">
+          DESLOP_LICENSE_KEY=your_key_here
+        </code>
+        <p className={`${typeScale.bodySm} ${baseTw.text.muted}`}>
+          A{' '}
+          <span className="font-medium text-zinc-200">Deslop Hobby</span>{' '}
+          license is the minimum recommended plan for CI and AI agent
+          environments.
+        </p>
       </div>
     </div>
   );
@@ -193,7 +243,10 @@ function ProPlanCard(): ReactNode {
         <span className="text-xs text-zinc-500">/mo</span>
       </div>
       <ul className="space-y-3 mb-8 flex-1">
-        {['Everything in Deslop Hobby'].map((item) => (
+        {[
+          'Everything in Deslop Hobby',
+          '10× more CI runs than Hobby — at only 5× the price (~50% savings)',
+        ].map((item) => (
           <li
             key={item}
             className={`${textPresets.bodyList} ${baseTw.text.secondary}`}
@@ -237,7 +290,10 @@ function UltraPlanCard(): ReactNode {
         <span className="text-xs text-zinc-500">/mo</span>
       </div>
       <ul className="space-y-3 mb-8 flex-1">
-        {['Everything in Deslop PRO'].map((item) => (
+        {[
+          'Everything in Deslop PRO',
+          '20× more CI runs than PRO — at only 10× the price (~50% savings)',
+        ].map((item) => (
           <li
             key={item}
             className={`${textPresets.bodyList} ${baseTw.text.secondary}`}
