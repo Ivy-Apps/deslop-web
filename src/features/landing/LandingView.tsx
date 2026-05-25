@@ -9,7 +9,7 @@ import Navbar from '@/features/landing/components/Navbar';
 import PricingSection from '@/features/landing/components/PricingSection';
 import PrTaxSection from '@/features/landing/components/PrTaxSection';
 import TechnicalDetailsSection from '@/features/landing/components/TechnicalDetailsSection';
-import TransitiveDefenseSection from '@/features/landing/components/TransitiveDefenseSection';
+import WhyDeslopSection from '@/features/landing/components/WhyDeslopSection';
 import UnifiedDslSection from '@/features/landing/components/UnifiedDslSection';
 
 export default function LandingView() {
@@ -20,7 +20,7 @@ export default function LandingView() {
       <AiFleetSection />
       <PrTaxSection />
       <UnifiedDslSection />
-      <TransitiveDefenseSection />
+      <WhyDeslopSection />
       <CapabilityMatrixSection />
       <TechnicalDetailsSection />
       <PricingSection />
