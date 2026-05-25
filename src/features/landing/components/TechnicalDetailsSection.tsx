@@ -197,15 +197,12 @@ function TechnicalCopyColumn(): ReactNode {
           refactors.
         </p>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary}`}>
-          Deslop solves this by exposing a{' '}
-          <strong className="text-zinc-200 font-semibold">
-            complete, deterministic graph
-          </strong>{' '}
-          via <strong className="text-zinc-200 font-semibold">MCP</strong>{' '}
-          (Model Context Protocol). Instead of guessing based on semantic
-          similarity, agents can query exact topological contexts, ensuring
-          AI-generated code perfectly aligns with your pipeline's architectural
-          rules.
+          Deslop fixes this by feeding clear structural errors directly into the
+          developer loop. When an agent violates a design rule, Deslop hands it
+          back an explicit, high-context markdown summary of the failure.
+          Instead of guessing based on vague code chunks, the agent can react to
+          hard compiler diagnostics, ensuring AI-generated code perfectly aligns
+          with your pipeline&apos;s exact architectural rules.
         </p>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import DeslopWordmarkLink from '@/components/DeslopWordmarkLink';
+import { GITHUB_DOCS_URL, POLAR_MANAGE_URL } from '@/lib/deslop';
 
 export default function Footer() {
   return (
@@ -16,20 +17,20 @@ export default function Footer() {
             Contact
           </a>
           <a
-            href="https://twitter.com"
+            href={GITHUB_DOCS_URL}
             className="hover:text-white transition-colors"
             rel="noopener noreferrer"
             target="_blank"
           >
-            Twitter
+            Docs
           </a>
           <a
-            href="https://github.com"
+            href={POLAR_MANAGE_URL}
             className="hover:text-white transition-colors"
             rel="noopener noreferrer"
             target="_blank"
           >
-            GitHub
+            Manage Subscription
           </a>
         </div>
         <p className="text-base text-zinc-500">

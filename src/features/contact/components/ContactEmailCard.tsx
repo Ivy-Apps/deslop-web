@@ -31,7 +31,9 @@ export default function ContactEmailCard({ email }: Props): ReactNode {
       </span>
       <span
         className={`ml-1 inline-flex items-center gap-1 text-sm font-medium transition-colors ${
-          copied ? 'text-green-400' : `${tw.text.muted} group-hover:text-zinc-200`
+          copied
+            ? 'text-green-400'
+            : `${tw.text.muted} group-hover:text-zinc-200`
         }`}
       >
         {copied ? (

@@ -7,6 +7,7 @@ import {
   GlowSecondaryButton,
 } from '@/components/design-system';
 import { textPresets, typeScale } from '@/components/design-system/typography';
+import { POLAR_MANAGE_URL } from '@/lib/deslop';
 import { POLAR_CHECKOUT_URL } from '@/lib/polar';
 
 export default function PricingSection(): ReactNode {
@@ -17,11 +18,20 @@ export default function PricingSection(): ReactNode {
           <h2
             className={`${typeScale.displayXl} mb-4 md:mb-5 ${baseTw.text.primary}`}
           >
-            Simple, transparent pricing
+            Free for local development. Insurance for your pipeline.
           </h2>
-          <p className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}>
-            Free for local development. Pay only for CI and automated
-            environments.
+          <p
+            className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted} mb-6`}
+          >
+            Why pay for Deslop when linters are free?
+          </p>
+          <p
+            className={`${typeScale.bodyLg} ${baseTw.text.secondary} max-w-2xl mx-auto`}
+          >
+            You don&apos;t pay for Deslop to format your code; you pay for
+            Deslop to reclaim lost engineering hours. It pays for itself the
+            very first time it stops a wayward AI agent or a rushed developer
+            from shipping architectural debt to production.
           </p>
         </div>
 
@@ -41,6 +51,17 @@ export default function PricingSection(): ReactNode {
 
         {/* Enterprise — full-width banner */}
         <EnterpriseBanner />
+
+        <div className="mt-8 text-center">
+          <a
+            href={POLAR_MANAGE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors underline underline-offset-4"
+          >
+            Already a customer? Manage your subscription
+          </a>
+        </div>
       </div>
     </section>
   );
@@ -138,7 +159,12 @@ function HobbyPlanCard(): ReactNode {
         ))}
       </ul>
       <div className="mt-auto w-full">
-        <a href={POLAR_CHECKOUT_URL} target="_blank" rel="noopener noreferrer" className="block w-full">
+        <a
+          href={POLAR_CHECKOUT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full"
+        >
           <GlowSecondaryButton className="w-full" size="lg">
             Start Free Trial
           </GlowSecondaryButton>
@@ -157,9 +183,7 @@ function ProPlanCard(): ReactNode {
         </span>
       </div>
       <h3 className={`${typeScale.titleMd} mb-1`}>Deslop PRO</h3>
-      <p className={`text-sm ${baseTw.text.muted} mb-4`}>
-        Best for startups
-      </p>
+      <p className={`text-sm ${baseTw.text.muted} mb-4`}>Best for startups</p>
       <div className="flex items-baseline gap-1 mb-4">
         <span className="text-4xl font-bold text-white">€24.99</span>
         <span className="text-zinc-500">/mo</span>
@@ -169,9 +193,7 @@ function ProPlanCard(): ReactNode {
         <span className="text-xs text-zinc-500">/mo</span>
       </div>
       <ul className="space-y-3 mb-8 flex-1">
-        {[
-          'Everything in Deslop Hobby',
-        ].map((item) => (
+        {['Everything in Deslop Hobby'].map((item) => (
           <li
             key={item}
             className={`${textPresets.bodyList} ${baseTw.text.secondary}`}
@@ -182,7 +204,12 @@ function ProPlanCard(): ReactNode {
         ))}
       </ul>
       <div className="mt-auto w-full">
-        <a href={POLAR_CHECKOUT_URL} target="_blank" rel="noopener noreferrer" className="block w-full">
+        <a
+          href={POLAR_CHECKOUT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full"
+        >
           <GlowPrimaryButton className="w-full" size="lg">
             Start Free Trial
           </GlowPrimaryButton>
@@ -204,13 +231,13 @@ function UltraPlanCard(): ReactNode {
         <span className="text-zinc-500">/mo</span>
       </div>
       <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#3E99F5]/10 border border-[#3E99F5]/20 px-3.5 py-1.5">
-        <span className="text-sm font-bold text-[#3E99F5]">100,000 CI runs</span>
+        <span className="text-sm font-bold text-[#3E99F5]">
+          100,000 CI runs
+        </span>
         <span className="text-xs text-zinc-500">/mo</span>
       </div>
       <ul className="space-y-3 mb-8 flex-1">
-        {[
-          'Everything in Deslop PRO',
-        ].map((item) => (
+        {['Everything in Deslop PRO'].map((item) => (
           <li
             key={item}
             className={`${textPresets.bodyList} ${baseTw.text.secondary}`}
@@ -221,7 +248,12 @@ function UltraPlanCard(): ReactNode {
         ))}
       </ul>
       <div className="mt-auto w-full">
-        <a href={POLAR_CHECKOUT_URL} target="_blank" rel="noopener noreferrer" className="block w-full">
+        <a
+          href={POLAR_CHECKOUT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full"
+        >
           <GlowSecondaryButton className="w-full" size="lg">
             Start Free Trial
           </GlowSecondaryButton>
