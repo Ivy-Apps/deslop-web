@@ -15,7 +15,7 @@ import { GITHUB_DOCS_URL } from '@/lib/deslop';
 
 const LANDING_NAV_LINKS = [
   { label: 'The Problem', href: '#problem' },
-  { label: 'How it Works', href: '#how-it-works' },
+  { label: 'Solution', href: '#ai-fleet' },
   { label: 'Pricing', href: '#pricing' },
   { label: 'Docs', href: GITHUB_DOCS_URL, external: true },
 ];
