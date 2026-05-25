@@ -15,11 +15,14 @@ export default function PricingSection(): ReactNode {
     <section id="pricing" className="py-24 md:py-32 bg-zinc-950">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-8 text-center md:mb-10">
-          <h2
-            className={`${typeScale.displayXl} mb-4 md:mb-5 ${baseTw.text.primary}`}
-          >
-            Simple, Transparent Pricing: free on local, paid on CI
+          <h2 className={`${typeScale.displayXl} mb-3 ${baseTw.text.primary}`}>
+            Simple, Transparent Pricing
           </h2>
+          <p
+            className={`${typeScale.bodyXl} ${baseTw.text.muted} mb-4 md:mb-5`}
+          >
+            free on local, paid on CI
+          </p>
           <p
             className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted} mb-6`}
           >
@@ -70,20 +73,19 @@ export default function PricingSection(): ReactNode {
 
 function TrialCallout(): ReactNode {
   return (
-    <div className="mb-8 flex justify-center" role="note">
-      <div className="flex max-w-lg flex-col items-center gap-3 text-center sm:max-w-none sm:flex-row sm:items-center sm:gap-8 sm:text-left">
-        <div className="flex items-center gap-2.5 text-sm text-zinc-400">
-          <Check
-            className="h-4 w-4 shrink-0 text-green-500"
-            strokeWidth={2.5}
-            aria-hidden
-          />
-          <span>
-            <span className="font-medium text-zinc-200">14-day free trial</span>{' '}
-            on all plans
-          </span>
-        </div>
-      </div>
+    <div
+      className="mb-8 flex items-center justify-center gap-3 rounded-2xl border border-green-500/20 bg-green-500/[0.05] px-6 py-5"
+      role="note"
+    >
+      <Check
+        className="h-5 w-5 shrink-0 text-green-400"
+        strokeWidth={2.5}
+        aria-hidden
+      />
+      <p className={`${typeScale.bodyLg} text-zinc-300`}>
+        <span className="font-semibold text-green-400">14-day free trial</span>{' '}
+        on all paid plans
+      </p>
     </div>
   );
 }
@@ -132,7 +134,9 @@ function LocalExplainer(): ReactNode {
   return (
     <div className="w-full bg-white/[0.02] border border-white/10 rounded-3xl p-8 flex flex-col gap-6">
       <div>
-        <h3 className={`${typeScale.titleMd} mb-2`}>What counts as &ldquo;local&rdquo;?</h3>
+        <h3 className={`${typeScale.titleMd} mb-2`}>
+          What counts as &ldquo;local&rdquo;?
+        </h3>
         <p className={`${typeScale.bodySm} ${baseTw.text.muted}`}>
           Deslop is free whenever you run it in an interactive terminal — your
           everyday shell session. No account, no limits.
@@ -141,19 +145,25 @@ function LocalExplainer(): ReactNode {
 
       <div className="flex flex-col gap-3">
         <div className="flex items-start gap-3">
-          <span className="mt-0.5 text-green-500 text-base leading-none">✓</span>
+          <span className="mt-0.5 text-green-500 text-base leading-none">
+            ✓
+          </span>
           <p className={`${typeScale.bodySm} ${baseTw.text.secondary}`}>
-            <span className="font-medium text-white">Interactive terminal</span>
-            {' '}— your regular shell, VS Code terminal, iTerm, etc. Always free.
+            <span className="font-medium text-white">Interactive terminal</span>{' '}
+            — your regular shell, VS Code terminal, iTerm, etc. Always free.
           </p>
         </div>
         <div className="flex items-start gap-3">
-          <span className="mt-0.5 text-amber-400 text-base leading-none">⚠</span>
+          <span className="mt-0.5 text-amber-400 text-base leading-none">
+            !
+          </span>
           <p className={`${typeScale.bodySm} ${baseTw.text.secondary}`}>
-            <span className="font-medium text-white">Headless / automated environments</span>
-            {' '}— CI pipelines, GitHub Actions, and AI coding agents that run
-            Deslop without an interactive session trigger a human verification
-            step. This is intentional to keep the free tier sustainable.
+            <span className="font-medium text-white">
+              Headless / automated environments
+            </span>{' '}
+            — CI pipelines, GitHub Actions, and AI coding agents that run Deslop
+            without an interactive session trigger a human verification step.
+            This is intentional to keep the free tier sustainable.
           </p>
         </div>
       </div>
@@ -167,8 +177,7 @@ function LocalExplainer(): ReactNode {
           DESLOP_LICENSE_KEY=your_key_here
         </code>
         <p className={`${typeScale.bodySm} ${baseTw.text.muted}`}>
-          A{' '}
-          <span className="font-medium text-zinc-200">Deslop Hobby</span>{' '}
+          A <span className="font-medium text-zinc-200">Deslop Hobby</span>{' '}
           license is the minimum recommended plan for CI and AI agent
           environments.
         </p>
@@ -245,7 +254,7 @@ function ProPlanCard(): ReactNode {
       <ul className="space-y-3 mb-8 flex-1">
         {[
           'Everything in Deslop Hobby',
-          '10× more CI runs than Hobby — at only 5× the price (~50% savings)',
+          '10x more CI runs than Hobby — at only 5x the price (~50% savings)',
         ].map((item) => (
           <li
             key={item}
@@ -292,7 +301,7 @@ function UltraPlanCard(): ReactNode {
       <ul className="space-y-3 mb-8 flex-1">
         {[
           'Everything in Deslop PRO',
-          '20× more CI runs than PRO — at only 10× the price (~50% savings)',
+          '20x more CI runs than PRO — at only 10x the price (~50% savings)',
         ].map((item) => (
           <li
             key={item}
