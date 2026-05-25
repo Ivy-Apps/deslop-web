@@ -56,7 +56,7 @@ export default function Navbar(): ReactNode {
               type="button"
               className={`inline-flex items-center justify-center bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium ring-1 ring-white/20 transition-all hover:bg-zinc-100 ${baseTw.effects.brandShadowHover}`}
             >
-              Get Started Free
+              Get Started
             </button>
           </a>
         </div>
@@ -95,7 +95,7 @@ export default function Navbar(): ReactNode {
             className="mt-2 inline-flex items-center justify-center bg-white text-zinc-950 px-5 py-2.5 rounded-full text-base font-medium w-fit ring-1 ring-white/20 transition-all hover:bg-zinc-100"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            Get Started Free
+            Get Started
           </a>
         </div>
       )}
