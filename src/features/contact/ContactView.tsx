@@ -5,7 +5,12 @@ import AppNavbar from '@/components/AppNavbar';
 import { tw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
 import ContactEmailCard from '@/features/contact/components/ContactEmailCard';
-import { CONTACT_EMAIL, GITHUB_DOCS_URL, GITHUB_NEW_ISSUE_URL, POLAR_MANAGE_URL } from '@/lib/deslop';
+import {
+  CONTACT_EMAIL,
+  GITHUB_DOCS_URL,
+  GITHUB_NEW_ISSUE_URL,
+  POLAR_MANAGE_URL,
+} from '@/lib/deslop';
 
 const CONTACT_NAV_LINKS = [
   { label: 'Docs', href: GITHUB_DOCS_URL, external: true },
