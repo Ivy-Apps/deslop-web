@@ -135,6 +135,18 @@ const ROWS: Row[] = [
     eslint: { kind: 'no' },
     depCruiser: { kind: 'yes' },
   },
+  {
+    feature: 'Monorepo / multiple tsconfigs',
+    deslop: { kind: 'limited', label: 'run per package; proper support WIP' },
+    eslint: {
+      kind: 'limited',
+      label: 'parserOptions.project glob array via typescript-eslint',
+    },
+    depCruiser: {
+      kind: 'limited',
+      label: 'run per package; no multi-tsconfig from root',
+    },
+  },
 ];
 
 export default function CapabilityMatrixSection(): ReactNode {
