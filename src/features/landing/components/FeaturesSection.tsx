@@ -1,5 +1,5 @@
 import { Github, Plug, Shield, Sparkles } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { Suspense, use, type ReactNode } from 'react';
 import BeforeAfter from '@/components/BeforeAfter';
 import CodeBlock from '@/components/CodeBlock';
 import { tw as baseTw } from '@/components/design-system/colors';
@@ -7,7 +7,10 @@ import { textPresets, typeScale } from '@/components/design-system/typography';
 import FeatureCard from '@/components/FeatureCard';
 import { highlightCode } from '@/lib/highlight-code';
 
-export default async function FeaturesSection(): Promise<ReactNode> {
+const RULEBOOK_YAML = `rules:\n  - id: no-react-in-core\n    forbidden:\n      - import: react\n        transitive: true`;
+const highlightedRulebookYaml = highlightCode(RULEBOOK_YAML, 'yaml');
+
+export default function FeaturesSection(): ReactNode {
   return (
     <section
       id="features"
@@ -28,18 +31,21 @@ export default async function FeaturesSection(): Promise<ReactNode> {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
-          <ArchitecturalRulebookFeature />
+          <Suspense>
+            <ArchitecturalRulebookFeature />
+          </Suspense>
           <McpCiFeature />
-          <CodeSmellsFeature />
+          <Suspense>
+            <CodeSmellsFeature />
+          </Suspense>
         </div>
       </div>
     </section>
   );
 }
 
-async function ArchitecturalRulebookFeature(): Promise<ReactNode> {
-  const yaml = `rules:\n  - id: no-react-in-core\n    forbidden:\n      - import: react\n        transitive: true`;
-  const highlightedHtml = await highlightCode(yaml, 'yaml');
+function ArchitecturalRulebookFeature(): ReactNode {
+  const highlightedHtml = use(highlightedRulebookYaml);
 
   return (
     <div id="rules">
@@ -62,7 +68,7 @@ async function ArchitecturalRulebookFeature(): Promise<ReactNode> {
       >
         <div className="-mt-2">
           <CodeBlock
-            code={yaml}
+            code={RULEBOOK_YAML}
             highlightedHtml={highlightedHtml}
             filename="deslop.config.yaml"
           />

@@ -1,0 +1,36 @@
+id: arch
+name: Architecture
+description: Enforces the architecture of the website.
+rules:
+  - id: design-system-self-isolated
+    description: >-
+      The design system must be fully self-contained and must not import anything
+      from the broader application. This ensures it remains a pure, reusable UI
+      primitive layer with no coupling to app-specific logic, features, or routing.
+    target: "@/components/design-system/**"
+    forbids:
+      - import: "@/**"
+    allows:
+      - import: "@/components/design-system/**"
+    fix: >-
+      Remove the offending import. If you need shared logic, extract it into a
+      framework-agnostic utility inside @/components/design-system itself. Never
+      import from @/lib, @/features, @/components (outside design-system), or @/app.
+
+  - id: lib-no-ui-and-features
+    description: >-
+      Library utilities must be pure, framework-agnostic modules. They must not
+      import React, UI components, feature modules, or app-level code. This keeps
+      @/lib usable in server contexts, tests, and non-React environments without
+      pulling in the rendering tree.
+    target: "@/lib/**"
+    forbids:
+      - import: react
+        transtivie: true
+      - import: "@/components/**"
+      - import: "@/features/**"
+      - import: "@/app/**"
+    fix: >-
+      Move any UI or React-dependent logic out of @/lib and into the appropriate
+      @/components or @/features module. Keep @/lib strictly for pure functions,
+      data utilities, and server-safe helpers that have no rendering concerns.

@@ -1,18 +1,23 @@
 import { Check, Terminal } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { Suspense, use, type ReactNode } from 'react';
 
 import CodeBlock from '@/components/CodeBlock';
 import { tw as baseTw } from '@/components/design-system/colors';
 import { textPresets, typeScale } from '@/components/design-system/typography';
 import { highlightCode } from '@/lib/highlight-code';
 
-export default async function ErrorReportingSection(): Promise<ReactNode> {
+const ERROR_REPORT = `# /src/app/[locale]/dashboard/settings/security/mfa/page.tsx: no-relative-imports\nRelative imports are not allowed. Use absolute path aliased ones.\n\n\`\`\`ts\nimport { assertOrgRole } from '../../../../lib/auth/rbac';\n\`\`\`\n\nFIX: Use \`import { assertOrgRole } from '@/lib/auth/rbac';\` instead.\n---------`;
+const highlightedErrorReport = highlightCode(ERROR_REPORT, 'md');
+
+export default function ErrorReportingSection(): ReactNode {
   return (
     <section className="py-24 md:py-32 bg-zinc-900 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <ErrorReportingCopy />
-          <ErrorReportPreview />
+          <Suspense>
+            <ErrorReportPreview />
+          </Suspense>
         </div>
       </div>
     </section>
@@ -50,15 +55,14 @@ function ErrorReportingCopy(): ReactNode {
   );
 }
 
-async function ErrorReportPreview(): Promise<ReactNode> {
-  const report = `# /src/app/[locale]/dashboard/settings/security/mfa/page.tsx: no-relative-imports\nRelative imports are not allowed. Use absolute path aliased ones.\n\n\`\`\`ts\nimport { assertOrgRole } from '../../../../lib/auth/rbac';\n\`\`\`\n\nFIX: Use \`import { assertOrgRole } from '@/lib/auth/rbac';\` instead.\n---------`;
-  const highlightedHtml = await highlightCode(report, 'md');
+function ErrorReportPreview(): ReactNode {
+  const highlightedHtml = use(highlightedErrorReport);
 
   return (
     <div className="relative">
       <div className="absolute -inset-4 bg-white/5 blur-2xl rounded-full opacity-50" />
       <CodeBlock
-        code={report}
+        code={ERROR_REPORT}
         filename="deslop-report.md"
         className="relative z-10"
         highlightedHtml={highlightedHtml}

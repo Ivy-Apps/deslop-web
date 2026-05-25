@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
       { source: '/privacy', destination: '/privacy/v1', permanent: true },
     ];
   },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.stories\.(ts|tsx|js|jsx)$/,
+      loader: 'null-loader',
+    });
+    return config;
+  },
 };
 
 const withMDX = createMDX({});
