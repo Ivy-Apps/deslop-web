@@ -25,6 +25,18 @@ const ROWS: Row[] = [
     depCruiser: { kind: 'text', label: 'Regex-heavy JS/JSON' },
   },
   {
+    feature: 'Typical rule length',
+    deslop: { kind: 'text', label: '~5 lines of YAML' },
+    eslint: { kind: 'text', label: '~20–40 lines of JS' },
+    depCruiser: { kind: 'text', label: '~10–20 lines of regex' },
+  },
+  {
+    feature: 'Engine',
+    deslop: { kind: 'text', label: 'Haskell' },
+    eslint: { kind: 'text', label: 'JavaScript' },
+    depCruiser: { kind: 'text', label: 'JavaScript' },
+  },
+  {
     feature: 'Forbid dependencies',
     deslop: { kind: 'yes', label: 'forbids' },
     eslint: { kind: 'yes' },
@@ -58,6 +70,12 @@ const ROWS: Row[] = [
     },
   },
   {
+    feature: 'Transitive require (uses)',
+    deslop: { kind: 'yes', label: 'uses + transitive: true' },
+    eslint: { kind: 'no' },
+    depCruiser: { kind: 'no' },
+  },
+  {
     feature: 'Named path variables',
     deslop: { kind: 'yes', label: '{{FileName}}, {{TARGET_DIR}}' },
     eslint: { kind: 'no' },
@@ -70,22 +88,52 @@ const ROWS: Row[] = [
     depCruiser: { kind: 'no' },
   },
   {
+    feature: 'Correct-code example in rule',
+    deslop: { kind: 'yes', label: 'example field, shown in violation output' },
+    eslint: { kind: 'no' },
+    depCruiser: {
+      kind: 'limited',
+      label: 'comment text field only, not shown in output',
+    },
+  },
+  {
+    feature: 'Baseline (silence known violations)',
+    deslop: {
+      kind: 'yes',
+      label: 'deslop baseline → readable YAML, one key per violation',
+    },
+    eslint: {
+      kind: 'limited',
+      label: 'JSON count-based file, added v9.24 Apr 2025',
+    },
+    depCruiser: {
+      kind: 'limited',
+      label: 'verbose JSON objects per violation',
+    },
+  },
+  {
+    feature: 'Exclude from target',
+    deslop: { kind: 'yes', label: 'exclude list' },
+    eslint: { kind: 'yes' },
+    depCruiser: { kind: 'yes' },
+  },
+  {
+    feature: 'Auto-fix relative imports',
+    deslop: { kind: 'yes', label: 'deslop fix, built-in' },
+    eslint: { kind: 'limited', label: 'third-party plugin required' },
+    depCruiser: { kind: 'no' },
+  },
+  {
+    feature: 'Multiple rule files',
+    deslop: { kind: 'yes', label: 'auto-loaded from deslop/rules/' },
+    eslint: { kind: 'yes', label: 'via JS imports into one config' },
+    depCruiser: { kind: 'yes', label: 'extends in config' },
+  },
+  {
     feature: 'Dependency graph visualization',
     deslop: { kind: 'no' },
     eslint: { kind: 'no' },
     depCruiser: { kind: 'yes' },
-  },
-  {
-    feature: 'Typical rule length',
-    deslop: { kind: 'text', label: '~5 lines of YAML' },
-    eslint: { kind: 'text', label: '~20–40 lines of JS' },
-    depCruiser: { kind: 'text', label: '~10–20 lines of regex' },
-  },
-  {
-    feature: 'Engine',
-    deslop: { kind: 'text', label: 'Haskell' },
-    eslint: { kind: 'text', label: 'JavaScript' },
-    depCruiser: { kind: 'text', label: 'JavaScript' },
   },
 ];
 
@@ -101,7 +149,7 @@ export default function CapabilityMatrixSection(): ReactNode {
             One Tool vs. A Fragile Ecosystem of Plugins
           </h2>
           <p className={`text-xl leading-relaxed ${baseTw.text.muted}`}>
-            How Deslop compares to the tools your team is already using.
+            How Deslop compares to the popular open-source tools.
           </p>
         </header>
 
