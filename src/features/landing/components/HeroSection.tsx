@@ -7,7 +7,6 @@ import {
   GlowSecondaryButton,
   inlineStyle,
 } from '@/components/design-system';
-import { textPresets, typeScale } from '@/components/design-system/typography';
 import { HeroDemo } from '@/components/HeroDemo';
 import { GITHUB_DOCS_URL } from '@/lib/deslop';
 
@@ -78,27 +77,29 @@ function HeroCopyBlock(): ReactNode {
               aria-hidden
             />
             <span className="text-sm sm:text-[15px] font-semibold tracking-wide text-zinc-100">
-              Deterministic TypeScript guardrails for the AI era
+              Deterministic Architectural Guardrails for the AI era
             </span>
           </div>
         </div>
-        <h1 className={`text-balance ${typeScale.display2xl}`}>
+        <h1
+          className={`text-balance text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-0.04em] leading-[1.05]`}
+        >
           <span
             className={`block ${baseTw.gradient.lightText} drop-shadow-[0_0_48px_rgba(255,255,255,0.12)]`}
           >
             Your AI writes code.
           </span>
-          <span className={`mt-2 md:mt-4 block ${typeScale.display2xl}`}>
+          <span className="mt-2 md:mt-4 block">
             <span className={baseTw.gradient.brandText}>Deslop</span>
             <span className={baseTw.gradient.softLightText}> makes it </span>
             <span className={baseTw.gradient.brandTextReverse}>good.</span>
           </span>
         </h1>
       </div>
-      <p className={`${textPresets.heroLead} ${baseTw.text.secondary} mb-10`}>
+      <p className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed font-normal text-zinc-300 mb-10">
         Stop playing architectural whack-a-mole in PR reviews. Enforce
         deterministic TypeScript guardrails that both humans and AI agents
-        understand — validated in under 3 seconds.
+        understand — setup in 5 minutes.
       </p>
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-10">
         <a href="/get-started" className="contents">
