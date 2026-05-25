@@ -102,7 +102,7 @@ export default function PrTaxSection(): ReactNode {
   return (
     <section
       id="problem"
-      className="py-24 md:py-32 bg-zinc-950 border-t border-white/5"
+      className="py-24 md:py-32 bg-zinc-900 border-t border-white/5"
     >
       <div className="max-w-6xl mx-auto px-6">
         <header className="text-center mb-14 max-w-3xl mx-auto">
@@ -112,9 +112,9 @@ export default function PrTaxSection(): ReactNode {
             Every week without Deslop has a price
           </h2>
           <p className={`text-xl leading-relaxed ${baseTw.text.muted}`}>
-            Whether you enforce architecture manually on PR review, build infra
-            yourself, or don't enforce it all — your team is paying a hidden tax
-            right now.
+            Whether you enforce architecture manually on PR review, build the
+            infra yourself, or don't enforce architecture at all — your team is
+            paying a hidden tax right now.
           </p>
         </header>
 

@@ -29,8 +29,8 @@ export default function LandingView() {
         logoScrollToTop
       />
       <HeroSection />
-      <AiFleetSection />
       <PrTaxSection />
+      <AiFleetSection />
       <UnifiedDslSection />
       <WhyDeslopSection />
       <CapabilityMatrixSection />
