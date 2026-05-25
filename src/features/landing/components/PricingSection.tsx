@@ -12,7 +12,9 @@ export default function PricingSection(): ReactNode {
     <section id="pricing" className="py-24 md:py-32 bg-zinc-950">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-8 text-center md:mb-10">
-          <h2 className={`${typeScale.displayXl} mb-4 md:mb-5 ${baseTw.text.primary}`}>
+          <h2
+            className={`${typeScale.displayXl} mb-4 md:mb-5 ${baseTw.text.primary}`}
+          >
             Simple, transparent pricing
           </h2>
           <p className={`${textPresets.sectionLeadMuted} ${baseTw.text.muted}`}>
@@ -41,8 +43,7 @@ function TrialCallout(): ReactNode {
             aria-hidden
           />
           <span>
-            <span className="font-medium text-zinc-200">7-day free trial</span>
-            {' '}
+            <span className="font-medium text-zinc-200">7-day free trial</span>{' '}
             on all plans
           </span>
         </div>

@@ -9,19 +9,27 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <h2 className="text-xl font-bold text-white mb-4 mt-10">{children}</h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-lg font-semibold text-zinc-100 mb-3 mt-8">{children}</h3>
+      <h3 className="text-lg font-semibold text-zinc-100 mb-3 mt-8">
+        {children}
+      </h3>
     ),
     h4: ({ children }) => (
-      <h4 className="text-base font-semibold text-zinc-200 mb-2 mt-6">{children}</h4>
+      <h4 className="text-base font-semibold text-zinc-200 mb-2 mt-6">
+        {children}
+      </h4>
     ),
     p: ({ children }) => (
       <p className="text-zinc-400 leading-relaxed mb-4">{children}</p>
     ),
     ul: ({ children }) => (
-      <ul className="list-disc list-inside text-zinc-400 space-y-2 mb-4 pl-2">{children}</ul>
+      <ul className="list-disc list-inside text-zinc-400 space-y-2 mb-4 pl-2">
+        {children}
+      </ul>
     ),
     ol: ({ children }) => (
-      <ol className="list-decimal list-inside text-zinc-400 space-y-2 mb-4 pl-2">{children}</ol>
+      <ol className="list-decimal list-inside text-zinc-400 space-y-2 mb-4 pl-2">
+        {children}
+      </ol>
     ),
     li: ({ children }) => (
       <li className="text-zinc-400 leading-relaxed">{children}</li>
