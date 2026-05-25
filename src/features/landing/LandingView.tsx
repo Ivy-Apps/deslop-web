@@ -1,6 +1,5 @@
 import { tw as baseTw } from '@/components/design-system/colors';
 import { appText } from '@/components/design-system/typography';
-import Footer from '@/components/Footer';
 import AiFleetSection from '@/features/landing/components/AiFleetSection';
 import CapabilityMatrixSection from '@/features/landing/components/CapabilityMatrixSection';
 import CtaSection from '@/features/landing/components/CtaSection';
@@ -27,7 +26,6 @@ export default function LandingView() {
       <PricingSection />
       <FaqSection />
       <CtaSection />
-      <Footer />
     </div>
   );
 }
