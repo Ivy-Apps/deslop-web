@@ -154,13 +154,16 @@ export default function FaqSection(): ReactNode {
     >
       <div className="max-w-3xl mx-auto px-6">
         <header className="text-center mb-12">
+          <p className={`${typeScale.labelCaps} ${baseTw.text.muted} mb-4`}>
+            FAQ
+          </p>
           <h2 className={`${typeScale.displayLg} ${baseTw.text.primary}`}>
             Frequently Asked Questions
           </h2>
         </header>
         <div className="divide-y divide-white/[0.07]">
-          {FAQ_ITEMS.map((item) => (
-            <FaqAccordionItem key={item.question} item={item} />
+          {FAQ_ITEMS.map((item, index) => (
+            <FaqAccordionItem key={item.question} item={item} index={index} />
           ))}
         </div>
       </div>
@@ -168,8 +171,15 @@ export default function FaqSection(): ReactNode {
   );
 }
 
-function FaqAccordionItem({ item }: { item: FaqItem }): ReactNode {
+function FaqAccordionItem({
+  item,
+  index,
+}: {
+  item: FaqItem;
+  index: number;
+}): ReactNode {
   const [open, setOpen] = useState(false);
+  const num = String(index + 1).padStart(2, '0');
 
   return (
     <div>
@@ -179,21 +189,32 @@ function FaqAccordionItem({ item }: { item: FaqItem }): ReactNode {
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
       >
-        <span
-          className={`text-lg font-semibold ${baseTw.text.primary} leading-snug`}
-        >
-          {item.question}
+        <span className="flex items-baseline gap-3">
+          <span
+            className={`font-mono text-sm ${baseTw.text.muted} shrink-0 select-none`}
+          >
+            {num}
+          </span>
+          <span
+            className={`text-xl font-semibold ${baseTw.text.primary} leading-snug`}
+          >
+            {item.question}
+          </span>
         </span>
         <ChevronDown
-          className={`w-5 h-5 shrink-0 ${baseTw.text.muted} transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`w-5 h-5 shrink-0 ${baseTw.text.muted} transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
           aria-hidden
         />
       </button>
-      {open && (
-        <div className={`pb-5 ${typeScale.bodyMd} ${baseTw.text.secondary}`}>
-          {item.answer}
+      <div
+        className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+      >
+        <div className="overflow-hidden">
+          <div className={`pb-5 ${typeScale.bodyLg} ${baseTw.text.secondary}`}>
+            {item.answer}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
