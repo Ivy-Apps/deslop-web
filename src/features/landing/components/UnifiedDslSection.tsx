@@ -1,11 +1,9 @@
-import { type ReactNode, Suspense, use } from 'react';
+import type { ReactNode } from 'react';
 
+import { HighlightedCodeBlock } from '@/components/HighlightedCodeBlock';
 import { InfoBubble } from '@/components/InfoBubble';
-
-import CodeBlock from '@/components/CodeBlock';
 import { tw as baseTw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
-import { highlightCode } from '@/lib/highlight-code';
 
 const FEATURES_YAML = `id: features
 name: Feature Modules
@@ -45,8 +43,6 @@ rules:
       - module: "{{TARGET_DIR}}/use{{FileName}}ViewModel.test" # → useCartViewModel.test
     fix: Add use{{FileName}}ViewModel.test alongside each viewmodel.`;
 
-const highlightedYaml = highlightCode(FEATURES_YAML, 'yaml');
-
 export default function UnifiedDslSection(): ReactNode {
   return (
     <section
@@ -56,9 +52,7 @@ export default function UnifiedDslSection(): ReactNode {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <UnifiedDslCopy />
-          <Suspense>
-            <UnifiedDslCode />
-          </Suspense>
+          <UnifiedDslCode />
         </div>
       </div>
     </section>
@@ -135,14 +129,13 @@ function UnifiedDslCopy(): ReactNode {
 }
 
 function UnifiedDslCode(): ReactNode {
-  const highlightedHtml = use(highlightedYaml);
   return (
     <div className="relative">
       <div className="absolute -inset-3 bg-[#3E99F5]/5 blur-2xl rounded-full opacity-50" />
-      <CodeBlock
+      <HighlightedCodeBlock
         code={FEATURES_YAML}
+        lang="yaml"
         filename="deslop/rules/features.yaml"
-        highlightedHtml={highlightedHtml}
         className="relative z-10"
       />
     </div>

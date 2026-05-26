@@ -1,10 +1,11 @@
 import { Bot, GitPullRequest, Terminal, Wrench } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
 
-import CodeBlock from '@/components/CodeBlock';
+import { DeslopTerminalOutput } from '@/components/DeslopTerminalOutput';
 import { InfoBubble } from '@/components/InfoBubble';
-import { tw as baseTw } from '@/components/design-system/colors';
+import { GlowPrimaryButton, GlowSecondaryButton, tw as baseTw } from '@/components/design-system';
 import { typeScale } from '@/components/design-system/typography';
+import { GITHUB_DOCS_URL } from '@/lib/deslop';
 
 type AccentColor = 'red' | 'amber' | 'orange' | 'purple' | 'blue';
 
@@ -17,31 +18,31 @@ type PainPoint = {
   callout: string;
 };
 
-const AHA_MOMENT_OUTPUT = `> npx @ivy-apps/deslop check .
-
-🚀 Deslopping project: repo/my-app
-Found 3 problems:
-
-# arch#feature-isolation#@/features/billing/checkout
-
-No feature may import another feature transitively.
-
-Module '@/features/billing/checkout' transitively imports '@/features/auth/debug-modal' via:
-@/features/billing/checkout → @/components/shared/modal → @/features/auth/debug-modal
-
-FIX: Extract shared logic to a @/lib or @/components module.
-
-────────────────────────────────────────────
-√ Checked 412 modules in 870ms`;
-
 const PAIN_POINTS: PainPoint[] = [
   {
     icon: GitPullRequest,
     accentColor: 'red',
     badge: 'Missed opportunity',
     title: 'Senior engineers stuck playing human compiler',
-    description:
-      'Every week, your most expensive engineers waste hours flagging the exact same architectural violations in PRs. Tired reviewers miss things, deadlines loom, and rot slips through because no human holds a full transitive dependency graph in their head.',
+    description: (
+      <>
+        Every week, your most expensive engineers waste hours flagging the exact same architectural
+        violations in PRs. Tired reviewers miss things, deadlines loom, and rot slips through
+        because no human holds a{' '}
+        <InfoBubble
+          label="full transitive dependency graph"
+          tooltip={
+            <>
+              A transitive closure over N modules can contain O(N²) potential reachability paths.
+              Even a modest monorepo with 500 modules produces a dependency graph too large for any
+              reviewer to hold in working memory. The only reliable method for transitive boundary
+              checking is automated static graph traversal — not code review.
+            </>
+          }
+        />{' '}
+        in their head.
+      </>
+    ),
     callout:
       '"We already flagged this boundary leak last sprint. But we had to ship, so it slipped through anyway."',
   },
@@ -59,11 +60,15 @@ const PAIN_POINTS: PainPoint[] = [
           label="Next-token predictors"
           tooltip={
             <>
-              Autoregressive LLMs generate each token by sampling from a probability distribution
-              conditioned on prior context. There is no constraint-satisfaction pass, no global
-              coherence check, and no awareness of your module graph. A model that &ldquo;looks
-              right&rdquo; at every individual step can still produce architecturally catastrophic
-              outputs.
+              Autoregressive LLMs generate tokens by sampling from a softmax probability
+              distribution over the vocabulary, conditioned on prior context. There is no
+              constraint-satisfaction pass at inference time. More critically, these models are
+              trained via RLHF where human raters consistently score working, compiling code higher
+              than architecturally correct but failing code. This bakes a systematic bias into the
+              model&apos;s weights: when forced to choose between honouring an AGENTS.md
+              architecture rule and resolving a concrete compilation error, the model&apos;s learned
+              reward signal drives it toward the immediately verifiable win. The architecture rule
+              is soft statistical context. The compiler error is a hard gradient signal.
             </>
           }
         />{' '}
@@ -92,8 +97,34 @@ const PAIN_POINTS: PainPoint[] = [
     accentColor: 'amber',
     badge: 'Wasted platform time',
     title: 'Weeks to build, forever to maintain',
-    description:
-      "ESLint and Dependency Cruiser can technically detect transitive imports — but it requires layering 2–3 tools with a wall of regex rules and custom AST plugins that nobody owns. Ask yourself: what's more expensive — a platform engineer debugging brittle infrastructure after every Node upgrade, or a €24.99/mo subscription?",
+    description: (
+      <>
+        ESLint and Dependency Cruiser can technically detect transitive imports — but it requires
+        layering 2–3 tools with a wall of regex rules and{' '}
+        <InfoBubble
+          label="custom AST plugins"
+          tooltip={
+            <>
+              ESLint can technically trace transitive imports via{' '}
+              <code className="text-xs bg-white/10 px-1 py-0.5 rounded font-mono">
+                typescript-eslint
+              </code>{' '}
+              type-aware rules, which access the TypeScript{' '}
+              <code className="text-xs bg-white/10 px-1 py-0.5 rounded font-mono">
+                CompilerHost
+              </code>{' '}
+              to follow module symbols across file boundaries. But the cost is severe: it requires
+              loading the full TypeScript compiler on every lint pass, dragging your IDE to a crawl
+              on every file save and adding minutes to CI runtimes. The resulting custom plugin is
+              specialized and fragile — it breaks on major ESLint or Node upgrades, and nobody owns
+              it after the engineer who wrote it leaves.
+            </>
+          }
+        />{' '}
+        that nobody owns. Ask yourself: what&apos;s more expensive — a platform engineer debugging
+        brittle infrastructure after every Node upgrade, or a €24.99/mo subscription?
+      </>
+    ),
     callout:
       '"The staff engineer spent 3 weeks on a custom ESLint plugin and Dependency Cruiser config. It broke again after the Node upgrade."',
   },
@@ -102,8 +133,25 @@ const PAIN_POINTS: PainPoint[] = [
     accentColor: 'purple',
     badge: 'Wasted dev time',
     title: 'Hours lost decoding cryptic, un-fixable lint errors',
-    description:
-      "Custom ESLint rules produce opaque error messages with zero context. Developers stop what they're doing, post in Slack, or worse — disable the rule entirely to pass CI. Deslop outputs human-readable, AI-native markdown errors with exact fix instructions, out of the box.",
+    description: (
+      <>
+        Custom ESLint rules produce opaque error messages with zero context. Developers stop what
+        they&apos;re doing, post in Slack, or worse — disable the rule entirely to pass CI. Deslop
+        outputs{' '}
+        <InfoBubble
+          label="human-readable, AI-native markdown errors"
+          tooltip={
+            <>
+              Standard ESLint formatters emit a file path, line number, and rule ID — no causal
+              chain, no transitive path, no fix instruction. Deslop errors include the full import
+              chain that caused the violation plus a structured fix directive: output that both
+              humans and AI coding assistants can parse and act on directly, without a Slack detour.
+            </>
+          }
+        />{' '}
+        with exact fix instructions, out of the box.
+      </>
+    ),
     callout:
       '"no-cross-layer-import: violation detected" — and absolutely no guidance on what to do next.',
   },
@@ -202,19 +250,43 @@ function AhaMoment(): ReactNode {
         </p>
       </div>
 
-      <CodeBlock code={AHA_MOMENT_OUTPUT} filename="terminal" className="mb-6" />
+      <DeslopTerminalOutput
+        projectName="repo/my-app"
+        violations={[
+          {
+            ruleId: 'arch#feature-isolation#@/features/billing/checkout',
+            description: 'No feature may import another feature transitively.',
+            offendingModule: '@/features/billing/checkout',
+            importedModule: '@/features/auth/debug-modal',
+            transitiveChain:
+              '@/features/billing/checkout → @/components/shared/modal → @/features/auth/debug-modal',
+            fix: 'Extract shared logic to a @/lib or @/components module.',
+          },
+        ]}
+        checkedModules={412}
+        durationMs={870}
+      />
 
-      <p className={`text-center text-sm ${baseTw.text.muted} mb-8`}>
+      <p className={`text-center text-sm ${baseTw.text.muted} mt-6 mb-8`}>
         When you run it, you will find violations you didn&apos;t expect to exist.{' '}
         <strong className="text-zinc-300">That is the moment Deslop pays for itself.</strong>
       </p>
 
-      <div className="flex justify-center">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4">
+        <a href="/get-started" className="contents">
+          <GlowPrimaryButton className="w-full sm:w-auto">
+            Reclaim Lost Eng Hours
+          </GlowPrimaryButton>
+        </a>
         <a
-          href="/get-started"
-          className="shrink-0 inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-8 py-3.5 text-base font-bold text-zinc-950 ring-1 ring-white/20 transition-all duration-300 hover:bg-zinc-100 shadow-[0_0_28px_-6px_rgba(62,153,245,0.35),0_0_32px_-6px_rgba(92,61,245,0.4)] hover:shadow-[0_0_46px_-2px_rgba(62,153,245,0.56),0_0_56px_-2px_rgba(92,61,245,0.58),0_0_96px_-10px_rgba(62,153,245,0.32)] whitespace-nowrap"
+          href={GITHUB_DOCS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="contents"
         >
-          Reclaim Lost Eng Hours
+          <GlowSecondaryButton className="w-full sm:w-auto">
+            Read the Docs
+          </GlowSecondaryButton>
         </a>
       </div>
     </div>

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import AppNavbar from '@/components/AppNavbar';
 import CodeBlock from '@/components/CodeBlock';
 import CopyButton from '@/components/CopyButton';
+import { HighlightedCodeBlock } from '@/components/HighlightedCodeBlock';
 import { tw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
 import { GITHUB_DOCS_URL, POLAR_MANAGE_URL } from '@/lib/deslop';
@@ -110,7 +111,7 @@ export default function GetStartedView(): ReactNode {
           </span>
           <CopyButton text={RULEBOOK_YAML} />
         </div>
-        <CodeBlock code={RULEBOOK_YAML} filename="deslop/rules/arch.yaml" className="mb-10" />
+        <HighlightedCodeBlock code={RULEBOOK_YAML} lang="yaml" filename="deslop/rules/arch.yaml" className="mb-10" />
 
         {/* Step 3 */}
         <StepLabel number={3} title="Run the Audit" />
