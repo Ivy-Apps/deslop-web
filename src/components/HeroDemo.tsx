@@ -27,7 +27,7 @@ export function HeroDemo(): ReactNode {
             <div className={`h-2.5 w-2.5 rounded-full ${baseTw.window.zoom}`} />
           </div>
           <div className="flex min-w-0 flex-1 items-center gap-4">
-            <Tab label="@/proxy.ts" active />
+            <Tab label="@/app/api/orders/route.ts" active />
             <Tab label="Terminal" active={false} />
           </div>
         </div>
@@ -65,7 +65,7 @@ function CodePane(): ReactNode {
           number={1}
           content={
             <span className="text-zinc-500">
-              {'// Runs on the Edge Runtime'}
+              {'// POST /api/orders — Node.js runtime'}
             </span>
           }
         />
@@ -74,7 +74,7 @@ function CodePane(): ReactNode {
           content={
             <>
               <span className="text-[#3E99F5]">{'import'}</span>
-              <span className="text-zinc-300">{' { NextRequest } '}</span>
+              <span className="text-zinc-300">{' { NextResponse } '}</span>
               <span className="text-[#3E99F5]">{'from'}</span>
               <span className="text-zinc-400">{" 'next/server'"}</span>
               <span className="text-zinc-400">{';'}</span>
@@ -86,10 +86,11 @@ function CodePane(): ReactNode {
           content={
             <>
               <span className="text-[#3E99F5]">{'import'}</span>
-              <span className="text-zinc-300">{' { adminGuard } '}</span>
+              <span className="text-zinc-300">{' { logOrderTelemetry } '}</span>
               <span className="text-[#3E99F5]">{'from'}</span>
-              <span className="text-red-400/80">{" '@/lib/guards'"}</span>
+              <span className="text-red-400/80">{" '@/lib/analytics'"}</span>
               <span className="text-zinc-400">{';'}</span>
+              <span className="text-zinc-600">{' // ← Looks innocent'}</span>
             </>
           }
         />
@@ -98,10 +99,10 @@ function CodePane(): ReactNode {
           number={5}
           content={
             <>
-              <span className="text-[#3E99F5]">{'export function'}</span>
-              <span className="text-zinc-100">{' proxy'}</span>
+              <span className="text-[#3E99F5]">{'export async function'}</span>
+              <span className="text-zinc-100">{' POST'}</span>
               <span className="text-zinc-400">{'(req: '}</span>
-              <span className="text-[#3E99F5]">{'NextRequest'}</span>
+              <span className="text-[#3E99F5]">{'Request'}</span>
               <span className="text-zinc-400">{')'}</span>
               <span className="text-zinc-400">{' {'}</span>
             </>
@@ -111,12 +112,73 @@ function CodePane(): ReactNode {
           number={6}
           content={
             <span className="pl-4">
-              <span className="text-zinc-500">{'// ...'}</span>
+              <span className="text-[#3E99F5]">{'const'}</span>
+              <span className="text-zinc-300">{' body '}</span>
+              <span className="text-zinc-400">{'='}</span>
+              <span className="text-zinc-400">{' await '}</span>
+              <span className="text-zinc-300">{'req'}</span>
+              <span className="text-zinc-400">{'.'}</span>
+              <span className="text-zinc-200">{'json'}</span>
+              <span className="text-zinc-400">{'();'}</span>
+            </span>
+          }
+        />
+        <CodeLine number={7} content={<span />} />
+        <CodeLine
+          number={8}
+          content={
+            <span className="pl-4 text-zinc-500">
+              {'// next build passes completely.'}
             </span>
           }
         />
         <CodeLine
-          number={7}
+          number={9}
+          content={
+            <span className="pl-4 text-zinc-500">
+              {'// First production request:'}
+            </span>
+          }
+        />
+        <CodeLine
+          number={10}
+          content={
+            <span className="pl-4 text-red-500/70">
+              {'// ReferenceError: window is not defined'}
+            </span>
+          }
+        />
+        <CodeLine
+          number={11}
+          content={
+            <span className="pl-4">
+              <span className="text-zinc-400">{'await '}</span>
+              <span className="text-zinc-200">{'logOrderTelemetry'}</span>
+              <span className="text-zinc-400">{'(body.'}</span>
+              <span className="text-zinc-300">{'id'}</span>
+              <span className="text-zinc-400">{');'}</span>
+            </span>
+          }
+        />
+        <CodeLine number={12} content={<span />} />
+        <CodeLine
+          number={13}
+          content={
+            <span className="pl-4">
+              <span className="text-[#3E99F5]">{'return'}</span>
+              <span className="text-zinc-300">{' NextResponse'}</span>
+              <span className="text-zinc-400">{'.'}</span>
+              <span className="text-zinc-200">{'json'}</span>
+              <span className="text-zinc-400">{'({'}</span>
+              <span className="text-zinc-300">{' success'}</span>
+              <span className="text-zinc-400">{':'}</span>
+              <span className="text-[#3E99F5]">{' true'}</span>
+              <span className="text-zinc-400">{' });'}</span>
+            </span>
+          }
+        />
+        <CodeLine
+          number={14}
           content={<span className="text-zinc-400">{'}'}</span>}
         />
       </div>
@@ -183,49 +245,51 @@ function TerminalPane(): ReactNode {
 
         <div className="space-y-2">
           <p className="text-red-400/90 font-semibold">
-            {'# arch#proxy-no-react#@/proxy'}
+            {'# arch#api-no-browser-globals#@/app/api/orders/route'}
           </p>
           <p className="text-zinc-400 leading-relaxed">
             {
-              'The Next.js Proxy runs on the Edge Runtime — a V8 isolate with no Node.js APIs and no React support. Transitively importing '
+              'API routes run in Node.js — browser globals like '
             }
-            <span className="text-red-400/80">{'react'}</span>
+            <span className="text-red-400/80">{'window'}</span>
+            {' and '}
+            <span className="text-red-400/80">{'document'}</span>
             {
-              ' crashes every request at runtime, not at build time. Invisible without static analysis.'
+              " don't exist here. Transitively importing a browser-only SDK crashes every request at runtime. Passes "
             }
+            <span className="text-zinc-300">{'next build'}</span>
+            {'. Invisible without graph analysis.'}
           </p>
 
           <p className="text-zinc-300">
             {'Module '}
-            <span className="text-zinc-100 font-semibold">{"'@/proxy'"}</span>
+            <span className="text-zinc-100 font-semibold">{"'@/app/api/orders/route'"}</span>
             {' transitively imports '}
-            <span className="text-red-400">{"'react'"}</span>
+            <span className="text-red-400">{"'mixpanel-browser'"}</span>
             {' via:'}
           </p>
           <p className="text-zinc-500 font-mono text-xs pl-2">
-            {'@/proxy → @/lib/guards → @/components/Redirect → react'}
+            {'@/app/api/orders/route → @/lib/analytics → mixpanel-browser'}
           </p>
 
           <div className="rounded bg-zinc-900/60 border border-white/[0.06] px-3 py-2">
             <p className="text-zinc-500 text-xs mb-1">{'ts'}</p>
             <p>
               <span className="text-[#3E99F5]">{'import'}</span>
-              <span className="text-zinc-300">{' { adminGuard } '}</span>
+              <span className="text-zinc-300">{' { logOrderTelemetry } '}</span>
               <span className="text-[#3E99F5]">{'from'}</span>
-              <span className="text-red-400/80">{" '@/lib/guards'"}</span>
+              <span className="text-red-400/80">{" '@/lib/analytics'"}</span>
               <span className="text-zinc-400">{';'}</span>
             </p>
           </div>
 
           <p className="text-zinc-300 leading-relaxed">
             <span className="text-[#3E99F5] font-semibold">{'FIX: '}</span>
-            {'Replace '}
-            <span className="text-zinc-100">{'@/lib/guards'}</span>
-            {
-              ' with an Edge-safe utility that uses only URL and header manipulation — no '
-            }
-            <span className="text-zinc-100">{'@/components'}</span>
-            {', no React.'}
+            {'Use '}
+            <span className="text-zinc-100">{'mixpanel-node'}</span>
+            {' in a dedicated '}
+            <span className="text-zinc-100">{'@/lib/analytics.server'}</span>
+            {' module. Never import browser SDKs from route handlers.'}
           </p>
         </div>
 
