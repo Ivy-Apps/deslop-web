@@ -63,10 +63,13 @@ const ROWS: Row[] = [
   {
     feature: 'Transitive checks',
     deslop: { kind: 'yes', label: 'transitive: true on any rule' },
-    eslint: { kind: 'no' },
+    eslint: {
+      kind: 'limited',
+      label: 'possible via typescript-eslint, but severe IDE/CI performance cost',
+    },
     depCruiser: {
       kind: 'limited',
-      label: 'reachable attr, path conditions only',
+      label: 'reachable attr, complex regex config required',
     },
   },
   {
@@ -104,7 +107,7 @@ const ROWS: Row[] = [
     },
     eslint: {
       kind: 'limited',
-      label: 'JSON count-based file, added v9.24 Apr 2025',
+      label: 'Bulk Suppressions (eslint --suppress-all, v9.24 Apr 2025)',
     },
     depCruiser: {
       kind: 'limited',

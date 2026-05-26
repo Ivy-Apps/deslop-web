@@ -73,9 +73,14 @@ export default function WhyDeslopSection(): ReactNode {
 
         <div className="mt-14 mb-8">
           <DescriptionText>
-            And Deslop doesn&apos;t just check the surface. Unlike ESLint, which
-            only sees direct imports, Deslop traces the full dependency graph.
-            Add{' '}
+            And Deslop doesn&apos;t just check the surface. Unlike ESLint —
+            which can only trace cross-file dependencies by loading the full{' '}
+            <code className="text-zinc-200 font-mono text-[0.9em]">
+              typescript-eslint
+            </code>{' '}
+            compiler API, at a severe IDE and CI performance cost — Deslop
+            traces the full dependency graph as its primary job, in
+            milliseconds. Add{' '}
             <code className="text-zinc-200 font-mono text-[0.9em]">
               transitive: true
             </code>{' '}

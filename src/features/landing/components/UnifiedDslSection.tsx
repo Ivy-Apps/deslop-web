@@ -1,5 +1,7 @@
 import { type ReactNode, Suspense, use } from 'react';
 
+import { InfoBubble } from '@/components/InfoBubble';
+
 import CodeBlock from '@/components/CodeBlock';
 import { tw as baseTw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
@@ -116,13 +118,16 @@ function UnifiedDslCopy(): ReactNode {
           <span className="text-zinc-100 font-semibold">~30 lines of YAML</span>{' '}
           in Deslop. Equivalent coverage requires{' '}
           <span className="text-zinc-100 font-semibold">200+ lines</span> across
-          ESLint, Dependency Cruiser, and a custom script —{' '}
-          <span className="text-zinc-100 font-semibold">
-            transitive reachability checks are not supported whatsoever
-          </span>
-          , <code className="font-mono text-[0.9em] text-zinc-300">exists</code>{' '}
-          needs a custom script on top, and your team inherits two tools with
-          independent release cycles and no performance guarantees at scale.
+          ESLint, Dependency Cruiser, and a custom script — Dependency
+          Cruiser&apos;s transitive checks need dense regex rules with a{' '}
+          <InfoBubble
+            label="hidden maintenance cost"
+            tooltip="Dependency Cruiser expresses reachability rules as complex regex capturing groups. The moment a directory is renamed, rules break silently or produce false positives — and nobody owns or understands the config after the person who wrote it leaves."
+          />
+          ,{' '}
+          <code className="font-mono text-[0.9em] text-zinc-300">exists</code>{' '}
+          checks need a custom script on top, and your team inherits two tools
+          with independent release cycles and no performance guarantees at scale.
         </p>
       </div>
     </div>
