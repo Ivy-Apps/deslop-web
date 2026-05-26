@@ -2,9 +2,13 @@ import { Bot, GitPullRequest, Terminal, Wrench } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
 
 import { DeslopTerminalOutput } from '@/components/DeslopTerminalOutput';
-import { InfoBubble } from '@/components/InfoBubble';
-import { GlowPrimaryButton, GlowSecondaryButton, tw as baseTw } from '@/components/design-system';
+import {
+  tw as baseTw,
+  GlowPrimaryButton,
+  GlowSecondaryButton,
+} from '@/components/design-system';
 import { typeScale } from '@/components/design-system/typography';
+import { InfoBubble } from '@/components/InfoBubble';
 import { GITHUB_DOCS_URL } from '@/lib/deslop';
 
 type AccentColor = 'red' | 'amber' | 'orange' | 'purple' | 'blue';
@@ -26,16 +30,17 @@ const PAIN_POINTS: PainPoint[] = [
     title: 'Senior engineers stuck playing human compiler',
     description: (
       <>
-        Every week, your most expensive engineers waste hours flagging the exact same architectural
-        violations in PRs. Tired reviewers miss things, deadlines loom, and rot slips through
-        because no human holds a{' '}
+        Every week, your most expensive engineers waste hours flagging the exact
+        same architectural violations in PRs. Tired reviewers miss things,
+        deadlines loom, and rot slips through because no human holds a{' '}
         <InfoBubble
           label="full transitive dependency graph"
           tooltip={
             <>
-              A transitive closure over N modules can contain O(N²) potential reachability paths.
-              Even a modest monorepo with 500 modules produces a dependency graph too large for any
-              reviewer to hold in working memory. The only reliable method for transitive boundary
+              A transitive closure over N modules can contain O(N²) potential
+              reachability paths. Even a modest monorepo with 500 modules
+              produces a dependency graph too large for any reviewer to hold in
+              working memory. The only reliable method for transitive boundary
               checking is automated static graph traversal — not code review.
             </>
           }
@@ -54,21 +59,26 @@ const PAIN_POINTS: PainPoint[] = [
     description: (
       <>
         Relying on{' '}
-        <code className="text-xs bg-white/10 px-1 py-0.5 rounded font-mono">AGENTS.md</code> or AI
-        code reviewers?{' '}
+        <code className="text-xs bg-white/10 px-1 py-0.5 rounded font-mono">
+          AGENTS.md
+        </code>{' '}
+        or AI code reviewers?{' '}
         <InfoBubble
           label="Next-token predictors"
           tooltip={
             <>
-              Autoregressive LLMs generate tokens by sampling from a softmax probability
-              distribution over the vocabulary, conditioned on prior context. There is no
-              constraint-satisfaction pass at inference time. More critically, these models are
-              trained via RLHF where human raters consistently score working, compiling code higher
-              than architecturally correct but failing code. This bakes a systematic bias into the
-              model&apos;s weights: when forced to choose between honouring an AGENTS.md
-              architecture rule and resolving a concrete compilation error, the model&apos;s learned
-              reward signal drives it toward the immediately verifiable win. The architecture rule
-              is soft statistical context. The compiler error is a hard gradient signal.
+              Autoregressive LLMs generate tokens by sampling from a softmax
+              probability distribution over the vocabulary, conditioned on prior
+              context. There is no constraint-satisfaction pass at inference
+              time. More critically, these models are trained via RLHF where
+              human raters consistently score working, compiling code higher
+              than architecturally correct but failing code. This bakes a
+              systematic bias into the model&apos;s weights: when forced to
+              choose between honouring an AGENTS.md architecture rule and
+              resolving a concrete compilation error, the model&apos;s learned
+              reward signal drives it toward the immediately verifiable win. The
+              architecture rule is soft statistical context. The compiler error
+              is a hard gradient signal.
             </>
           }
         />{' '}
@@ -77,16 +87,17 @@ const PAIN_POINTS: PainPoint[] = [
           label="whole-graph context"
           tooltip={
             <>
-              Detecting a transitive violation across 3+ hops requires traversing a fully resolved
-              import graph — not pattern-matching source files. An LLM reading file-by-file in a
-              limited context window physically cannot reconstruct this graph, making it structurally
-              unfit for reliable architectural enforcement.
+              Detecting a transitive violation across 3+ hops requires
+              traversing a fully resolved import graph — not pattern-matching
+              source files. An LLM reading file-by-file in a limited context
+              window physically cannot reconstruct this graph, making it
+              structurally unfit for reliable architectural enforcement.
             </>
           }
         />{' '}
-        and will confidently justify a critical boundary violation just to get the code compiling.
-        Deslop is different: deterministic static graph traversal — no hallucinations, no false
-        positives, no dice roll.
+        and will confidently justify a critical boundary violation just to get
+        the code compiling. Deslop is different: deterministic static graph
+        traversal — no hallucinations, no false positives, no dice roll.
       </>
     ),
     callout:
@@ -99,8 +110,8 @@ const PAIN_POINTS: PainPoint[] = [
     title: 'Weeks to build, forever to maintain',
     description: (
       <>
-        ESLint and Dependency Cruiser can technically detect transitive imports — but it requires
-        layering 2–3 tools with a wall of regex rules and{' '}
+        ESLint and Dependency Cruiser can technically detect transitive imports
+        — but it requires layering 2–3 tools with a wall of regex rules and{' '}
         <InfoBubble
           label="custom AST plugins"
           tooltip={
@@ -113,16 +124,19 @@ const PAIN_POINTS: PainPoint[] = [
               <code className="text-xs bg-white/10 px-1 py-0.5 rounded font-mono">
                 CompilerHost
               </code>{' '}
-              to follow module symbols across file boundaries. But the cost is severe: it requires
-              loading the full TypeScript compiler on every lint pass, dragging your IDE to a crawl
-              on every file save and adding minutes to CI runtimes. The resulting custom plugin is
-              specialized and fragile — it breaks on major ESLint or Node upgrades, and nobody owns
-              it after the engineer who wrote it leaves.
+              to follow module symbols across file boundaries. But the cost is
+              severe: it requires loading the full TypeScript compiler on every
+              lint pass, dragging your IDE to a crawl on every file save and
+              adding minutes to CI runtimes. The resulting custom plugin is
+              specialized and fragile — it breaks on major ESLint or Node
+              upgrades, and nobody owns it after the engineer who wrote it
+              leaves.
             </>
           }
         />{' '}
-        that nobody owns. Ask yourself: what&apos;s more expensive — a platform engineer debugging
-        brittle infrastructure after every Node upgrade, or a €24.99/mo subscription?
+        that nobody owns. Ask yourself: what&apos;s more expensive — a platform
+        engineer debugging brittle infrastructure after every Node upgrade, or a
+        €24.99/mo subscription?
       </>
     ),
     callout:
@@ -135,17 +149,19 @@ const PAIN_POINTS: PainPoint[] = [
     title: 'Hours lost decoding cryptic, un-fixable lint errors',
     description: (
       <>
-        Custom ESLint rules produce opaque error messages with zero context. Developers stop what
-        they&apos;re doing, post in Slack, or worse — disable the rule entirely to pass CI. Deslop
-        outputs{' '}
+        Custom ESLint rules produce opaque error messages with zero context.
+        Developers stop what they&apos;re doing, post in Slack, or worse —
+        disable the rule entirely to pass CI. Deslop outputs{' '}
         <InfoBubble
           label="human-readable, AI-native markdown errors"
           tooltip={
             <>
-              Standard ESLint formatters emit a file path, line number, and rule ID — no causal
-              chain, no transitive path, no fix instruction. Deslop errors include the full import
-              chain that caused the violation plus a structured fix directive: output that both
-              humans and AI coding assistants can parse and act on directly, without a Slack detour.
+              Standard ESLint formatters emit a file path, line number, and rule
+              ID — no causal chain, no transitive path, no fix instruction.
+              Deslop errors include the full import chain that caused the
+              violation plus a structured fix directive: output that both humans
+              and AI coding assistants can parse and act on directly, without a
+              Slack detour.
             </>
           }
         />{' '}
@@ -218,9 +234,10 @@ export default function PrTaxSection(): ReactNode {
             Every week without Deslop has a price
           </h2>
           <p className={`text-xl leading-relaxed ${baseTw.text.muted}`}>
-            Whether you&apos;re babysitting architecture manually on PR reviews, trusting AI coding
-            assistants, or wrestling with fragile open-source linting setups — your team is paying
-            a hidden tax in lost engineering hours.
+            Whether you&apos;re babysitting architecture manually on PR reviews,
+            trusting AI coding assistants, or wrestling with fragile open-source
+            linting setups — your team is paying a hidden tax in lost
+            engineering hours.
           </p>
         </header>
 
@@ -244,9 +261,10 @@ function AhaMoment(): ReactNode {
           Think your codebase is clean? Let&apos;s find out.
         </h3>
         <p className={`text-lg leading-relaxed ${baseTw.text.muted}`}>
-          Most teams believe their architecture is enforced — until they run their first Deslop
-          check. Line-by-line linters are blind to multi-hop transitive imports. Rot accumulates
-          silently, deep inside your dependency graph.
+          Most teams believe their architecture is enforced — until they run
+          their first Deslop check. Line-by-line linters are blind to multi-hop
+          transitive imports. Rot accumulates silently, deep inside your
+          dependency graph.
         </p>
       </div>
 
@@ -268,8 +286,11 @@ function AhaMoment(): ReactNode {
       />
 
       <p className={`text-center text-sm ${baseTw.text.muted} mt-6 mb-8`}>
-        When you run it, you will find violations you didn&apos;t expect to exist.{' '}
-        <strong className="text-zinc-300">That is the moment Deslop pays for itself.</strong>
+        When you run it, you will find violations you didn&apos;t expect to
+        exist.{' '}
+        <strong className="text-zinc-300">
+          That is the moment Deslop pays for itself.
+        </strong>
       </p>
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4">

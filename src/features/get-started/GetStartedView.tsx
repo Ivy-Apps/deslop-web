@@ -4,9 +4,9 @@ import type { ReactNode } from 'react';
 import AppNavbar from '@/components/AppNavbar';
 import CodeBlock from '@/components/CodeBlock';
 import CopyButton from '@/components/CopyButton';
-import { HighlightedCodeBlock } from '@/components/HighlightedCodeBlock';
 import { tw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
+import { HighlightedCodeBlock } from '@/components/HighlightedCodeBlock';
 import { GITHUB_DOCS_URL, POLAR_MANAGE_URL } from '@/lib/deslop';
 
 const INSTALL_COMMAND = 'npm install --save-dev @ivy-apps/deslop';
@@ -71,39 +71,56 @@ export default function GetStartedView(): ReactNode {
             Stop guessing. Find out exactly where your architecture is leaking.
           </p>
           <p className={`${tw.text.muted}`}>
-            In the AI era, agents write code faster than any human — but speed without guardrails
-            is how architecture silently rots. Let&apos;s run a quick structural audit on your
-            codebase to see what your current tools are missing.
+            In the AI era, agents write code faster than any human — but speed
+            without guardrails is how architecture silently rots. Let&apos;s run
+            a quick structural audit on your codebase to see what your current
+            tools are missing.
           </p>
         </div>
 
         {/* Step 1 */}
         <StepLabel number={1} title="Install Deslop" />
         <p className={`${typeScale.bodyMd} ${tw.text.muted} mb-5`}>
-          Add Deslop to your project as a dev dependency. It&apos;s built in Haskell,
-          lightning-fast, and completely free for local use.
+          Add Deslop to your project as a dev dependency. It&apos;s built in
+          Haskell, lightning-fast, and completely free for local use.
         </p>
         <div className="mb-3 flex items-center justify-between">
-          <span className={`text-sm font-medium ${tw.text.secondary}`}>Install via npm</span>
+          <span className={`text-sm font-medium ${tw.text.secondary}`}>
+            Install via npm
+          </span>
           <CopyButton text={INSTALL_COMMAND} />
         </div>
-        <CodeBlock code={INSTALL_COMMAND} filename="terminal" className="mb-5" />
+        <CodeBlock
+          code={INSTALL_COMMAND}
+          filename="terminal"
+          className="mb-5"
+        />
 
         <p className={`text-sm ${tw.text.muted} mb-3`}>
           Or try instantly without installing:
         </p>
         <div className="mb-3 flex items-center justify-between">
-          <span className={`text-sm font-medium ${tw.text.secondary}`}>Quick try via npx</span>
+          <span className={`text-sm font-medium ${tw.text.secondary}`}>
+            Quick try via npx
+          </span>
           <CopyButton text={NPX_CHECK_COMMAND} />
         </div>
-        <CodeBlock code={NPX_CHECK_COMMAND} filename="terminal" className="mb-10" />
+        <CodeBlock
+          code={NPX_CHECK_COMMAND}
+          filename="terminal"
+          className="mb-10"
+        />
 
         {/* Step 2 */}
         <StepLabel number={2} title="Create Your First Rulebook" />
         <p className={`${typeScale.bodyMd} ${tw.text.muted} mb-5`}>
-          Create <code className="text-xs bg-white/10 px-1.5 py-0.5 rounded font-mono text-zinc-200">deslop/rules/arch.yaml</code> and paste these two baseline rules. They catch the most
-          critical multi-hop architectural leaks that slip past manual PR reviews and standard
-          linters.
+          Create{' '}
+          <code className="text-xs bg-white/10 px-1.5 py-0.5 rounded font-mono text-zinc-200">
+            deslop/rules/arch.yaml
+          </code>{' '}
+          and paste these two baseline rules. They catch the most critical
+          multi-hop architectural leaks that slip past manual PR reviews and
+          standard linters.
         </p>
         <div className="mb-3 flex items-center justify-between">
           <span className={`text-sm font-medium ${tw.text.secondary}`}>
@@ -111,28 +128,42 @@ export default function GetStartedView(): ReactNode {
           </span>
           <CopyButton text={RULEBOOK_YAML} />
         </div>
-        <HighlightedCodeBlock code={RULEBOOK_YAML} lang="yaml" filename="deslop/rules/arch.yaml" className="mb-10" />
+        <HighlightedCodeBlock
+          code={RULEBOOK_YAML}
+          lang="yaml"
+          filename="deslop/rules/arch.yaml"
+          className="mb-10"
+        />
 
         {/* Step 3 */}
         <StepLabel number={3} title="Run the Audit" />
         <p className={`${typeScale.bodyMd} ${tw.text.muted} mb-5`}>
-          Run the check in your project root. Deslop will traverse your full dependency graph and
-          surface every transitive violation your current linters are missing.
+          Run the check in your project root. Deslop will traverse your full
+          dependency graph and surface every transitive violation your current
+          linters are missing.
         </p>
         <div className="mb-3 flex items-center justify-between">
-          <span className={`text-sm font-medium ${tw.text.secondary}`}>Run in your terminal</span>
+          <span className={`text-sm font-medium ${tw.text.secondary}`}>
+            Run in your terminal
+          </span>
           <CopyButton text={NPX_CHECK_COMMAND} />
         </div>
-        <CodeBlock code={NPX_CHECK_COMMAND} filename="terminal" className="mb-6" />
+        <CodeBlock
+          code={NPX_CHECK_COMMAND}
+          filename="terminal"
+          className="mb-6"
+        />
 
         <div
           className={`p-5 rounded-2xl border border-[#3E99F5]/20 bg-[#3E99F5]/[0.05] mb-10`}
         >
           <p className={`${typeScale.bodySm} ${tw.text.secondary}`}>
-            <strong className="text-zinc-100 font-semibold">Prepare to be surprised.</strong>{' '}
-            Most teams find 3–15 critical multi-hop dependency leaks on their very first run. Once
-            you see the graph violations Deslop uncovers, head to the docs to automate this check
-            in your CI pipeline.
+            <strong className="text-zinc-100 font-semibold">
+              Prepare to be surprised.
+            </strong>{' '}
+            Most teams find 3–15 critical multi-hop dependency leaks on their
+            very first run. Once you see the graph violations Deslop uncovers,
+            head to the docs to automate this check in your CI pipeline.
           </p>
         </div>
 
@@ -150,7 +181,13 @@ export default function GetStartedView(): ReactNode {
   );
 }
 
-function StepLabel({ number, title }: { number: number; title: string }): ReactNode {
+function StepLabel({
+  number,
+  title,
+}: {
+  number: number;
+  title: string;
+}): ReactNode {
   return (
     <div className="flex items-center gap-3 mb-4">
       <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[#3E99F5]/20 border border-[#3E99F5]/30 text-[#3E99F5] text-sm font-bold shrink-0">

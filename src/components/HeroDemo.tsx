@@ -248,9 +248,7 @@ function TerminalPane(): ReactNode {
             {'# arch#api-no-browser-globals#@/app/api/orders/route'}
           </p>
           <p className="text-zinc-400 leading-relaxed">
-            {
-              'API routes run in Node.js — browser globals like '
-            }
+            {'API routes run in Node.js — browser globals like '}
             <span className="text-red-400/80">{'window'}</span>
             {' and '}
             <span className="text-red-400/80">{'document'}</span>
@@ -263,7 +261,9 @@ function TerminalPane(): ReactNode {
 
           <p className="text-zinc-300">
             {'Module '}
-            <span className="text-zinc-100 font-semibold">{"'@/app/api/orders/route'"}</span>
+            <span className="text-zinc-100 font-semibold">
+              {"'@/app/api/orders/route'"}
+            </span>
             {' transitively imports '}
             <span className="text-red-400">{"'mixpanel-browser'"}</span>
             {' via:'}

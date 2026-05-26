@@ -1,10 +1,8 @@
 import { ArrowDown, FileCode, GitBranch, Network } from 'lucide-react';
 import type { ReactNode } from 'react';
-
-import { InfoBubble } from '@/components/InfoBubble';
-
 import { tw as baseTw } from '@/components/design-system/colors';
 import { textPresets, typeScale } from '@/components/design-system/typography';
+import { InfoBubble } from '@/components/InfoBubble';
 
 export default function TechnicalDetailsSection(): ReactNode {
   return (
@@ -28,10 +26,9 @@ export default function TechnicalDetailsSection(): ReactNode {
             structural foundation that makes architectural guardrails{' '}
             <b>deterministic, not advisory</b>. Deslop contains no AI: unlike
             probabilistic code review tools that suggest fixes, it evaluates
-            your RuleBook as{' '}
-            <b>pure static analysis</b> — identical result on every run, zero
-            chance of hallucination or failure. Every rule sees the full
-            transitive import chain, catching violations that{' '}
+            your RuleBook as <b>pure static analysis</b> — identical result on
+            every run, zero chance of hallucination or failure. Every rule sees
+            the full transitive import chain, catching violations that{' '}
             <InfoBubble
               label="single-file tools are not designed to detect"
               tooltip="Technically, you can force ESLint to trace cross-file dependencies via typescript-eslint type-aware rules — but this requires loading the full TypeScript compiler on every lint pass, causing severe IDE slowdowns and bloated CI runtimes. It is a workaround, not a feature."

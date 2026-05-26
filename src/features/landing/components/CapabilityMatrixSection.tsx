@@ -65,7 +65,8 @@ const ROWS: Row[] = [
     deslop: { kind: 'yes', label: 'transitive: true on any rule' },
     eslint: {
       kind: 'limited',
-      label: 'possible via typescript-eslint, but severe IDE/CI performance cost',
+      label:
+        'possible via typescript-eslint, but severe IDE/CI performance cost',
     },
     depCruiser: {
       kind: 'limited',
@@ -266,7 +267,12 @@ function Cell({
         <span className="flex items-start gap-2 text-zinc-600">
           <X className="w-4 h-4 shrink-0 mt-0.5" aria-hidden />
           <span className="text-sm">
-            No{value.label ? <span className="text-xs text-zinc-500 ml-1">— {value.label}</span> : null}
+            No
+            {value.label ? (
+              <span className="text-xs text-zinc-500 ml-1">
+                — {value.label}
+              </span>
+            ) : null}
           </span>
         </span>
       );

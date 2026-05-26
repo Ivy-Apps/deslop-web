@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { textPresets, tw as baseTw } from '@/components/design-system';
+import { tw as baseTw, textPresets } from '@/components/design-system';
 
 export type DeslopViolation = {
   ruleId: string;
@@ -32,10 +32,14 @@ export function DeslopTerminalOutput({
       <div className="flex items-center gap-3 border-b border-white/[0.06] bg-zinc-900/50 px-4 py-3 md:px-5">
         <div className="flex shrink-0 gap-1.5">
           <div className={`h-2.5 w-2.5 rounded-full ${baseTw.window.close}`} />
-          <div className={`h-2.5 w-2.5 rounded-full ${baseTw.window.minimize}`} />
+          <div
+            className={`h-2.5 w-2.5 rounded-full ${baseTw.window.minimize}`}
+          />
           <div className={`h-2.5 w-2.5 rounded-full ${baseTw.window.zoom}`} />
         </div>
-        <span className={`${textPresets.codeFilename} ${baseTw.text.muted}`}>Terminal</span>
+        <span className={`${textPresets.codeFilename} ${baseTw.text.muted}`}>
+          Terminal
+        </span>
       </div>
 
       {/* Terminal body */}
@@ -50,7 +54,9 @@ export function DeslopTerminalOutput({
           {/* Header */}
           <div className="space-y-0.5">
             <p>
-              <span className="text-[#3E99F5]">{'🚀 Deslopping project: '}</span>
+              <span className="text-[#3E99F5]">
+                {'🚀 Deslopping project: '}
+              </span>
               <span className="text-zinc-200 font-semibold">{projectName}</span>
             </p>
             <p>
@@ -60,8 +66,11 @@ export function DeslopTerminalOutput({
             </p>
           </div>
 
-          {violations.map((v, i) => (
-            <ViolationBlock key={i} violation={v} />
+          {violations.map((v) => (
+            <ViolationBlock
+              key={`${v.ruleId}-${v.offendingModule}-${v.importedModule}`}
+              violation={v}
+            />
           ))}
 
           <div className="h-px bg-white/[0.08]" aria-hidden />
@@ -80,7 +89,11 @@ export function DeslopTerminalOutput({
   );
 }
 
-function ViolationBlock({ violation: v }: { violation: DeslopViolation }): ReactNode {
+function ViolationBlock({
+  violation: v,
+}: {
+  violation: DeslopViolation;
+}): ReactNode {
   return (
     <div className="space-y-2">
       <div className="h-px bg-white/[0.08]" aria-hidden />
@@ -96,7 +109,9 @@ function ViolationBlock({ violation: v }: { violation: DeslopViolation }): React
         <span className="text-red-400">{`'${v.importedModule}'`}</span>
         {' via:'}
       </p>
-      <p className="text-zinc-500 font-mono text-xs pl-2">{v.transitiveChain}</p>
+      <p className="text-zinc-500 font-mono text-xs pl-2">
+        {v.transitiveChain}
+      </p>
 
       <p className="text-zinc-300 leading-relaxed">
         <span className="text-[#3E99F5] font-semibold">{'FIX: '}</span>

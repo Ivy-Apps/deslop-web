@@ -70,11 +70,13 @@ const FAQ_ITEMS: FaqItem[] = [
           : one ESLint plugin to forbid imports, Dependency Cruiser for
           transitive boundary checks, and a custom script to enforce companion
           file existence. That&apos;s four rules in Deslop — roughly{' '}
-          <strong className="text-zinc-200 font-semibold">30 lines of YAML</strong>{' '}
+          <strong className="text-zinc-200 font-semibold">
+            30 lines of YAML
+          </strong>{' '}
           — versus{' '}
-          <strong className="text-zinc-200 font-semibold">200+ lines</strong>{' '}
-          of dense regex config, custom AST plugins, and glue scripts spread
-          across two tools with independent release cycles.
+          <strong className="text-zinc-200 font-semibold">200+ lines</strong> of
+          dense regex config, custom AST plugins, and glue scripts spread across
+          two tools with independent release cycles.
         </p>
         <p>
           Then there is the ongoing maintenance tax. Every Node.js upgrade,
@@ -267,8 +269,8 @@ const FAQ_ITEMS: FaqItem[] = [
         <p>
           All of this — import rules, dependency constraints, testing standards,
           file structure conventions — lives in the same RuleBook. No tribal
-          knowledge, no separate scripts, no custom AST plugins to maintain.
-          One tool. One contract. Enforced in CI.
+          knowledge, no separate scripts, no custom AST plugins to maintain. One
+          tool. One contract. Enforced in CI.
         </p>
       </div>
     ),
@@ -307,8 +309,8 @@ const FAQ_ITEMS: FaqItem[] = [
           Deslop offloads graph analysis entirely to a native{' '}
           <strong className="text-zinc-200 font-semibold">Haskell</strong>{' '}
           engine — millisecond performance, zero upkeep, zero AST knowledge
-          required. Keep ESLint fast for single-file syntax rules. Use Deslop
-          as the dedicated engine for whole-repo structural invariants.
+          required. Keep ESLint fast for single-file syntax rules. Use Deslop as
+          the dedicated engine for whole-repo structural invariants.
         </p>
       </div>
     ),

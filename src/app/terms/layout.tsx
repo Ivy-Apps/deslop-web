@@ -11,8 +11,13 @@ const TERMS_NAV_LINKS = [
 export default function TermsLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-zinc-950">
-      <AppNavbar links={TERMS_NAV_LINKS} cta={{ label: 'Contact Us', href: '/contact' }} />
-      <div className="max-w-3xl mx-auto px-6 pt-28 pb-16 md:pt-32 md:pb-24">{children}</div>
+      <AppNavbar
+        links={TERMS_NAV_LINKS}
+        cta={{ label: 'Contact Us', href: '/contact' }}
+      />
+      <div className="max-w-3xl mx-auto px-6 pt-28 pb-16 md:pt-32 md:pb-24">
+        {children}
+      </div>
     </div>
   );
 }
