@@ -5,3 +5,4 @@ dist
 tsconfig.tsbuildinfo
 next-env.d.ts
 plans # AI agent plans
+storybook-static
