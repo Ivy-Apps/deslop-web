@@ -6,7 +6,7 @@ import { typeScale } from '@/components/design-system/typography';
 
 type CellValue =
   | { kind: 'yes'; label?: string }
-  | { kind: 'no' }
+  | { kind: 'no'; label?: string }
   | { kind: 'limited'; label: string }
   | { kind: 'text'; label: string };
 
@@ -133,6 +133,12 @@ const ROWS: Row[] = [
     depCruiser: { kind: 'yes', label: 'extends in config' },
   },
   {
+    feature: 'Windows OS support',
+    deslop: { kind: 'no', label: 'coming soon' },
+    eslint: { kind: 'yes' },
+    depCruiser: { kind: 'yes' },
+  },
+  {
     feature: 'Dependency graph visualization',
     deslop: { kind: 'no' },
     eslint: { kind: 'no' },
@@ -257,9 +263,11 @@ function Cell({
       );
     case 'no':
       return (
-        <span className="flex items-center gap-2 text-zinc-600">
-          <X className="w-4 h-4 shrink-0" aria-hidden />
-          <span className="text-sm">No</span>
+        <span className="flex items-start gap-2 text-zinc-600">
+          <X className="w-4 h-4 shrink-0 mt-0.5" aria-hidden />
+          <span className="text-sm">
+            No{value.label ? <span className="text-xs text-zinc-500 ml-1">— {value.label}</span> : null}
+          </span>
         </span>
       );
     case 'limited':
