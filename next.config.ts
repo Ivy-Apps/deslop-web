@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   async redirects() {
     return [
+      {
+        source: '/docs',
+        destination: 'https://github.com/Ivy-Apps/deslop',
+        permanent: true,
+      },
       { source: '/terms', destination: '/terms/v1', permanent: true },
       { source: '/privacy', destination: '/privacy/v1', permanent: true },
     ];
