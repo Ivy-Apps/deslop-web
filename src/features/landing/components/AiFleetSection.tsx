@@ -36,7 +36,7 @@ function AiFleetCopy(): ReactNode {
       </p>
       <div className={`space-y-5 ${typeScale.bodyLg} ${baseTw.text.secondary}`}>
         <p>
-          Tools like Cursor, Copilot, and automated coding agents have
+          Tools like Cursor, Claude Code, and automated coding agents have
           transformed development velocity. An LLM can write a perfectly
           functioning feature in seconds that passes every unit test.
         </p>
