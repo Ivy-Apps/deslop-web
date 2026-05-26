@@ -57,48 +57,103 @@ const FAQ_ITEMS: FaqItem[] = [
   },
   {
     question:
-      "Isn't Deslop just another linter? Why should I pay for something that should be free?",
+      'Open-source linters are free and already handle import rules. Why pay for Deslop?',
     answer: (
       <div className="space-y-4">
         <p>
-          Deslop is not a syntax linter — keep using ESLint or Biome for
-          formatting, types, and semicolons. Deslop is an{' '}
+          &ldquo;Free&rdquo; is not the same as &ldquo;zero cost.&rdquo; To
+          achieve equivalent architecture governance with open-source tools, you
+          end up wrestling with a fragile stack of{' '}
           <strong className="text-zinc-200 font-semibold">
-            architectural guardrail.
+            2 to 3 different tools
+          </strong>
+          : one ESLint plugin to forbid imports, Dependency Cruiser for
+          transitive boundary checks, and a custom script to enforce companion
+          file existence. That&apos;s four rules in Deslop — roughly{' '}
+          <strong className="text-zinc-200 font-semibold">30 lines of YAML</strong>{' '}
+          — versus{' '}
+          <strong className="text-zinc-200 font-semibold">200+ lines</strong>{' '}
+          of dense regex config, custom AST plugins, and glue scripts spread
+          across two tools with independent release cycles.
+        </p>
+        <p>
+          Then there is the ongoing maintenance tax. Every Node.js upgrade,
+          every major ESLint version bump, every folder rename — and your custom
+          infrastructure breaks. The engineer who built it has usually left by
+          the time it does. Teams routinely report a Staff Engineer spending{' '}
+          <strong className="text-zinc-200 font-semibold">3 weeks</strong>{' '}
+          building a custom ESLint and Dependency Cruiser setup, only to watch
+          it silently rot after the next Node upgrade. At €50–€150+/hr, those 3
+          weeks alone cost more than{' '}
+          <strong className="text-zinc-200 font-semibold">
+            years of a Deslop PRO license.
           </strong>
         </p>
         <p>
-          Traditional linters look at your code line-by-line in isolation.
-          Deslop analyzes your{' '}
+          And that is before accounting for the recurring cost: every week a
+          senior engineer spends{' '}
           <strong className="text-zinc-200 font-semibold">
-            entire module dependency graph
+            15 minutes in PR review
           </strong>{' '}
-          transitively. You aren&apos;t paying for code styling; you are paying
-          to stop architectural drift, eliminate hours of repetitive PR review
-          cycles, and prevent AI agents from turning your codebase into
-          spaghetti.
+          re-explaining the same boundary violation is roughly one hour of
+          salary per month — €50 to €150, every month. A Deslop PRO license is
+          €24.99/month for the entire team. The open-source alternative
+          isn&apos;t free; it just hides the invoice inside your engineering
+          payroll.
         </p>
       </div>
     ),
   },
   {
     question:
-      "Why can't I just have an AI agent write custom ESLint or Dependency Cruiser rules for me for free?",
+      'We use an AI bot to review our PRs for architectural style. Isn\u2019t that enough?',
     answer: (
       <div className="space-y-4">
         <p>
-          LLMs can <em>write</em> complex regex and AST boilerplate, but they
-          still have to <em>maintain</em> it. If an AI writes a 50-line regex
-          rule for Dependency Cruiser and it breaks your build tool two months
-          later because a folder was renamed, a human engineer still has to
-          spend hours debugging that opaque regex string.
+          AI PR reviewers evaluate the{' '}
+          <strong className="text-zinc-200 font-semibold">diff</strong>, not the{' '}
+          <strong className="text-zinc-200 font-semibold">
+            dependency graph
+          </strong>
+          . They see what changed in this PR — not the full transitive import
+          chain of everything that was imported.
         </p>
         <p>
-          Furthermore, an AI cannot give an alternative tool the ability to
-          perform deep transitive analysis or enforce file existence (
-          <code className="text-zinc-200 font-mono text-[0.9em]">exists</code>
-          ). Deslop removes the complexity entirely, making rules maintainable
-          for both humans and AI.
+          Consider this scenario: an AI agent generates a Next.js Server
+          Component and adds{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">
+            import {'{ getUserProfile }'} from &quot;@/lib/user-profile&quot;
+          </code>
+          . The AI reviewer scans the diff, sees a single clean import line, and
+          approves the PR. What it cannot see is that{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">
+            @/lib/user-profile
+          </code>{' '}
+          transitively imports{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">
+            @/store/userStore
+          </code>{' '}
+          — a Zustand store using{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">persist</code>{' '}
+          middleware with{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">
+            localStorage
+          </code>{' '}
+          as its storage backend. The moment that Server Component is executed
+          in Node.js:{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">
+            ReferenceError: localStorage is not defined
+          </code>
+          . Every request crashes. The build passed. Every test passed. The AI
+          reviewer approved.
+        </p>
+        <p>
+          Deslop catches this in under a second:{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">
+            @/app/dashboard/page → @/lib/user-profile → @/store/userStore
+          </code>
+          . You are using a probabilistic text-scanner to solve a topological
+          graph problem. Deslop is the right tool for the job.
         </p>
       </div>
     ),
@@ -140,6 +195,159 @@ const FAQ_ITEMS: FaqItem[] = [
           </strong>
           , making it an unnoticeable blip in your local pre-commit hooks or
           GitHub Actions pipeline.
+        </p>
+      </div>
+    ),
+  },
+  {
+    question:
+      'Does Deslop only check imports, or can it enforce broader quality standards like test coverage and file structure?',
+    answer: (
+      <div className="space-y-4">
+        <p>
+          Deslop is not just an import checker. It is a{' '}
+          <strong className="text-zinc-200 font-semibold">
+            unified declarative YAML DSL
+          </strong>{' '}
+          for your entire architecture contract — import boundaries, dependency
+          rules, and companion file existence — all in one version-controlled,
+          human-readable RuleBook that engineers and AI agents can both
+          understand.
+        </p>
+        <p>
+          The{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">exists</code>{' '}
+          rule enforces that files matching a pattern always have a required
+          companion. For example:
+        </p>
+        <ul className="space-y-2 list-none pl-0">
+          <li>
+            <strong className="text-zinc-200 font-semibold">
+              Testing culture:
+            </strong>{' '}
+            every viewmodel must ship with a unit test.{' '}
+            <code className="text-zinc-200 font-mono text-[0.9em]">
+              useCartViewModel.ts
+            </code>{' '}
+            requires{' '}
+            <code className="text-zinc-200 font-mono text-[0.9em]">
+              useCartViewModel.test.ts
+            </code>{' '}
+            alongside it. No test file means CI fails — no custom script, no
+            plugin, 2 lines of YAML.
+          </li>
+          <li>
+            <strong className="text-zinc-200 font-semibold">
+              Design system quality:
+            </strong>{' '}
+            every component in{' '}
+            <code className="text-zinc-200 font-mono text-[0.9em]">
+              @/components/ui/**
+            </code>{' '}
+            must have a Storybook{' '}
+            <code className="text-zinc-200 font-mono text-[0.9em]">
+              .stories.tsx
+            </code>{' '}
+            file. Visual documentation becomes a first-class architectural
+            requirement.
+          </li>
+          <li>
+            <strong className="text-zinc-200 font-semibold">
+              Server module safety:
+            </strong>{' '}
+            any shared utility that accesses server-only APIs must have a
+            dedicated{' '}
+            <code className="text-zinc-200 font-mono text-[0.9em]">
+              .server.ts
+            </code>{' '}
+            counterpart, preventing accidental client-side imports at the
+            boundary.
+          </li>
+        </ul>
+        <p>
+          All of this — import rules, dependency constraints, testing standards,
+          file structure conventions — lives in the same RuleBook. No tribal
+          knowledge, no separate scripts, no custom AST plugins to maintain.
+          One tool. One contract. Enforced in CI.
+        </p>
+      </div>
+    ),
+  },
+  {
+    question:
+      "Can't I just build custom type-aware typescript-eslint rules to enforce transitive imports for free?",
+    answer: (
+      <div className="space-y-4">
+        <p>
+          Technically, yes — and it is worth being honest about what that
+          actually involves. Type-aware linting requires loading a full
+          TypeScript{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">
+            CompilerHost
+          </code>{' '}
+          instance on every lint pass. Starting a TypeScript compiler inside a
+          JavaScript process is a heavyweight operation: it{' '}
+          <strong className="text-zinc-200 font-semibold">
+            noticeably degrades IDE responsiveness on every file save
+          </strong>{' '}
+          and adds meaningful time to your CI lint step.
+        </p>
+        <p>
+          Beyond performance, the maintenance cost is the real tax. The custom
+          plugin you write is specialized and fragile. It breaks on major ESLint
+          version bumps, Node.js upgrades, and{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">
+            tsconfig.json
+          </code>{' '}
+          structural changes. The engineer who built it is rarely still around
+          when it breaks. The team inherits an opaque piece of internal
+          infrastructure that nobody owns and nobody wants to debug.
+        </p>
+        <p>
+          Deslop offloads graph analysis entirely to a native{' '}
+          <strong className="text-zinc-200 font-semibold">Haskell</strong>{' '}
+          engine — millisecond performance, zero upkeep, zero AST knowledge
+          required. Keep ESLint fast for single-file syntax rules. Use Deslop
+          as the dedicated engine for whole-repo structural invariants.
+        </p>
+      </div>
+    ),
+  },
+  {
+    question:
+      'Deslop is free for local use, but my AI coding agent (Cursor, Claude Code) runs headless and hits a verification step. Why?',
+    answer: (
+      <div className="space-y-4">
+        <p>
+          This is intentional, not a bug. The distinction Deslop draws is
+          between{' '}
+          <strong className="text-zinc-200 font-semibold">
+            interactive terminal sessions
+          </strong>{' '}
+          — you at your keyboard — and{' '}
+          <strong className="text-zinc-200 font-semibold">
+            headless automated execution
+          </strong>
+          , which is CI-equivalent behavior regardless of where it runs. Without
+          this boundary, the free tier would be trivially abused by teams
+          running unlimited automated checks without a license by simply
+          launching agents in a &ldquo;local&rdquo; environment.
+        </p>
+        <p>
+          The practical fix is straightforward: set{' '}
+          <code className="text-zinc-200 font-mono text-[0.9em]">
+            DESLOP_LICENSE_KEY=your_key_here
+          </code>{' '}
+          in your agent&apos;s environment. A{' '}
+          <strong className="text-zinc-200 font-semibold">Hobby license</strong>{' '}
+          at €4.99/month covers this use case with 500 CI runs per month.
+        </p>
+        <p>
+          A free{' '}
+          <strong className="text-zinc-200 font-semibold">MCP server</strong> is
+          coming soon. It will allow AI coding agents to invoke Deslop natively
+          through the MCP protocol without triggering headless detection, making
+          the full Deslop experience free for local agentic workflows.
         </p>
       </div>
     ),
