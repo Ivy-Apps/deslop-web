@@ -11,7 +11,7 @@ const PRIVACY_NAV_LINKS = [
 export default function PrivacyLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-zinc-950">
-      <AppNavbar links={PRIVACY_NAV_LINKS} />
+      <AppNavbar links={PRIVACY_NAV_LINKS} cta={{ label: 'Contact Us', href: '/contact' }} />
       <div className="max-w-3xl mx-auto px-6 pt-28 pb-16 md:pt-32 md:pb-24">{children}</div>
     </div>
   );
