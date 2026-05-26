@@ -1,17 +1,24 @@
-import { GitPullRequest, Terminal, TrendingDown, Wrench } from 'lucide-react';
+import { Bot, GitPullRequest, Terminal, Wrench } from 'lucide-react';
 import type { ComponentType, ReactNode } from 'react';
 
-import { tw as baseTw } from '@/components/design-system/colors';
+import { DeslopTerminalOutput } from '@/components/DeslopTerminalOutput';
+import {
+  tw as baseTw,
+  GlowPrimaryButton,
+  GlowSecondaryButton,
+} from '@/components/design-system';
 import { typeScale } from '@/components/design-system/typography';
+import { InfoBubble } from '@/components/InfoBubble';
+import { GITHUB_DOCS_URL } from '@/lib/deslop';
 
-type AccentColor = 'red' | 'amber' | 'orange' | 'purple';
+type AccentColor = 'red' | 'amber' | 'orange' | 'purple' | 'blue';
 
 type PainPoint = {
   icon: ComponentType<{ className?: string }>;
   accentColor: AccentColor;
   badge: string;
   title: string;
-  description: string;
+  description: ReactNode;
   callout: string;
 };
 
@@ -21,40 +28,148 @@ const PAIN_POINTS: PainPoint[] = [
     accentColor: 'red',
     badge: 'Missed opportunity',
     title: 'Senior engineers stuck playing human compiler',
-    description:
-      'Every week, your most expensive engineers burn hours in PR reviews flagging the exact same architectural violations. That time could ship features, mentor juniors, or design the next system.',
+    description: (
+      <>
+        Every week, your most expensive engineers waste hours flagging the exact
+        same architectural violations in PRs. Tired reviewers miss things,
+        deadlines loom, and rot slips through because no human holds a{' '}
+        <InfoBubble
+          label="full transitive dependency graph"
+          tooltip={
+            <>
+              A transitive closure over N modules can contain O(N²) potential
+              reachability paths. Even a modest monorepo with 500 modules
+              produces a dependency graph too large for any reviewer to hold in
+              working memory. The only reliable method for transitive boundary
+              checking is automated static graph traversal — not code review.
+            </>
+          }
+        />{' '}
+        in their head.
+      </>
+    ),
     callout:
-      '"We already reviewed this boundary leak last sprint. And the sprint before."',
+      '"We already flagged this boundary leak last sprint. But we had to ship, so it slipped through anyway."',
+  },
+  {
+    icon: Bot,
+    accentColor: 'blue',
+    badge: 'False sense of security',
+    title: 'The AI safety illusion',
+    description: (
+      <>
+        Relying on{' '}
+        <code className="text-xs bg-white/10 px-1 py-0.5 rounded font-mono">
+          AGENTS.md
+        </code>{' '}
+        or AI code reviewers?{' '}
+        <InfoBubble
+          label="Next-token predictors"
+          tooltip={
+            <>
+              Autoregressive LLMs generate tokens by sampling from a softmax
+              probability distribution over the vocabulary, conditioned on prior
+              context. There is no constraint-satisfaction pass at inference
+              time. More critically, these models are trained via RLHF where
+              human raters consistently score working, compiling code higher
+              than architecturally correct but failing code. This bakes a
+              systematic bias into the model&apos;s weights: when forced to
+              choose between honouring an AGENTS.md architecture rule and
+              resolving a concrete compilation error, the model&apos;s learned
+              reward signal drives it toward the immediately verifiable win. The
+              architecture rule is soft statistical context. The compiler error
+              is a hard gradient signal.
+            </>
+          }
+        />{' '}
+        optimized for short-term statistical success have no{' '}
+        <InfoBubble
+          label="whole-graph context"
+          tooltip={
+            <>
+              Detecting a transitive violation across 3+ hops requires
+              traversing a fully resolved import graph — not pattern-matching
+              source files. An LLM reading file-by-file in a limited context
+              window physically cannot reconstruct this graph, making it
+              structurally unfit for reliable architectural enforcement.
+            </>
+          }
+        />{' '}
+        and will confidently justify a critical boundary violation just to get
+        the code compiling. Deslop is different: deterministic static graph
+        traversal — no hallucinations, no false positives, no dice roll.
+      </>
+    ),
+    callout:
+      '"Cursor generated the feature perfectly, all tests pass — but it quietly pulled a UI component into our pure domain layer."',
   },
   {
     icon: Wrench,
     accentColor: 'amber',
     badge: 'Wasted platform time',
     title: 'Weeks to build, forever to maintain',
-    description:
-      "Writing AST plugins is specialized, tedious work. Mapping boundaries in Dependency Cruiser means a wall of regex rules that nobody owns. Your platform team built the pipeline — now they're on call for it indefinitely.",
+    description: (
+      <>
+        ESLint and Dependency Cruiser can technically detect transitive imports
+        — but it requires layering 2–3 tools with a wall of regex rules and{' '}
+        <InfoBubble
+          label="custom AST plugins"
+          tooltip={
+            <>
+              ESLint can technically trace transitive imports via{' '}
+              <code className="text-xs bg-white/10 px-1 py-0.5 rounded font-mono">
+                typescript-eslint
+              </code>{' '}
+              type-aware rules, which access the TypeScript{' '}
+              <code className="text-xs bg-white/10 px-1 py-0.5 rounded font-mono">
+                CompilerHost
+              </code>{' '}
+              to follow module symbols across file boundaries. But the cost is
+              severe: it requires loading the full TypeScript compiler on every
+              lint pass, dragging your IDE to a crawl on every file save and
+              adding minutes to CI runtimes. The resulting custom plugin is
+              specialized and fragile — it breaks on major ESLint or Node
+              upgrades, and nobody owns it after the engineer who wrote it
+              leaves.
+            </>
+          }
+        />{' '}
+        that nobody owns. Ask yourself: what&apos;s more expensive — a platform
+        engineer debugging brittle infrastructure after every Node upgrade, or a
+        €24.99/mo subscription?
+      </>
+    ),
     callout:
-      '"The staff engineer spent 3 weeks on the ESLint plugin. It broke again after the Node upgrade."',
-  },
-  {
-    icon: TrendingDown,
-    accentColor: 'orange',
-    badge: 'Tech debt',
-    title: 'Architectural rot that slips through undetected',
-    description:
-      'Not every violation gets caught in review. Reviewers miss things, PRs move fast, and nobody has the full dependency graph in their head. Each uncaught leak makes the next one easier to justify.',
-    callout:
-      '"The feature layer is importing directly from the DB layer again. When did this start?"',
+      '"The staff engineer spent 3 weeks on a custom ESLint plugin and Dependency Cruiser config. It broke again after the Node upgrade."',
   },
   {
     icon: Terminal,
     accentColor: 'purple',
     badge: 'Wasted dev time',
-    title: 'Hours lost decoding cryptic custom lint errors',
-    description:
-      'Custom ESLint rules produce opaque error messages with no guidance on how to fix them. Developers stop to investigate, post in Slack, or worse — disable the rule entirely.',
+    title: 'Hours lost decoding cryptic, un-fixable lint errors',
+    description: (
+      <>
+        Custom ESLint rules produce opaque error messages with zero context.
+        Developers stop what they&apos;re doing, post in Slack, or worse —
+        disable the rule entirely to pass CI. Deslop outputs{' '}
+        <InfoBubble
+          label="human-readable, AI-native markdown errors"
+          tooltip={
+            <>
+              Standard ESLint formatters emit a file path, line number, and rule
+              ID — no causal chain, no transitive path, no fix instruction.
+              Deslop errors include the full import chain that caused the
+              violation plus a structured fix directive: output that both humans
+              and AI coding assistants can parse and act on directly, without a
+              Slack detour.
+            </>
+          }
+        />{' '}
+        with exact fix instructions, out of the box.
+      </>
+    ),
     callout:
-      '"no-cross-layer-import: violation detected" — and zero context on what to do next.',
+      '"no-cross-layer-import: violation detected" — and absolutely no guidance on what to do next.',
   },
 ];
 
@@ -96,6 +211,13 @@ const accentStyles: Record<
     badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
     glow: 'shadow-[0_0_0_1px_rgba(168,85,247,0.08)]',
   },
+  blue: {
+    border: 'border-l-[#3E99F5]/60',
+    iconBg: 'bg-[#3E99F5]/15',
+    iconColor: 'text-[#3E99F5]',
+    badgeColor: 'text-[#3E99F5] bg-[#3E99F5]/10 border-[#3E99F5]/20',
+    glow: 'shadow-[0_0_0_1px_rgba(62,153,245,0.08)]',
+  },
 };
 
 export default function PrTaxSection(): ReactNode {
@@ -112,9 +234,10 @@ export default function PrTaxSection(): ReactNode {
             Every week without Deslop has a price
           </h2>
           <p className={`text-xl leading-relaxed ${baseTw.text.muted}`}>
-            Whether you enforce architecture manually on PR review, use
-            open-source linters, or don't enforce architecture at all — your
-            team is paying a hidden tax right now.
+            Whether you&apos;re babysitting architecture manually on PR reviews,
+            trusting AI coding assistants, or wrestling with fragile open-source
+            linting setups — your team is paying a hidden tax in lost
+            engineering hours.
           </p>
         </header>
 
@@ -124,28 +247,70 @@ export default function PrTaxSection(): ReactNode {
           ))}
         </div>
 
-        <div className="mt-12 flex justify-center">
-          <div className="rounded-2xl border border-[#3E99F5]/20 bg-[#3E99F5]/[0.05] px-7 py-6 max-w-2xl w-full flex flex-col sm:flex-row items-center gap-5">
-            <p
-              className={`text-base leading-relaxed ${baseTw.text.secondary} flex-1`}
-            >
-              Deslop gives you production-ready architectural guardrails out of
-              the box — configured in{' '}
-              <strong className="text-zinc-100 font-semibold">
-                5 lines of human-readable YAML
-              </strong>
-              , not weeks of custom infrastructure.
-            </p>
-            <a
-              href="/get-started"
-              className="shrink-0 inline-flex items-center justify-center gap-2.5 rounded-full bg-white px-8 py-3.5 text-base font-bold text-zinc-950 ring-1 ring-white/20 transition-all duration-300 hover:bg-zinc-100 shadow-[0_0_28px_-6px_rgba(62,153,245,0.35),0_0_32px_-6px_rgba(92,61,245,0.4)] hover:shadow-[0_0_46px_-2px_rgba(62,153,245,0.56),0_0_56px_-2px_rgba(92,61,245,0.58),0_0_96px_-10px_rgba(62,153,245,0.32)] whitespace-nowrap"
-            >
-              Try Deslop now
-            </a>
-          </div>
-        </div>
+        <AhaMoment />
       </div>
     </section>
+  );
+}
+
+function AhaMoment(): ReactNode {
+  return (
+    <div className="mt-16">
+      <div className="text-center mb-8 max-w-2xl mx-auto">
+        <h3 className={`${typeScale.titleLg} mb-4 text-balance`}>
+          Think your codebase is clean? Let&apos;s find out.
+        </h3>
+        <p className={`text-lg leading-relaxed ${baseTw.text.muted}`}>
+          Most teams believe their architecture is enforced — until they run
+          their first Deslop check. Line-by-line linters are blind to multi-hop
+          transitive imports. Rot accumulates silently, deep inside your
+          dependency graph.
+        </p>
+      </div>
+
+      <DeslopTerminalOutput
+        projectName="repo/my-app"
+        violations={[
+          {
+            ruleId: 'arch#feature-isolation#@/features/billing/checkout',
+            description: 'No feature may import another feature transitively.',
+            offendingModule: '@/features/billing/checkout',
+            importedModule: '@/features/auth/debug-modal',
+            transitiveChain:
+              '@/features/billing/checkout → @/components/shared/modal → @/features/auth/debug-modal',
+            fix: 'Extract shared logic to a @/lib or @/components module.',
+          },
+        ]}
+        checkedModules={412}
+        durationMs={870}
+      />
+
+      <p className={`text-center text-sm ${baseTw.text.muted} mt-6 mb-8`}>
+        When you run it, you will find violations you didn&apos;t expect to
+        exist.{' '}
+        <strong className="text-zinc-300">
+          That is the moment Deslop pays for itself.
+        </strong>
+      </p>
+
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4">
+        <a href="/get-started" className="contents">
+          <GlowPrimaryButton className="w-full sm:w-auto">
+            Reclaim Lost Eng Hours
+          </GlowPrimaryButton>
+        </a>
+        <a
+          href={GITHUB_DOCS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="contents"
+        >
+          <GlowSecondaryButton className="w-full sm:w-auto">
+            Read the Docs
+          </GlowSecondaryButton>
+        </a>
+      </div>
+    </div>
   );
 }
 
@@ -170,9 +335,9 @@ function PainPointCard({ point }: { point: PainPoint }): ReactNode {
 
       <div className="space-y-2">
         <h3 className={`${typeScale.titleMd} leading-snug`}>{point.title}</h3>
-        <p className={`${baseTw.text.muted} text-sm leading-relaxed`}>
+        <div className={`${baseTw.text.muted} text-sm leading-relaxed`}>
           {point.description}
-        </p>
+        </div>
       </div>
 
       <blockquote

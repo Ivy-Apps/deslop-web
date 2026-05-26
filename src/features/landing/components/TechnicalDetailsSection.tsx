@@ -1,8 +1,8 @@
 import { ArrowDown, FileCode, GitBranch, Network } from 'lucide-react';
 import type { ReactNode } from 'react';
-
 import { tw as baseTw } from '@/components/design-system/colors';
 import { textPresets, typeScale } from '@/components/design-system/typography';
+import { InfoBubble } from '@/components/InfoBubble';
 
 export default function TechnicalDetailsSection(): ReactNode {
   return (
@@ -26,11 +26,14 @@ export default function TechnicalDetailsSection(): ReactNode {
             structural foundation that makes architectural guardrails{' '}
             <b>deterministic, not advisory</b>. Deslop contains no AI: unlike
             probabilistic code review tools that suggest fixes, it evaluates
-            your RuleBook as{' '}
-            <b>pure static analysis</b> — identical result on every run, zero
-            chance of hallucination or failure. Every rule sees the full
-            transitive import chain, catching violations that single-file tools
-            are architecturally incapable of detecting.
+            your RuleBook as <b>pure static analysis</b> — identical result on
+            every run, zero chance of hallucination or failure. Every rule sees
+            the full transitive import chain, catching violations that{' '}
+            <InfoBubble
+              label="single-file tools are not designed to detect"
+              tooltip="Technically, you can force ESLint to trace cross-file dependencies via typescript-eslint type-aware rules — but this requires loading the full TypeScript compiler on every lint pass, causing severe IDE slowdowns and bloated CI runtimes. It is a workaround, not a feature."
+            />
+            .
           </p>
         </header>
 
@@ -157,24 +160,49 @@ function TechnicalCopyColumn(): ReactNode {
         <h3
           className={`${typeScale.titleLg} ${baseTw.text.primary} mb-4 tracking-tight`}
         >
-          Why Biome and ESLint aren't enough
+          Why Biome isn&apos;t enough
+        </h3>
+        <p className={`${typeScale.bodyMd} ${baseTw.text.secondary}`}>
+          Biome is exceptional at single-file AST traversal — formatting,
+          localized bug patterns, and direct-import checks. But it has{' '}
+          <strong className="text-zinc-200 font-semibold">
+            no cross-file semantic model at all
+          </strong>
+          . By design, each file is analyzed in isolation with no graph and no
+          transitive reachability. This is an architectural choice that keeps it
+          fast — but it means you cannot enforce macro-architectural boundaries,
+          regardless of plugins.
+        </p>
+      </div>
+
+      <div>
+        <h3
+          className={`${typeScale.titleLg} ${baseTw.text.primary} mb-4 tracking-tight`}
+        >
+          Why ESLint isn&apos;t enough
         </h3>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary} mb-4`}>
-          Biome and ESLint are exceptional at single-file AST traversal —
-          formatting, localized bug patterns, and direct-import checks. But they
-          have{' '}
+          With{' '}
+          <code className="text-zinc-300 font-mono text-[0.9em]">
+            typescript-eslint
+          </code>{' '}
+          type-aware linting, custom rules can technically access the TypeScript{' '}
+          <code className="text-zinc-300 font-mono text-[0.9em]">
+            CompilerHost
+          </code>{' '}
+          and trace module symbols across file boundaries. But doing so requires
+          loading the full TypeScript compiler on every lint pass —{' '}
           <strong className="text-zinc-200 font-semibold">
-            no cross-file semantic model
-          </strong>
-          : each file is analyzed in isolation, with no graph and no transitive
-          reachability. This isn't a plugin gap. You cannot write an ESLint rule
-          that catches a 3-hop transitive dependency violation, because the
-          visitor never crosses file boundaries.
+            dragging your IDE to a crawl on every file save
+          </strong>{' '}
+          and bloating CI runtimes by several minutes. The resulting custom
+          plugin is specialized, fragile, and breaks on every major ESLint or
+          Node upgrade. Nobody owns it after the person who wrote it leaves.
         </p>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary}`}>
-          Deslop is the structural complement. Keep your linters for fast, local
-          feedback; add Deslop as the deterministic enforcement layer over the
-          full dependency graph.
+          Deslop is the structural complement. Keep your linters fast for
+          single-file syntax rules; use Deslop as the dedicated native engine
+          for whole-repo structural invariants — in milliseconds.
         </p>
       </div>
 
@@ -236,10 +264,6 @@ function HaskellBadge(): ReactNode {
         <span className={`${baseTw.text.primary} font-semibold`}>
           Purely functional
         </span>{' '}
-        and{' '}
-        <span className={`${baseTw.text.primary} font-semibold`}>
-          mathematically correct{' '}
-        </span>
         — bringing strict determinism to our increasingly non-deterministic,
         LLM-driven world.
       </p>

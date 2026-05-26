@@ -1,9 +1,8 @@
-import { type ReactNode, Suspense, use } from 'react';
-
-import CodeBlock from '@/components/CodeBlock';
+import type { ReactNode } from 'react';
 import { tw as baseTw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
-import { highlightCode } from '@/lib/highlight-code';
+import { HighlightedCodeBlock } from '@/components/HighlightedCodeBlock';
+import { InfoBubble } from '@/components/InfoBubble';
 
 const FEATURES_YAML = `id: features
 name: Feature Modules
@@ -43,8 +42,6 @@ rules:
       - module: "{{TARGET_DIR}}/use{{FileName}}ViewModel.test" # → useCartViewModel.test
     fix: Add use{{FileName}}ViewModel.test alongside each viewmodel.`;
 
-const highlightedYaml = highlightCode(FEATURES_YAML, 'yaml');
-
 export default function UnifiedDslSection(): ReactNode {
   return (
     <section
@@ -54,9 +51,7 @@ export default function UnifiedDslSection(): ReactNode {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <UnifiedDslCopy />
-          <Suspense>
-            <UnifiedDslCode />
-          </Suspense>
+          <UnifiedDslCode />
         </div>
       </div>
     </section>
@@ -116,13 +111,16 @@ function UnifiedDslCopy(): ReactNode {
           <span className="text-zinc-100 font-semibold">~30 lines of YAML</span>{' '}
           in Deslop. Equivalent coverage requires{' '}
           <span className="text-zinc-100 font-semibold">200+ lines</span> across
-          ESLint, Dependency Cruiser, and a custom script —{' '}
-          <span className="text-zinc-100 font-semibold">
-            transitive reachability checks are not supported whatsoever
-          </span>
+          ESLint, Dependency Cruiser, and a custom script — Dependency
+          Cruiser&apos;s transitive checks need dense regex rules with a{' '}
+          <InfoBubble
+            label="hidden maintenance cost"
+            tooltip="Dependency Cruiser expresses reachability rules as complex regex capturing groups. The moment a directory is renamed, rules break silently or produce false positives — and nobody owns or understands the config after the person who wrote it leaves."
+          />
           , <code className="font-mono text-[0.9em] text-zinc-300">exists</code>{' '}
-          needs a custom script on top, and your team inherits two tools with
-          independent release cycles and no performance guarantees at scale.
+          checks need a custom script on top, and your team inherits two tools
+          with independent release cycles and no performance guarantees at
+          scale.
         </p>
       </div>
     </div>
@@ -130,14 +128,13 @@ function UnifiedDslCopy(): ReactNode {
 }
 
 function UnifiedDslCode(): ReactNode {
-  const highlightedHtml = use(highlightedYaml);
   return (
     <div className="relative">
       <div className="absolute -inset-3 bg-[#3E99F5]/5 blur-2xl rounded-full opacity-50" />
-      <CodeBlock
+      <HighlightedCodeBlock
         code={FEATURES_YAML}
+        lang="yaml"
         filename="deslop/rules/features.yaml"
-        highlightedHtml={highlightedHtml}
         className="relative z-10"
       />
     </div>

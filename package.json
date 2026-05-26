@@ -15,7 +15,7 @@
     "deslop": "deslop check .",
     "deslop:fix": "deslop fix . && npm run lint:fix",
     "deslop:baseline": "deslop baseline .",
-    "check": "npm run typecheck && npm run deslop && npm run lint",
+    "check": "npm run typecheck && npm run deslop && npm run lint && npm run build && npm run build-storybook",
     "fix": "npm run deslop:fix"
   },
   "dependencies": {

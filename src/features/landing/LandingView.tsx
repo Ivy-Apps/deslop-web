@@ -17,6 +17,7 @@ const LANDING_NAV_LINKS = [
   { label: 'The Problem', href: '#problem' },
   { label: 'Solution', href: '#ai-fleet' },
   { label: 'Pricing', href: '#pricing' },
+  { label: 'FAQ', href: '#faq' },
   { label: 'Docs', href: GITHUB_DOCS_URL, external: true },
 ];
 

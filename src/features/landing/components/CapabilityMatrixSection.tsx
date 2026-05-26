@@ -6,7 +6,7 @@ import { typeScale } from '@/components/design-system/typography';
 
 type CellValue =
   | { kind: 'yes'; label?: string }
-  | { kind: 'no' }
+  | { kind: 'no'; label?: string }
   | { kind: 'limited'; label: string }
   | { kind: 'text'; label: string };
 
@@ -63,10 +63,14 @@ const ROWS: Row[] = [
   {
     feature: 'Transitive checks',
     deslop: { kind: 'yes', label: 'transitive: true on any rule' },
-    eslint: { kind: 'no' },
+    eslint: {
+      kind: 'limited',
+      label:
+        'possible via typescript-eslint, but severe IDE/CI performance cost',
+    },
     depCruiser: {
       kind: 'limited',
-      label: 'reachable attr, path conditions only',
+      label: 'reachable attr, complex regex config required',
     },
   },
   {
@@ -104,7 +108,7 @@ const ROWS: Row[] = [
     },
     eslint: {
       kind: 'limited',
-      label: 'JSON count-based file, added v9.24 Apr 2025',
+      label: 'Bulk Suppressions (eslint --suppress-all, v9.24 Apr 2025)',
     },
     depCruiser: {
       kind: 'limited',
@@ -128,6 +132,12 @@ const ROWS: Row[] = [
     deslop: { kind: 'yes', label: 'auto-loaded from deslop/rules/' },
     eslint: { kind: 'yes', label: 'via JS imports into one config' },
     depCruiser: { kind: 'yes', label: 'extends in config' },
+  },
+  {
+    feature: 'Windows OS support',
+    deslop: { kind: 'no', label: 'coming soon' },
+    eslint: { kind: 'yes' },
+    depCruiser: { kind: 'yes' },
   },
   {
     feature: 'Dependency graph visualization',
@@ -254,9 +264,16 @@ function Cell({
       );
     case 'no':
       return (
-        <span className="flex items-center gap-2 text-zinc-600">
-          <X className="w-4 h-4 shrink-0" aria-hidden />
-          <span className="text-sm">No</span>
+        <span className="flex items-start gap-2 text-zinc-600">
+          <X className="w-4 h-4 shrink-0 mt-0.5" aria-hidden />
+          <span className="text-sm">
+            No
+            {value.label ? (
+              <span className="text-xs text-zinc-500 ml-1">
+                — {value.label}
+              </span>
+            ) : null}
+          </span>
         </span>
       );
     case 'limited':

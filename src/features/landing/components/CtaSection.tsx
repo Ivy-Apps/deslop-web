@@ -3,7 +3,6 @@ import type { ReactNode } from 'react';
 import { tw as baseTw } from '@/components/design-system/colors';
 import { GlowPrimaryButton } from '@/components/design-system/glow-buttons';
 import { typeScale } from '@/components/design-system/typography';
-import { GITHUB_DOCS_URL } from '@/lib/deslop';
 
 export default function CtaSection(): ReactNode {
   return (
@@ -30,14 +29,9 @@ export default function CtaSection(): ReactNode {
         </div>
 
         <div className="flex justify-center">
-          <a
-            href={GITHUB_DOCS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="contents"
-          >
+          <a href="/get-started" className="contents">
             <GlowPrimaryButton size="lg" className="w-full sm:w-auto">
-              Read the Docs &amp; View Examples
+              Audit My Architecture
             </GlowPrimaryButton>
           </a>
         </div>
