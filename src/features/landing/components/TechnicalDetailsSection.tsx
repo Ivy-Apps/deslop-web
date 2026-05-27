@@ -2,6 +2,7 @@ import { ArrowDown, FileCode, GitBranch, Network } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { tw as baseTw } from '@/components/design-system/colors';
 import { textPresets, typeScale } from '@/components/design-system/typography';
+import { InlineCode } from '@/components/InlineCode';
 import { InfoBubble } from '@/components/InfoBubble';
 
 export default function TechnicalDetailsSection(): ReactNode {
@@ -183,13 +184,9 @@ function TechnicalCopyColumn(): ReactNode {
         </h3>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary} mb-4`}>
           With{' '}
-          <code className="text-zinc-300 font-mono text-[0.9em]">
-            typescript-eslint
-          </code>{' '}
+          <InlineCode>typescript-eslint</InlineCode>{' '}
           type-aware linting, custom rules can technically access the TypeScript{' '}
-          <code className="text-zinc-300 font-mono text-[0.9em]">
-            CompilerHost
-          </code>{' '}
+          <InlineCode>CompilerHost</InlineCode>{' '}
           and trace module symbols across file boundaries. But doing so requires
           loading the full TypeScript compiler on every lint pass —{' '}
           <strong className="text-zinc-200 font-semibold">
@@ -216,11 +213,9 @@ function TechnicalCopyColumn(): ReactNode {
           AGENTS.md tells the model what your architecture looks like. It
           doesn't verify that the generated code actually conforms to it. When
           an agent imports{' '}
-          <code className="text-zinc-300 font-mono text-[0.9em]">
-            @/utils/bridge
-          </code>{' '}
+          <InlineCode>@/utils/bridge</InlineCode>{' '}
           — which internally imports{' '}
-          <code className="text-zinc-300 font-mono text-[0.9em]">react</code> —
+          <InlineCode>react</InlineCode> —
           no instruction catches that transitive violation, because{' '}
           <strong className="text-zinc-200 font-semibold">
             the model is not traversing the dependency graph

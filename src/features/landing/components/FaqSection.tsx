@@ -3,6 +3,7 @@
 import { ChevronDown } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
+import { InlineCode } from '@/components/InlineCode';
 import { tw as baseTw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
 
@@ -31,15 +32,11 @@ const FAQ_ITEMS: FaqItem[] = [
         </p>
         <p>
           For example, if your{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            AGENTS.md
-          </code>{' '}
+          <InlineCode>AGENTS.md</InlineCode>{' '}
           says &ldquo;Never import React or UI code inside pure domain
           utilities,&rdquo; but the agent needs a layout object type to clear a
           TypeScript compilation error, it will blindly pull{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            import {'{ ReactNode }'} from &quot;react&quot;
-          </code>{' '}
+          <InlineCode>import {'{ ReactNode }'} from &quot;react&quot;</InlineCode>{' '}
           straight into the domain layer to pass the compiler block. The agent
           ignores the markdown rules file because clearing the local compiler is
           its immediate statistical success metric.
@@ -123,37 +120,25 @@ const FAQ_ITEMS: FaqItem[] = [
         <p>
           Consider this scenario: an AI agent generates a Next.js Server
           Component and adds{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            import {'{ getUserProfile }'} from &quot;@/lib/user-profile&quot;
-          </code>
+          <InlineCode>import {'{ getUserProfile }'} from &quot;@/lib/user-profile&quot;</InlineCode>
           . The AI reviewer scans the diff, sees a single clean import line, and
           approves the PR. What it cannot see is that{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            @/lib/user-profile
-          </code>{' '}
+          <InlineCode>@/lib/user-profile</InlineCode>{' '}
           transitively imports{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            @/store/userStore
-          </code>{' '}
+          <InlineCode>@/store/userStore</InlineCode>{' '}
           — a Zustand store using{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">persist</code>{' '}
+          <InlineCode>persist</InlineCode>{' '}
           middleware with{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            localStorage
-          </code>{' '}
+          <InlineCode>localStorage</InlineCode>{' '}
           as its storage backend. The moment that Server Component is executed
           in Node.js:{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            ReferenceError: localStorage is not defined
-          </code>
+          <InlineCode>ReferenceError: localStorage is not defined</InlineCode>
           . Every request crashes. The build passed. Every test passed. The AI
           reviewer approved.
         </p>
         <p>
           Deslop catches this in under a second:{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            @/app/dashboard/page → @/lib/user-profile → @/store/userStore
-          </code>
+          <InlineCode>@/app/dashboard/page → @/lib/user-profile → @/store/userStore</InlineCode>
           . You are using a probabilistic text-scanner to solve a topological
           graph problem. Deslop is the right tool for the job.
         </p>
@@ -174,7 +159,7 @@ const FAQ_ITEMS: FaqItem[] = [
           Dependency Cruiser tells you <em>that</em> something is broken, but it
           can&apos;t tell an AI agent <em>how</em> to fix it. Deslop&apos;s
           structured markdown{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">fix</code>{' '}
+          <InlineCode>fix</InlineCode>{' '}
           field allows coding agents to read the violation and instantly rewrite
           their own code correctly without human intervention.
         </p>
@@ -218,7 +203,7 @@ const FAQ_ITEMS: FaqItem[] = [
         </p>
         <p>
           The{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">exists</code>{' '}
+          <InlineCode>exists</InlineCode>{' '}
           rule enforces that files matching a pattern always have a required
           companion. For example:
         </p>
@@ -228,13 +213,9 @@ const FAQ_ITEMS: FaqItem[] = [
               Testing culture:
             </strong>{' '}
             every viewmodel must ship with a unit test.{' '}
-            <code className="text-zinc-200 font-mono text-[0.9em]">
-              useCartViewModel.ts
-            </code>{' '}
+            <InlineCode>useCartViewModel.ts</InlineCode>{' '}
             requires{' '}
-            <code className="text-zinc-200 font-mono text-[0.9em]">
-              useCartViewModel.test.ts
-            </code>{' '}
+            <InlineCode>useCartViewModel.test.ts</InlineCode>{' '}
             alongside it. No test file means CI fails — no custom script, no
             plugin, 2 lines of YAML.
           </li>
@@ -243,13 +224,9 @@ const FAQ_ITEMS: FaqItem[] = [
               Design system quality:
             </strong>{' '}
             every component in{' '}
-            <code className="text-zinc-200 font-mono text-[0.9em]">
-              @/components/ui/**
-            </code>{' '}
+            <InlineCode>@/components/ui/**</InlineCode>{' '}
             must have a Storybook{' '}
-            <code className="text-zinc-200 font-mono text-[0.9em]">
-              .stories.tsx
-            </code>{' '}
+            <InlineCode>.stories.tsx</InlineCode>{' '}
             file. Visual documentation becomes a first-class architectural
             requirement.
           </li>
@@ -259,9 +236,7 @@ const FAQ_ITEMS: FaqItem[] = [
             </strong>{' '}
             any shared utility that accesses server-only APIs must have a
             dedicated{' '}
-            <code className="text-zinc-200 font-mono text-[0.9em]">
-              .server.ts
-            </code>{' '}
+            <InlineCode>.server.ts</InlineCode>{' '}
             counterpart, preventing accidental client-side imports at the
             boundary.
           </li>
@@ -284,9 +259,7 @@ const FAQ_ITEMS: FaqItem[] = [
           Technically, yes — and it is worth being honest about what that
           actually involves. Type-aware linting requires loading a full
           TypeScript{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            CompilerHost
-          </code>{' '}
+          <InlineCode>CompilerHost</InlineCode>{' '}
           instance on every lint pass. Starting a TypeScript compiler inside a
           JavaScript process is a heavyweight operation: it{' '}
           <strong className="text-zinc-200 font-semibold">
@@ -298,9 +271,7 @@ const FAQ_ITEMS: FaqItem[] = [
           Beyond performance, the maintenance cost is the real tax. The custom
           plugin you write is specialized and fragile. It breaks on major ESLint
           version bumps, Node.js upgrades, and{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            tsconfig.json
-          </code>{' '}
+          <InlineCode>tsconfig.json</InlineCode>{' '}
           structural changes. The engineer who built it is rarely still around
           when it breaks. The team inherits an opaque piece of internal
           infrastructure that nobody owns and nobody wants to debug.
@@ -337,9 +308,7 @@ const FAQ_ITEMS: FaqItem[] = [
         </p>
         <p>
           The practical fix is straightforward: set{' '}
-          <code className="text-zinc-200 font-mono text-[0.9em]">
-            DESLOP_LICENSE_KEY=your_key_here
-          </code>{' '}
+          <InlineCode>DESLOP_LICENSE_KEY=your_key_here</InlineCode>{' '}
           in your agent&apos;s environment. A{' '}
           <strong className="text-zinc-200 font-semibold">Hobby license</strong>{' '}
           at €4.99/month covers this use case with 500 CI runs per month.
