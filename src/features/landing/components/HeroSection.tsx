@@ -9,6 +9,7 @@ import {
 } from '@/components/design-system';
 import { HeroDemo } from '@/components/HeroDemo';
 import { GITHUB_DOCS_URL } from '@/lib/deslop';
+import { HeroBadge } from '@/features/landing/components/HeroBadge';
 
 export default function HeroSection(): ReactNode {
   return (
@@ -95,19 +96,7 @@ function HeroCopyBlock(): ReactNode {
   return (
     <div className="hero-copy-in text-center max-w-4xl mx-auto">
       <div className="mb-8 flex flex-col items-center gap-6">
-        <div
-          className={`${baseTw.gradient.brandBadge} rounded-full p-px shadow-[0_0_40px_-6px_rgba(62,153,245,0.4),0_0_44px_-6px_rgba(92,61,245,0.45)]`}
-        >
-          <div className="flex items-center gap-2.5 rounded-full bg-zinc-950 px-5 py-2.5">
-            <span
-              className="h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-[#3E99F5] to-[#5C3DF5] shadow-[0_0_10px_rgba(62,153,245,0.85),0_0_12px_rgba(92,61,245,0.75)]"
-              aria-hidden
-            />
-            <span className="text-sm sm:text-[15px] font-semibold tracking-wide text-zinc-100">
-              Deterministic Architectural Guardrails for the AI era
-            </span>
-          </div>
-        </div>
+        <HeroBadge />
         <h1
           className={`text-balance text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-0.04em] leading-[1.05]`}
         >
