@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { tw as baseTw } from '@/components/design-system/colors';
 import { textPresets, typeScale } from '@/components/design-system/typography';
 import { InfoBubble } from '@/components/InfoBubble';
+import { InlineCode } from '@/components/InlineCode';
 
 export default function TechnicalDetailsSection(): ReactNode {
   return (
@@ -182,16 +183,11 @@ function TechnicalCopyColumn(): ReactNode {
           Why ESLint isn&apos;t enough
         </h3>
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary} mb-4`}>
-          With{' '}
-          <code className="text-zinc-300 font-mono text-[0.9em]">
-            typescript-eslint
-          </code>{' '}
-          type-aware linting, custom rules can technically access the TypeScript{' '}
-          <code className="text-zinc-300 font-mono text-[0.9em]">
-            CompilerHost
-          </code>{' '}
-          and trace module symbols across file boundaries. But doing so requires
-          loading the full TypeScript compiler on every lint pass —{' '}
+          With <InlineCode>typescript-eslint</InlineCode> type-aware linting,
+          custom rules can technically access the TypeScript{' '}
+          <InlineCode>CompilerHost</InlineCode> and trace module symbols across
+          file boundaries. But doing so requires loading the full TypeScript
+          compiler on every lint pass —{' '}
           <strong className="text-zinc-200 font-semibold">
             dragging your IDE to a crawl on every file save
           </strong>{' '}
@@ -215,13 +211,9 @@ function TechnicalCopyColumn(): ReactNode {
         <p className={`${typeScale.bodyMd} ${baseTw.text.secondary} mb-4`}>
           AGENTS.md tells the model what your architecture looks like. It
           doesn't verify that the generated code actually conforms to it. When
-          an agent imports{' '}
-          <code className="text-zinc-300 font-mono text-[0.9em]">
-            @/utils/bridge
-          </code>{' '}
-          — which internally imports{' '}
-          <code className="text-zinc-300 font-mono text-[0.9em]">react</code> —
-          no instruction catches that transitive violation, because{' '}
+          an agent imports <InlineCode>@/utils/bridge</InlineCode> — which
+          internally imports <InlineCode>react</InlineCode> — no instruction
+          catches that transitive violation, because{' '}
           <strong className="text-zinc-200 font-semibold">
             the model is not traversing the dependency graph
           </strong>{' '}

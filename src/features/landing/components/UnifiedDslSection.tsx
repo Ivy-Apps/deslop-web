@@ -3,6 +3,7 @@ import { tw as baseTw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
 import { HighlightedCodeBlock } from '@/components/HighlightedCodeBlock';
 import { InfoBubble } from '@/components/InfoBubble';
+import { InlineCode } from '@/components/InlineCode';
 
 const FEATURES_YAML = `id: features
 name: Feature Modules
@@ -86,17 +87,12 @@ function UnifiedDslCopy(): ReactNode {
         </p>
         <p>
           In five lines of human-readable YAML, you get full coverage over
-          import boundaries (
-          <code className="text-zinc-200 font-mono text-[0.9em]">forbids</code>
-          ), exceptions (
-          <code className="text-zinc-200 font-mono text-[0.9em]">allows</code>),
-          mandatory module chains (
-          <code className="text-zinc-200 font-mono text-[0.9em]">uses</code>),
-          and companion file rules (
-          <code className="text-zinc-200 font-mono text-[0.9em]">exists</code>).
-          It&apos;s an entire architectural quality gate packaged into one
-          lightweight tool that requires zero AST knowledge, zero regex, and
-          zero ongoing DevOps overhead.
+          import boundaries (<InlineCode>forbids</InlineCode>
+          ), exceptions (<InlineCode>allows</InlineCode>), mandatory module
+          chains (<InlineCode>uses</InlineCode>), and companion file rules (
+          <InlineCode>exists</InlineCode>). It&apos;s an entire architectural
+          quality gate packaged into one lightweight tool that requires zero AST
+          knowledge, zero regex, and zero ongoing DevOps overhead.
         </p>
       </div>
 
@@ -117,10 +113,9 @@ function UnifiedDslCopy(): ReactNode {
             label="hidden maintenance cost"
             tooltip="Dependency Cruiser expresses reachability rules as complex regex capturing groups. The moment a directory is renamed, rules break silently or produce false positives — and nobody owns or understands the config after the person who wrote it leaves."
           />
-          , <code className="font-mono text-[0.9em] text-zinc-300">exists</code>{' '}
-          checks need a custom script on top, and your team inherits two tools
-          with independent release cycles and no performance guarantees at
-          scale.
+          , <InlineCode>exists</InlineCode> checks need a custom script on top,
+          and your team inherits two tools with independent release cycles and
+          no performance guarantees at scale.
         </p>
       </div>
     </div>
