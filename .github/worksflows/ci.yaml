@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v6
+
+      - name: 📦 Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: 📥 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Typecheck
+        run: npm run typecheck
+
+      - name: 🔮 Deslop
+        run: npm run deslop
+        env:
+          DESLOP_LICENSE_KEY: ${{ secrets.DESLOP_LICENSE_KEY }}
+
+      - name: ✨ Lint
+        run: npm run lint
+
+      - name: 🏗️ Build
+        run: npm run build
+
+      - name: 📚 Build Storybook
+        run: npm run build-storybook
