@@ -6,7 +6,9 @@ import { tw as baseTw } from '@/components/design-system';
 
 export function HeroBadge(): ReactNode {
   const [open, setOpen] = useState(false);
-  const showTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const showTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   function scheduleShow() {
@@ -22,7 +24,10 @@ export function HeroBadge(): ReactNode {
   useEffect(() => {
     if (!open) return;
     function handlePointerDown(e: PointerEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     }
@@ -60,7 +65,9 @@ export function HeroBadge(): ReactNode {
         }`}
       >
         <p className="text-zinc-300">
-          <span className="font-semibold text-[#3E99F5]">{'Zero AI inside.'}</span>
+          <span className="font-semibold text-[#3E99F5]">
+            {'Zero AI inside.'}
+          </span>
           {
             ' Deslop is a pure static graph engine — it traverses your entire import graph to find architectural violations.'
           }

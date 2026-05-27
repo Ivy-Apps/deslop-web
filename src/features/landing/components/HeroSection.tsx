@@ -8,8 +8,8 @@ import {
   inlineStyle,
 } from '@/components/design-system';
 import { HeroDemo } from '@/components/HeroDemo';
-import { GITHUB_DOCS_URL } from '@/lib/deslop';
 import { HeroBadge } from '@/features/landing/components/HeroBadge';
+import { GITHUB_DOCS_URL } from '@/lib/deslop';
 
 export default function HeroSection(): ReactNode {
   return (

@@ -2,13 +2,13 @@ import { ArrowRight } from 'lucide-react';
 import { type ReactNode, Suspense, use } from 'react';
 
 import CodeBlock from '@/components/CodeBlock';
-import { InlineCode } from '@/components/InlineCode';
 import {
   tw as baseTw,
   GlowPrimaryButton,
   GlowSecondaryButton,
 } from '@/components/design-system';
 import { typeScale } from '@/components/design-system/typography';
+import { InlineCode } from '@/components/InlineCode';
 import { GITHUB_DOCS_URL } from '@/lib/deslop';
 import { highlightCode } from '@/lib/highlight-code';
 
@@ -76,13 +76,12 @@ export default function WhyDeslopSection(): ReactNode {
           <DescriptionText>
             And Deslop doesn&apos;t just check the surface. Unlike ESLint —
             which can only trace cross-file dependencies by loading the full{' '}
-            <InlineCode>typescript-eslint</InlineCode>{' '}
-            compiler API, at a severe IDE and CI performance cost — Deslop
-            traces the full dependency graph as its primary job, in
-            milliseconds. Add{' '}
-            <InlineCode>transitive: true</InlineCode>{' '}
-            to any import rule and no developer nor AI agent can sneak a
-            forbidden dependency through an intermediate file.
+            <InlineCode>typescript-eslint</InlineCode> compiler API, at a severe
+            IDE and CI performance cost — Deslop traces the full dependency
+            graph as its primary job, in milliseconds. Add{' '}
+            <InlineCode>transitive: true</InlineCode> to any import rule and no
+            developer nor AI agent can sneak a forbidden dependency through an
+            intermediate file.
           </DescriptionText>
         </div>
 
@@ -193,8 +192,8 @@ function BypassDiagram(): ReactNode {
             Deslop detects:{' '}
           </span>
           <span className={`text-sm ${baseTw.text.secondary}`}>
-            <InlineCode>react</InlineCode> reachable transitively (2
-            hops) — flagged instantly
+            <InlineCode>react</InlineCode> reachable transitively (2 hops) —
+            flagged instantly
           </span>
         </div>
       </div>
