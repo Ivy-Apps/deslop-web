@@ -126,7 +126,7 @@ function HeroCopyBlock(): ReactNode {
       <p className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed font-normal text-zinc-300 mb-10">
         Stop playing architectural whack-a-mole in PR reviews. Enforce
         deterministic TypeScript guardrails that both humans and AI agents
-        understand — setup in 5 minutes.
+        understand — set up in 5 minutes.
       </p>
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-10">
         <a href="/get-started" className="contents">
