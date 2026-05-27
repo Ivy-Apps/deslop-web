@@ -84,10 +84,6 @@ function HeroVisualEffects(): ReactNode {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(62,153,245,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(92,61,245,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
       </div>
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[min(60vh,28rem)] bg-[linear-gradient(180deg,transparent_0%,rgba(62,153,245,0.03)_22%,rgba(92,61,245,0.045)_78%,transparent_100%)] [animation:hero-beam_14s_ease-in-out_infinite]"
-        aria-hidden
-      />
-      <div
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-44 bg-gradient-to-t from-zinc-950 via-zinc-950/90 to-transparent"
         aria-hidden
       />
@@ -102,7 +98,7 @@ function HeroCopyBlock(): ReactNode {
         <div
           className={`${baseTw.gradient.brandBadge} rounded-full p-px shadow-[0_0_40px_-6px_rgba(62,153,245,0.4),0_0_44px_-6px_rgba(92,61,245,0.45)]`}
         >
-          <div className="flex items-center gap-2.5 rounded-full bg-zinc-950/95 px-5 py-2.5 backdrop-blur-md">
+          <div className="flex items-center gap-2.5 rounded-full bg-zinc-950 px-5 py-2.5">
             <span
               className="h-2 w-2 shrink-0 rounded-full bg-gradient-to-br from-[#3E99F5] to-[#5C3DF5] shadow-[0_0_10px_rgba(62,153,245,0.85),0_0_12px_rgba(92,61,245,0.75)]"
               aria-hidden

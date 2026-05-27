@@ -15,7 +15,7 @@ export function HeroDemo(): ReactNode {
         className="pointer-events-none absolute -inset-1 rounded-3xl bg-gradient-to-tr from-[#3E99F5]/16 via-transparent to-[#5C3DF5]/14 opacity-70"
         aria-hidden
       />
-      <div className="relative rounded-3xl border border-[#3E99F5]/15 bg-zinc-950/85 shadow-[0_28px_100px_-28px_rgba(0,0,0,0.9),0_0_50px_-18px_rgba(62,153,245,0.12),0_0_55px_-16px_rgba(92,61,245,0.18)] ring-1 ring-[#5C3DF5]/10 backdrop-blur-md overflow-hidden">
+      <div className="relative rounded-3xl border border-[#3E99F5]/15 bg-zinc-950 shadow-[0_28px_100px_-28px_rgba(0,0,0,0.9),0_0_50px_-18px_rgba(62,153,245,0.12),0_0_55px_-16px_rgba(92,61,245,0.18)] ring-1 ring-[#5C3DF5]/10 overflow-hidden">
         {/* Window chrome */}
         <div className="flex items-center gap-3 border-b border-white/[0.06] bg-zinc-900/50 px-4 py-3 md:px-5">
           <div className="flex shrink-0 gap-1.5">
