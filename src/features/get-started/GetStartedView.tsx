@@ -7,7 +7,8 @@ import CopyButton from '@/components/CopyButton';
 import { tw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
 import { HighlightedCodeBlock } from '@/components/HighlightedCodeBlock';
-import { GITHUB_DOCS_URL, POLAR_MANAGE_URL } from '@/lib/deslop';
+import { GITHUB_DOCS_URL } from '@/lib/deslop';
+import { POLAR_MANAGE_URL } from '@/lib/polar';
 
 const INSTALL_COMMAND = 'npm install --save-dev @ivy-apps/deslop';
 const NPX_CHECK_COMMAND = 'npx @ivy-apps/deslop check .';

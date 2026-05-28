@@ -4,4 +4,3 @@ export const GITHUB_NEW_ISSUE_URL =
 export const GITHUB_DOCS_URL = 'https://github.com/Ivy-Apps/deslop';
 export const GITHUB_EXAMPLES_URL =
   'https://github.com/Ivy-Apps/deslop/tree/main/deslop/rules';
-export const POLAR_MANAGE_URL = 'https://polar.sh/ivy-apps/portal';
