@@ -31,7 +31,7 @@ export default function CtaSection(): ReactNode {
         <div className="flex justify-center">
           <a href="/get-started" className="contents">
             <GlowPrimaryButton size="lg" className="w-full sm:w-auto">
-              Audit My Architecture
+              Audit My Codebase
             </GlowPrimaryButton>
           </a>
         </div>
