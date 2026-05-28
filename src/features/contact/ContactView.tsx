@@ -9,8 +9,8 @@ import {
   CONTACT_EMAIL,
   GITHUB_DOCS_URL,
   GITHUB_NEW_ISSUE_URL,
-  POLAR_MANAGE_URL,
 } from '@/lib/deslop';
+import { POLAR_MANAGE_URL } from '@/lib/polar';
 
 const CONTACT_NAV_LINKS = [
   { label: 'Docs', href: GITHUB_DOCS_URL, external: true },

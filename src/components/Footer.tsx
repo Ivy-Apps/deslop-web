@@ -1,5 +1,6 @@
 import DeslopWordmarkLink from '@/components/DeslopWordmarkLink';
-import { GITHUB_DOCS_URL, POLAR_MANAGE_URL } from '@/lib/deslop';
+import { GITHUB_DOCS_URL } from '@/lib/deslop';
+import { POLAR_MANAGE_URL } from '@/lib/polar';
 
 export default function Footer() {
   return (

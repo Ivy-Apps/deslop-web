@@ -7,8 +7,7 @@ import {
   GlowSecondaryButton,
 } from '@/components/design-system';
 import { textPresets, typeScale } from '@/components/design-system/typography';
-import { POLAR_MANAGE_URL } from '@/lib/deslop';
-import { POLAR_CHECKOUT_URL } from '@/lib/polar';
+import { POLAR_CHECKOUT_URL, POLAR_MANAGE_URL } from '@/lib/polar';
 
 export default function PricingSection(): ReactNode {
   return (

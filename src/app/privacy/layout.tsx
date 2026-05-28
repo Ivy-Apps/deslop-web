@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 
 import AppNavbar from '@/components/AppNavbar';
-import { GITHUB_DOCS_URL, POLAR_MANAGE_URL } from '@/lib/deslop';
+import { GITHUB_DOCS_URL } from '@/lib/deslop';
+import { POLAR_MANAGE_URL } from '@/lib/polar';
 
 const PRIVACY_NAV_LINKS = [
   { label: 'Docs', href: GITHUB_DOCS_URL, external: true },
