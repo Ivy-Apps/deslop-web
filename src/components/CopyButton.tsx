@@ -42,7 +42,7 @@ export default function CopyButton({
       type="button"
       onClick={handleCopy}
       aria-label={copied ? 'Copied' : 'Copy to clipboard'}
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-md ${tw.link.quiet} hover:bg-zinc-100 dark:hover:bg-white/[0.06] ${className}`}
+      className={`inline-flex h-8 w-8 items-center justify-center rounded-md ${tw.link.quiet} ${tw.bg.hover} ${className}`}
     >
       {copied ? (
         <Check className={`h-4 w-4 ${tw.result.pass}`} aria-hidden />

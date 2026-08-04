@@ -29,7 +29,7 @@ export default function AppNavbar(): ReactNode {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className={`${typeScale.bodySm} ${tw.link.quiet} rounded-md px-3 py-2 hover:bg-zinc-100 dark:hover:bg-white/[0.06]`}
+              className={`${typeScale.bodySm} ${tw.link.quiet} rounded-md px-3 py-2 ${tw.bg.hover}`}
             >
               {link.label}
             </a>

@@ -19,11 +19,18 @@ export type TerminalOutputProps = {
  * A terminal's palette is tuned for a dark background, so the raw colours are
  * mapped per theme rather than used literally: the light column is darkened
  * enough to stay readable on white, and the dark column lightened to stay
- * readable on near-black. Hue and meaning are preserved.
+ * readable on the raised surface. Hue and meaning are preserved.
+ *
+ * The dark column stays at -400/-300 even though the surrounding prose was
+ * dialled down: that rung is the only one where all six hues clear AA on
+ * #27272A — one step dimmer fails red (3.96), blue (4.05) and fuchsia (4.31).
+ * Output reading brighter than the prose around it is correct; it is verbatim
+ * CLI output and should look like a terminal.
  */
 const COLOR_CLASSES: Record<AnsiColor, { normal: string; bright: string }> = {
   black: {
-    normal: 'text-zinc-600 dark:text-zinc-500',
+    /* zinc-500 sat at 3.08 on the raised surface; this is the `muted` value. */
+    normal: 'text-zinc-600 dark:text-[#8E8E94]',
     bright: 'text-zinc-500 dark:text-zinc-400',
   },
   red: {

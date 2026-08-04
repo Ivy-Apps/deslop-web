@@ -30,7 +30,7 @@ export default function ExternalLink({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className={`inline-flex items-center gap-1.5 rounded-md border ${tw.border.default} ${tw.bg.surface} px-4 py-2 ${typeScale.bodySm} ${tw.text.primary} no-underline transition-colors hover:bg-zinc-100 dark:hover:bg-white/[0.06]`}
+        className={`inline-flex items-center gap-1.5 rounded-md border ${tw.border.default} ${tw.bg.surface} px-4 py-2 ${typeScale.bodySm} ${tw.text.primary} no-underline transition-colors ${tw.bg.hover}`}
       >
         {children}
         <ArrowUpRight className="h-4 w-4 shrink-0 opacity-60" aria-hidden />

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
+import { tw } from '@/components/design-system/colors';
 import { appText } from '@/components/design-system/typography';
 import Footer from '@/components/Footer';
 import ThemeScript from '@/components/ThemeScript';
@@ -18,7 +19,7 @@ export const viewport: Viewport = {
   // whichever theme the visitor is actually in.
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+    { media: '(prefers-color-scheme: dark)', color: '#18181b' },
   ],
   viewportFit: 'cover',
 };
@@ -33,7 +34,7 @@ export default function RootLayout({
       <head>
         <ThemeScript />
       </head>
-      <body className={`${appText.shell} bg-white dark:bg-zinc-950`}>
+      <body className={`${appText.shell} ${tw.bg.page}`}>
         {children}
         <Footer />
       </body>
