@@ -44,7 +44,9 @@ export default function ChecksSection({
         {CLAUSES.map((clause) => (
           <div key={clause.name}>
             <dt>
-              <code className={`${textPresets.code} ${tw.text.primary}`}>
+              <code
+                className={`${textPresets.code} font-semibold ${tw.text.primary}`}
+              >
                 {clause.name}
               </code>
             </dt>
