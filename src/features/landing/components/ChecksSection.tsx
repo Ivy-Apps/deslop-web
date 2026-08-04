@@ -98,6 +98,17 @@ export default function ChecksSection(): ReactNode {
         written in one file, so a dependency reached through three other modules
         is still caught.
       </p>
+
+      {/*
+        Secondary on purpose: auto-fixing relative imports is a convenience, not
+        the reason the tool exists. One sentence, no heading, no code sample.
+      */}
+      <p className={`mt-4 max-w-2xl ${typeScale.bodySm} ${tw.text.muted}`}>
+        Separately, Deslop ships one built-in check of its own: relative imports
+        like <InlineCode>../../lib/util</InlineCode>, which{' '}
+        <InlineCode>deslop fix</InlineCode> rewrites to your{' '}
+        <InlineCode>@/</InlineCode> alias automatically.
+      </p>
     </Section>
   );
 }

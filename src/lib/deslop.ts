@@ -22,3 +22,4 @@ export const NPM_PACKAGE_URL = 'https://www.npmjs.com/package/@ivy-apps/deslop';
 
 export const INSTALL_COMMAND = 'npm install --save-dev @ivy-apps/deslop';
 export const NPX_COMMAND = 'npx @ivy-apps/deslop check .';
+export const FIX_COMMAND = 'npx @ivy-apps/deslop fix .';

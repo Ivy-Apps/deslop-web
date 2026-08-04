@@ -11,15 +11,18 @@ export const dynamic = 'force-static';
  * show a flash of unhighlighted code on a page that is entirely static.
  */
 export default async function HomePage() {
-  const [transitiveRuleHtml, existsRuleHtml] = await Promise.all([
-    highlightCode(examples.transitiveRule, 'yaml'),
-    highlightCode(examples.existsRule, 'yaml'),
-  ]);
+  const [transitiveRuleHtml, existsRuleHtml, relativeDiffHtml] =
+    await Promise.all([
+      highlightCode(examples.transitiveRule, 'yaml'),
+      highlightCode(examples.existsRule, 'yaml'),
+      highlightCode(examples.relativeDiff, 'diff'),
+    ]);
 
   return (
     <LandingView
       transitiveRuleHtml={transitiveRuleHtml}
       existsRuleHtml={existsRuleHtml}
+      relativeDiffHtml={relativeDiffHtml}
     />
   );
 }
