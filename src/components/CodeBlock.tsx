@@ -1,58 +1,62 @@
+import type { ReactNode } from 'react';
+
+import CopyButton from '@/components/CopyButton';
 import { tw } from '@/components/design-system/colors';
 import { textPresets } from '@/components/design-system/typography';
 
 export type CodeBlockProps = {
   code: string;
+  /** Shown in a header strip. A real path, so it can be located in a repo. */
   filename?: string;
+  /** Adds a copy control. Worth it for commands, noise for rule samples. */
+  copyable?: boolean;
   className?: string;
   /**
    * Output of `await highlightCode(code, lang)` from `@/lib/highlight-code`.
-   * Omit to render plain `<pre>` (no highlighting).
+   * Omit to render an unhighlighted `<pre>`.
    */
   highlightedHtml?: string;
 };
 
 /**
- * Sync Server Component — highlighting is done by callers via `highlightCode`
- * so Turbopack does not treat this module as an async CJS boundary.
+ * Sync Server Component — callers do the highlighting via `highlightCode` so
+ * Turbopack does not treat this module as an async CJS boundary.
+ *
+ * No traffic-light dots: this is a file, not a window, and the decoration
+ * implied a screenshot of something that was never a screenshot.
  */
 export default function CodeBlock({
   code,
   filename,
+  copyable = false,
   className = '',
   highlightedHtml,
-}: CodeBlockProps) {
-  const trimmed = code.trimEnd();
-
+}: CodeBlockProps): ReactNode {
   return (
     <div
-      className={`${tw.bg.code} border border-white/10 rounded-xl overflow-hidden font-mono text-base ${className}`}
+      className={`relative overflow-hidden rounded-lg border ${tw.border.default} ${tw.bg.code} ${className}`}
     >
       {filename && (
-        <div className="bg-white/5 border-b border-white/10 px-4 py-2 flex items-center justify-between">
-          <span
-            className={`${textPresets.codeSm} ${tw.text.muted} font-medium`}
-          >
-            {filename}
-          </span>
-          <div className="flex gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-            <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-            <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-          </div>
+        <div
+          className={`border-b ${tw.border.default} px-4 py-2 ${textPresets.code} ${tw.text.muted}`}
+        >
+          {filename}
         </div>
       )}
-      <div
-        className={`p-5 overflow-x-auto code-block-shiki ${!highlightedHtml ? 'text-zinc-200' : ''}`}
-      >
+      {copyable && (
+        <CopyButton text={code.trimEnd()} className="absolute top-2 right-2" />
+      )}
+      <div className="overflow-x-auto p-4">
         {highlightedHtml ? (
           <div
-            className="[&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0 [&_pre]:text-[0.9375rem] [&_pre]:leading-[1.65] [&_code]:font-mono"
+            className={`${textPresets.codeBlock} [&_code]:font-mono [&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0`}
+            /* Shiki output, generated at build time from string literals in
+               this repo. No user input reaches it. */
             dangerouslySetInnerHTML={{ __html: highlightedHtml }}
           />
         ) : (
-          <pre className="text-zinc-200 m-0">
-            <code>{trimmed}</code>
+          <pre className={`m-0 ${textPresets.codeBlock} ${tw.text.secondary}`}>
+            <code>{code.trimEnd()}</code>
           </pre>
         )}
       </div>

@@ -1,37 +1,32 @@
 /**
  * Feature-agnostic typography tokens.
+ *
+ * System font stack — no webfont, so there is nothing to download and no text
+ * reflow on load. 16px base with a deliberately shallow scale: the largest
+ * thing on the page is only three steps above body copy.
  */
 
 export const appText = {
-  shell:
-    'min-h-screen text-white selection:bg-white selection:text-black font-sans text-[17px] md:text-[18px] antialiased',
+  shell: 'min-h-screen font-sans text-base antialiased',
 } as const;
 
 export const typeScale = {
-  display2xl:
-    'text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-0.04em] leading-[1.05]',
-  displayXl: 'text-5xl md:text-7xl font-bold tracking-tight',
-  displayLg: 'text-5xl md:text-6xl font-bold tracking-tight',
-  titleLg: 'text-3xl font-bold text-white',
-  titleMd: 'text-xl font-bold text-white',
-  bodyXl: 'text-2xl leading-relaxed',
-  bodyLg: 'text-lg leading-relaxed',
-  bodyMd: 'text-base leading-relaxed',
-  bodySm: 'text-sm md:text-base leading-relaxed',
-  labelCaps: 'text-base font-medium uppercase tracking-wider',
-  codeSm: 'font-mono text-sm',
-  codeMd: 'font-mono text-base',
+  /** Page title. The only place tracking is tightened. */
+  display: 'text-4xl sm:text-5xl font-semibold tracking-[-0.02em]',
+  sectionTitle: 'text-2xl font-semibold tracking-[-0.01em]',
+  subTitle: 'text-lg font-semibold',
+  lead: 'text-lg leading-relaxed',
+  body: 'text-base leading-relaxed',
+  bodySm: 'text-sm leading-relaxed',
+  /** Section eyebrow. Uppercase, so tracking is opened back up. */
+  eyebrow: 'text-xs font-medium uppercase tracking-[0.12em]',
 } as const;
 
 export const textPresets = {
-  navBrand: 'text-[17px] md:text-lg font-semibold tracking-[-0.02em]',
-  sectionLeadMuted: 'text-2xl max-w-3xl mx-auto leading-relaxed',
-  heroLead: 'text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-normal',
-  ctaLead: 'text-2xl max-w-2xl mx-auto leading-relaxed',
-  codeFilename: 'truncate font-mono text-sm',
-  codeSm: 'font-mono text-sm',
-  codeLineNumber: 'w-7 shrink-0 select-none text-right tabular-nums',
-  codePanel: 'p-7 md:p-11 font-mono text-sm md:text-base leading-[1.75]',
-  bodyList: 'flex items-center gap-3 text-base',
-  bodyListLg: 'flex items-center gap-3 text-lg',
+  navBrand: 'text-base font-semibold tracking-[-0.01em]',
+  /** Clause names, file paths, commands. */
+  code: 'font-mono text-sm',
+  codeBlock: 'font-mono text-sm leading-[1.7]',
+  /** Verbatim CLI output — must not wrap mid-token. */
+  terminal: 'font-mono text-xs sm:text-sm leading-[1.6] whitespace-pre-wrap',
 } as const;

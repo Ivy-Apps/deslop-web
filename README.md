@@ -1,22 +1,35 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# deslop-web
 
-# Run and deploy your AI Studio app
+Source for [deslop.dev](https://deslop.dev) — the landing page for
+[Ivy-Apps/deslop](https://github.com/Ivy-Apps/deslop).
 
-This contains everything you need to run your app locally.
+The site is a single page that explains what Deslop is and links to the repo,
+which holds the documentation. It deliberately does not restate the README; see
+[`docs/adr/0001-thin-front-door.md`](./docs/adr/0001-thin-front-door.md) for why,
+and [`CONTEXT.md`](./CONTEXT.md) for the terminology the copy uses.
 
-View your app in AI Studio: https://ai.studio/apps/3125ea99-753c-492f-80ea-f6db71f4f25e
+## Running it
 
-## Run Locally
+```bash
+npm install
+npm run dev          # http://localhost:3000
+npm run storybook    # http://localhost:6006
+```
 
-**Prerequisites:** Node.js
+## Before pushing
 
-1. Install dependencies: `npm install`
-2. Run the app: `npm run dev` (opens on port 3000)
+```bash
+npm run check        # typecheck, deslop, lint, build, build-storybook
+npm run fix          # deslop --fix, then biome --write
+```
 
-## Deploy to Vercel
+The site enforces its own architecture with Deslop — the rules live in
+[`deslop/rules/`](./deslop/rules/). Pages must delegate to a `*View` component,
+features may not import each other, the design system may not import from the
+app, and every `*View` needs a Storybook story.
 
-1. Push this repo to GitHub (or GitLab / Bitbucket) and import the project in [Vercel](https://vercel.com).
-2. Use the default settings: **Install** `npm install`, **Build** `next build`, **Output** managed by Next.js.
-3. **Environment variables:** Add secrets only in the Vercel project dashboard when your app reads them on the **server** (for example in a [Route Handler](https://nextjs.org/docs/app/building-your-application/routing/route-handlers)). Do **not** use the `NEXT_PUBLIC_` prefix for API keys you must keep private—those are exposed in the browser bundle.
+## Deploying
+
+Hosted on Vercel with the default Next.js settings: install `npm install`, build
+`next build`, output managed by Next.js. There are no environment variables and
+no runtime secrets — every page is statically rendered.

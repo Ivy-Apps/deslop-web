@@ -1,44 +1,40 @@
+import type { ReactNode } from 'react';
+
 import AppNavbar from '@/components/AppNavbar';
-import { tw as baseTw } from '@/components/design-system/colors';
-import { appText } from '@/components/design-system/typography';
-import AiFleetSection from '@/features/landing/components/AiFleetSection';
-import CapabilityMatrixSection from '@/features/landing/components/CapabilityMatrixSection';
-import CtaSection from '@/features/landing/components/CtaSection';
-import FaqSection from '@/features/landing/components/FaqSection';
+import { tw } from '@/components/design-system/colors';
+import ChecksSection, {
+  type ChecksSectionProps,
+} from '@/features/landing/components/ChecksSection';
+import ExampleSection, {
+  type ExampleSectionProps,
+} from '@/features/landing/components/ExampleSection';
 import HeroSection from '@/features/landing/components/HeroSection';
-import PricingSection from '@/features/landing/components/PricingSection';
-import PrTaxSection from '@/features/landing/components/PrTaxSection';
-import TechnicalDetailsSection from '@/features/landing/components/TechnicalDetailsSection';
-import UnifiedDslSection from '@/features/landing/components/UnifiedDslSection';
-import WhyDeslopSection from '@/features/landing/components/WhyDeslopSection';
-import { GITHUB_DOCS_URL } from '@/lib/deslop';
+import InstallSection from '@/features/landing/components/InstallSection';
 
-const LANDING_NAV_LINKS = [
-  { label: 'The Problem', href: '#problem' },
-  { label: 'Solution', href: '#ai-fleet' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Docs', href: GITHUB_DOCS_URL, external: true },
-];
+export type LandingViewProps = ChecksSectionProps & ExampleSectionProps;
 
-export default function LandingView() {
+/**
+ * The whole site. Four sections: what it is, what it checks, what that looks
+ * like in practice, and how to install it. Anything a reader wants beyond this
+ * is a link to the repo — see docs/adr/0001-thin-front-door.md.
+ *
+ * Syntax highlighting arrives as props rather than being done here, so this
+ * component and everything under it stay synchronous and renderable in
+ * Storybook. The page does the async work.
+ */
+export default function LandingView({
+  snippetHtml,
+  ...exampleProps
+}: LandingViewProps): ReactNode {
   return (
-    <div className={`${appText.shell} ${baseTw.bg.page}`}>
-      <AppNavbar
-        links={LANDING_NAV_LINKS}
-        cta={{ label: 'Get Started', href: '/get-started' }}
-        logoScrollToTop
-      />
-      <HeroSection />
-      <PrTaxSection />
-      <AiFleetSection />
-      <UnifiedDslSection />
-      <WhyDeslopSection />
-      <CapabilityMatrixSection />
-      <TechnicalDetailsSection />
-      <PricingSection />
-      <FaqSection />
-      <CtaSection />
+    <div className={tw.bg.page}>
+      <AppNavbar />
+      <main>
+        <HeroSection />
+        <ChecksSection snippetHtml={snippetHtml} />
+        <ExampleSection {...exampleProps} />
+        <InstallSection />
+      </main>
     </div>
   );
 }

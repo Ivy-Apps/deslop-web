@@ -1,90 +1,49 @@
 @import "tailwindcss";
 
-/* Shiki: many themes (e.g. github-dark) set per-token background-color — looks like a text selection */
-.code-block-shiki :is(pre.shiki, code) {
+/*
+ * Theme is a class on <html>, not a media query, so a visitor can override
+ * their OS preference. The pre-paint script in layout.tsx sets it.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Shiki dual-theme output. Every token carries both a light and a dark colour
+ * as a CSS variable; we pick one here rather than shipping two <pre> blocks.
+ */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
   background-color: transparent !important;
 }
 
-.code-block-shiki .shiki span,
-.code-block-shiki .shiki .line {
-  background-color: transparent !important;
-  background-image: none !important;
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark);
 }
 
 html {
-  scroll-behavior: smooth;
-  /* Match page surface so overscroll (rubber-band) isn’t white */
-  background-color: #09090b;
-  color-scheme: dark;
+  /* Prevents a white flash on overscroll before the body paints. */
+  background-color: #ffffff;
   min-height: 100dvh;
+}
+
+html.dark {
+  background-color: #18181b;
 }
 
 body {
-  background-color: #09090b;
   min-height: 100dvh;
-  /* Extend background into iOS / PWA safe areas (Android gesture inset is mostly theme-color) */
+  /* Extends the background into iOS / PWA safe areas. */
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-@keyframes hero-copy-in {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
+/*
+ * The page is short enough that in-page anchors are unnecessary, and smooth
+ * scrolling is one of the "fancy" behaviours being removed. Kept only as a
+ * courtesy for the skip link.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes hero-demo-in {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes step-arrow-bob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5px);
-  }
-}
-
-@supports (animation-timeline: view()) {
-  .landing-reveal {
-    animation: landing-reveal 0.65s ease-out both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 40%;
-  }
-}
-
-@keyframes landing-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.hero-copy-in {
-  animation: hero-copy-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.hero-demo-in {
-  animation: hero-demo-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
-}
-
-.step-arrow-bob {
-  animation: step-arrow-bob 2s ease-in-out infinite;
 }

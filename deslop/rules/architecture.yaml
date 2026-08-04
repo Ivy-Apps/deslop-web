@@ -66,3 +66,18 @@ rules:
       Move any UI or React-dependent logic out of @/lib and into the appropriate
       @/components or @/features module. Keep @/lib strictly for pure functions,
       data utilities, and server-safe helpers that have no rendering concerns.
+
+  - id: components-feature-agnostic
+    description: >-
+      Shared components must be reusable by any feature, which means they must
+      not know about any particular one. A component that imports a feature or a
+      route module cannot be lifted into another page without dragging that
+      feature along with it.
+    target: "@/components/**"
+    forbids:
+      - import: "@/features/**"
+      - import: "@/app/**"
+    fix: >-
+      Invert the dependency: pass what the component needs in as props, and let
+      the feature own the wiring. If the component is genuinely specific to one
+      feature, move it under that feature's directory instead.

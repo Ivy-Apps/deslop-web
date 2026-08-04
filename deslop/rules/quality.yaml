@@ -15,3 +15,18 @@ rules:
       Create a {{FileName}}View.stories.tsx file next to {{FileName}}View.tsx.
       Add at least a Default story that renders the View with representative props
       or mock data so it can be previewed standalone in Storybook.
+
+  - id: no-stories-in-prod
+    description: >-
+      Stories are development-only fixtures. Shipping code must never import
+      them, even through a chain of other modules, or mock data and Storybook's
+      runtime end up in the production bundle.
+    target: "**/*"
+    exclude:
+      - "**/*.stories"
+    forbids:
+      - import: "**/*.stories"
+        transitive: true
+    fix: >-
+      Remove the import. If the story and the shipping code need to share a
+      fixture or a type, extract it into a plain module that both can import.

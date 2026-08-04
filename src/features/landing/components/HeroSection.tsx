@@ -1,140 +1,50 @@
-import { ArrowRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 
-import {
-  tw as baseTw,
-  GlowPrimaryButton,
-  GlowSecondaryButton,
-  inlineStyle,
-} from '@/components/design-system';
-import { HeroDemo } from '@/components/HeroDemo';
-import { HeroBadge } from '@/features/landing/components/HeroBadge';
-import { GITHUB_DOCS_URL } from '@/lib/deslop';
+import { tw } from '@/components/design-system/colors';
+import { typeScale } from '@/components/design-system/typography';
+import ExternalLink from '@/components/ExternalLink';
+import { GITHUB_REPO_URL, NPM_PACKAGE_URL, NPX_COMMAND } from '@/lib/deslop';
 
+/**
+ * States what the tool is before it states why anyone should care. AI is named
+ * once, as a fact about determinism, rather than being the theme of the page.
+ */
 export default function HeroSection(): ReactNode {
   return (
-    <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-zinc-950">
-      <HeroVisualEffects />
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <HeroCopyBlock />
-        <HeroDemoRow />
+    <section className="mx-auto max-w-3xl px-6 pt-16 pb-12 md:pt-24 md:pb-16">
+      <h1 className={`${typeScale.display} ${tw.text.primary}`}>Deslop</h1>
+
+      <p className={`mt-5 max-w-2xl ${typeScale.lead} ${tw.text.secondary}`}>
+        Static import-graph analyzer for TypeScript. You write architecture
+        rules in YAML; Deslop checks them on every run.
+      </p>
+
+      <div
+        className={`mt-8 overflow-x-auto rounded-lg border ${tw.border.default} ${tw.bg.code} px-4 py-3`}
+      >
+        <code className={`font-mono text-sm ${tw.text.primary}`}>
+          <span className={`select-none ${tw.text.muted}`}>$ </span>
+          {NPX_COMMAND}
+        </code>
+      </div>
+
+      <p className={`mt-6 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
+        No AI and no heuristics — it walks the import graph, so the same code
+        always produces the same result.
+      </p>
+
+      <p className={`mt-3 ${typeScale.bodySm} ${tw.text.muted}`}>
+        MIT licensed · free · no account
+      </p>
+
+      <div className="mt-8 flex flex-wrap gap-3">
+        <ExternalLink href={GITHUB_REPO_URL} variant="button">
+          View on GitHub
+        </ExternalLink>
+        <ExternalLink href={NPM_PACKAGE_URL} variant="button">
+          npm
+        </ExternalLink>
       </div>
     </section>
-  );
-}
-
-function HeroDemoRow(): ReactNode {
-  return (
-    <div className="mt-16 md:mt-20 flex flex-col items-center gap-6">
-      <DemoCaption />
-      <HeroDemo />
-    </div>
-  );
-}
-
-function DemoCaption(): ReactNode {
-  return (
-    <div className="text-center border-l-2 border-[#3E99F5]/50 pl-4 leading-relaxed text-zinc-300">
-      <p className="text-lg font-medium">
-        {'Deslop '}
-        <span className="text-white font-bold">{'catches'}</span>{' '}
-        <span className="text-white font-bold">
-          {'architectural violations'}
-        </span>
-        {' that result in bugs, security vulnerabilities or serious tech debt '}
-        <span className="text-white font-bold">{'before they happen'}</span>
-        {'.'}
-      </p>
-      <p className="mt-2 text-sm text-zinc-500 leading-relaxed">
-        {
-          'No AI involved — just good old Code Graph & Dependency Analysis algorithms.'
-        }
-      </p>
-    </div>
-  );
-}
-
-function HeroVisualEffects(): ReactNode {
-  return (
-    <>
-      <div
-        className={`pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-px ${baseTw.gradient.brandBorder}`}
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_55%_45%_at_15%_5%,rgba(62,153,245,0.14),transparent_55%),radial-gradient(ellipse_50%_45%_at_85%_0%,rgba(92,61,245,0.15),transparent_55%)]"
-        aria-hidden
-      />
-      <div
-        className="hero-blob-left pointer-events-none absolute -left-[20%] top-[5%] z-0 h-[min(70vw,32rem)] w-[min(70vw,32rem)] rounded-full bg-[#3E99F5]/25 blur-[120px]"
-        aria-hidden
-      />
-      <div
-        className="hero-blob-right pointer-events-none absolute -right-[15%] top-[25%] z-0 h-[min(60vw,28rem)] w-[min(60vw,28rem)] rounded-full bg-[#5C3DF5]/20 blur-[110px]"
-        aria-hidden
-      />
-      <div
-        className="hero-bloom pointer-events-none absolute bottom-[-10%] left-1/2 z-0 h-[22rem] w-[min(95vw,44rem)] -translate-x-1/2 rounded-full blur-[130px]"
-        style={inlineStyle.brandBloom}
-        aria-hidden
-      />
-      <div
-        className="absolute inset-0 z-0 opacity-[0.4] [mask-image:radial-gradient(ellipse_75%_65%_at_50%_40%,black,transparent)]"
-        aria-hidden
-      >
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(62,153,245,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(92,61,245,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
-      </div>
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-44 bg-gradient-to-t from-zinc-950 via-zinc-950/90 to-transparent"
-        aria-hidden
-      />
-    </>
-  );
-}
-
-function HeroCopyBlock(): ReactNode {
-  return (
-    <div className="hero-copy-in text-center max-w-4xl mx-auto">
-      <div className="mb-8 flex flex-col items-center gap-6">
-        <HeroBadge />
-        <h1
-          className={`text-balance text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-0.04em] leading-[1.05]`}
-        >
-          <span
-            className={`block ${baseTw.gradient.lightText} drop-shadow-[0_0_48px_rgba(255,255,255,0.12)]`}
-          >
-            Your AI writes code.
-          </span>
-          <span className="mt-2 md:mt-4 block">
-            <span className={baseTw.gradient.brandText}>Deslop</span>
-            <span className={baseTw.gradient.softLightText}> makes it </span>
-            <span className={baseTw.gradient.brandTextReverse}>good.</span>
-          </span>
-        </h1>
-      </div>
-      <p className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed font-normal text-zinc-300 mb-10">
-        Stop playing architectural whack-a-mole in PR reviews. Enforce
-        deterministic TypeScript guardrails that both humans and AI agents
-        understand — set up in 5 minutes.
-      </p>
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-10">
-        <a href="/get-started" className="contents">
-          <GlowPrimaryButton className="w-full sm:w-auto">
-            Get Started Free
-            <ArrowRight className="w-6 h-6 opacity-90 shrink-0" />
-          </GlowPrimaryButton>
-        </a>
-        <a
-          href={GITHUB_DOCS_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="contents"
-        >
-          <GlowSecondaryButton className="w-full sm:w-auto">
-            Read the Docs
-          </GlowSecondaryButton>
-        </a>
-      </div>
-    </div>
   );
 }
