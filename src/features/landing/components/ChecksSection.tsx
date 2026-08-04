@@ -1,54 +1,26 @@
 import type { ReactNode } from 'react';
 
+import CodeBlock from '@/components/CodeBlock';
 import { tw } from '@/components/design-system/colors';
 import { textPresets, typeScale } from '@/components/design-system/typography';
 import ExternalLink from '@/components/ExternalLink';
 import { InlineCode } from '@/components/InlineCode';
 import Section from '@/components/Section';
+import { CLAUSES } from '@/features/landing/components/clauses';
 import { GITHUB_WRITING_RULES_URL } from '@/lib/deslop';
 
-type Clause = {
-  name: string;
-  description: string;
-  snippet: string;
+export type ChecksSectionProps = {
+  /**
+   * Shiki output for each clause snippet, keyed by clause name and highlighted
+   * by the page. Omitting it renders plain text, which is what the Storybook
+   * story gets — this component stays synchronous either way.
+   */
+  snippetHtml?: Record<string, string>;
 };
 
-/**
- * The whole DSL is four clauses. Showing each one's syntax next to its
- * description is both faster to read than prose and evidence that the language
- * really is this small.
- */
-const CLAUSES: Clause[] = [
-  {
-    name: 'forbids',
-    description:
-      'This module may not import that one — directly, or through any chain of imports.',
-    snippet: `forbids:
-  - import: "react"
-    transitive: true`,
-  },
-  {
-    name: 'allows',
-    description: 'Carves an exception out of a broad forbids.',
-    snippet: `allows:
-  - import: "{{TARGET_DIR}}/**"`,
-  },
-  {
-    name: 'uses',
-    description: 'This module must import that one.',
-    snippet: `uses:
-  - import: "@/lib/auth/session"`,
-  },
-  {
-    name: 'exists',
-    description:
-      'A companion module must be present — a test, a story, a sibling file.',
-    snippet: `exists:
-  - module: "{{TARGET_DIR}}/{{FileName}}.spec"`,
-  },
-];
-
-export default function ChecksSection(): ReactNode {
+export default function ChecksSection({
+  snippetHtml,
+}: ChecksSectionProps): ReactNode {
   return (
     <Section
       id="what-it-checks"
@@ -79,14 +51,11 @@ export default function ChecksSection(): ReactNode {
             <dd className={`mt-1.5 ${typeScale.body} ${tw.text.secondary}`}>
               {clause.description}
             </dd>
-            <dd
-              className={`mt-3 overflow-x-auto rounded-lg border ${tw.border.default} ${tw.bg.code} p-3`}
-            >
-              <pre
-                className={`m-0 ${textPresets.codeBlock} ${tw.text.secondary}`}
-              >
-                {clause.snippet}
-              </pre>
+            <dd className="mt-3">
+              <CodeBlock
+                code={clause.snippet}
+                highlightedHtml={snippetHtml?.[clause.name]}
+              />
             </dd>
           </div>
         ))}
