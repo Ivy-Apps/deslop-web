@@ -1,8 +1,12 @@
 import type { ReactNode } from 'react';
 
+import { tw } from '@/components/design-system/colors';
+
 export function InlineCode({ children }: { children: ReactNode }): ReactNode {
   return (
-    <code className="text-[0.9em] text-zinc-200 bg-white/10 px-1 py-0.5 rounded font-mono">
+    <code
+      className={`rounded px-1.5 py-0.5 font-mono text-[0.9em] ${tw.bg.surfaceStrong} ${tw.text.primary}`}
+    >
       {children}
     </code>
   );

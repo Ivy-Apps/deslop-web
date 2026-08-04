@@ -1,18 +1,25 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
+import { appText } from '@/components/design-system/typography';
 import Footer from '@/components/Footer';
+import ThemeScript from '@/components/ThemeScript';
 import '@/app/globals.css';
 
 export const metadata: Metadata = {
-  title: 'Deslop: fix AI slop',
-  description: 'Your AI writes code. Deslop makes it good.',
+  title: 'Deslop — static import-graph analyzer for TypeScript',
+  description:
+    'Define architecture rules in YAML. Deslop checks them on every run, across every import. Free, open source, MIT licensed.',
 };
 
-/** Paints Android Chrome’s bottom nav / gesture bar to match the page (avoids a white strip). */
 export const viewport: Viewport = {
-  themeColor: '#09090b',
-  colorScheme: 'dark',
+  colorScheme: 'light dark',
+  // Paints the browser UI (Android Chrome's nav bar, Safari's chrome) to match
+  // whichever theme the visitor is actually in.
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+  ],
   viewportFit: 'cover',
 };
 
@@ -22,8 +29,11 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body className={`${appText.shell} bg-white dark:bg-zinc-950`}>
         {children}
         <Footer />
       </body>

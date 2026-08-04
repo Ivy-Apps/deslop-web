@@ -1,21 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Deslop">
   <title>Deslop</title>
-  <rect
-    width="32"
-    height="32"
-    rx="5.33"
-    fill="#ffffff"
-    stroke="#000000"
-    stroke-opacity="0.06"
-  />
+  <!--
+    Gradient fill rather than white: the previous white tile vanished against a
+    light tab bar. This matches the wordmark and reads on either chrome.
+  -->
+  <defs>
+    <linearGradient id="deslop-mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3E99F5" />
+      <stop offset="1" stop-color="#5C3DF5" />
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="url(#deslop-mark)" />
   <text
     x="50%"
     y="50%"
     dominant-baseline="central"
     text-anchor="middle"
-    fill="#09090b"
+    fill="#ffffff"
     font-family="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-    font-size="28"
+    font-size="21"
     font-weight="600"
   >
     &#x03B4;

@@ -1,7 +1,9 @@
 'use client';
 
 import { Check, Copy } from 'lucide-react';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
+
+import { tw } from '@/components/design-system/colors';
 
 type CopyButtonProps = {
   text: string;
@@ -13,30 +15,40 @@ export default function CopyButton({
   className = '',
 }: CopyButtonProps): ReactNode {
   const [copied, setCopied] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Without this, navigating away mid-timeout sets state on an unmounted tree.
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(text);
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Denied clipboard permission or a non-secure origin. The command is
+      // visible and selectable either way, so fail quietly.
+      return;
+    }
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <button
       type="button"
       onClick={handleCopy}
-      aria-label={copied ? 'Copied!' : 'Copy to clipboard'}
-      className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-        copied
-          ? 'bg-green-500/20 text-green-400'
-          : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-zinc-200'
-      } ${className}`}
+      aria-label={copied ? 'Copied' : 'Copy to clipboard'}
+      className={`inline-flex h-8 w-8 items-center justify-center rounded-md ${tw.link.quiet} hover:bg-zinc-100 dark:hover:bg-white/[0.06] ${className}`}
     >
       {copied ? (
-        <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+        <Check className={`h-4 w-4 ${tw.result.pass}`} aria-hidden />
       ) : (
-        <Copy className="h-3.5 w-3.5" />
+        <Copy className="h-4 w-4" aria-hidden />
       )}
-      {copied ? 'Copied!' : 'Copy'}
     </button>
   );
 }

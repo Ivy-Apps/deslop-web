@@ -1,96 +1,62 @@
 /**
- * Feature-agnostic color tokens for the app.
- * Keep these primitive and reusable across pages/features.
+ * Feature-agnostic color tokens.
+ *
+ * Every token carries its own `dark:` variant, so consumers never branch on
+ * theme. The dark variant is driven by a `.dark` class on <html> (see the
+ * `@custom-variant dark` declaration in globals.css), not by a media query —
+ * the theme is user-overridable.
+ *
+ * Color carries meaning rather than decoration. The brand blue/purple pair
+ * appears only in the logo mark; links are blue; red and green are reserved for
+ * Deslop's own output.
  */
 export const palette = {
+  /** Logo mark only. Never used for text. */
   brand: {
     primary: '#3E99F5',
     secondary: '#5C3DF5',
-    tertiary: '#4B6EF4',
-    accent: '#4A2DD4',
+  },
+  /** Links. Two shades so both themes clear WCAG AA (5.4:1 and 6.7:1). */
+  link: {
+    light: '#1668C9',
+    dark: '#3E99F5',
   },
   surface: {
-    page: '#09090B',
-    elevated: '#18181B',
-    code: '#0A0A0A',
+    light: '#FFFFFF',
+    dark: '#09090B',
   },
-  text: {
-    primary: '#FFFFFF',
-    secondary: '#D4D4D8',
-    muted: '#A1A1AA',
-    subtle: '#71717A',
-  },
-  status: {
-    success: '#22C55E',
-    warning: '#FEBC2E',
-    danger: '#FF5F57',
-  },
-} as const;
-
-export const rgb = {
-  brandPrimary: '62, 153, 245',
-  brandSecondary: '92, 61, 245',
 } as const;
 
 export const tw = {
   text: {
-    brandPrimary: 'text-[#3E99F5]',
-    brandSecondary: 'text-[#5C3DF5]',
-    brandBlue: 'text-[#3E99F5]',
-    primary: 'text-white',
-    secondary: 'text-zinc-300',
-    muted: 'text-zinc-400',
-    subtle: 'text-zinc-500',
+    primary: 'text-zinc-900 dark:text-zinc-50',
+    secondary: 'text-zinc-600 dark:text-zinc-300',
+    muted: 'text-zinc-500 dark:text-zinc-400',
+    subtle: 'text-zinc-400 dark:text-zinc-500',
   },
   bg: {
-    page: 'bg-zinc-950',
-    elevated: 'bg-zinc-900',
-    surface: 'bg-white/[0.02]',
-    surfaceStrong: 'bg-white/5',
-    code: 'bg-[#0A0A0A]',
+    page: 'bg-white dark:bg-zinc-950',
+    surface: 'bg-zinc-50 dark:bg-white/[0.03]',
+    surfaceStrong: 'bg-zinc-100 dark:bg-white/[0.06]',
+    code: 'bg-zinc-50 dark:bg-black/40',
   },
   border: {
-    soft: 'border-white/5',
-    default: 'border-white/10',
-    brandSoft: 'border-[#3E99F5]/15',
+    default: 'border-zinc-200 dark:border-white/10',
+    soft: 'border-zinc-100 dark:border-white/[0.06]',
   },
-  gradient: {
-    brandText:
-      'bg-gradient-to-r from-[#3E99F5] via-[#4B6EF4] to-[#5C3DF5] bg-clip-text text-transparent',
-    brandTextReverse:
-      'bg-gradient-to-r from-[#5C3DF5] via-[#4B6EF4] to-[#3E99F5] bg-clip-text text-transparent',
-    lightText:
-      'bg-gradient-to-b from-white via-zinc-100 to-zinc-400 bg-clip-text text-transparent',
-    softLightText:
-      'bg-gradient-to-b from-white to-zinc-300 bg-clip-text text-transparent',
-    brandBadge:
-      'bg-gradient-to-r from-[#3E99F5]/90 via-[#5C3DF5]/95 to-[#4A2DD4]/90',
-    brandBorder:
-      'bg-gradient-to-r from-[#3E99F5]/40 via-white/10 to-[#5C3DF5]/40',
-    brandSurface: 'bg-gradient-to-r from-[#3E99F5]/10 to-[#5C3DF5]/10',
+  link: {
+    /** Accent link — the primary "go to the repo" affordances. */
+    accent:
+      'text-[#1668C9] dark:text-[#3E99F5] hover:underline underline-offset-4',
+    /** Quiet link — nav and footer, where colour would be noise. */
+    quiet:
+      'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors',
   },
-  effects: {
-    brandShadow:
-      'shadow-[0_0_28px_-6px_rgba(62,153,245,0.35),0_0_32px_-6px_rgba(92,61,245,0.4)]',
-    brandShadowHover:
-      'hover:shadow-[0_0_36px_-4px_rgba(62,153,245,0.45),0_0_40px_-4px_rgba(92,61,245,0.5)]',
+  /** Deslop's own result colours. The only other colour on the page. */
+  result: {
+    violation: 'text-red-600 dark:text-red-400',
+    pass: 'text-emerald-600 dark:text-emerald-400',
   },
-  status: {
-    success: 'text-green-500',
-    successBgSoft: 'bg-green-500/20',
-    dangerBgSoft: 'bg-red-500',
-    infoBrand: 'text-[#5C3DF5]',
-  },
-  window: {
-    close: 'bg-[#FF5F57]',
-    minimize: 'bg-[#FEBC2E]',
-    zoom: 'bg-[#28C840]',
-  },
-} as const;
-
-export const inlineStyle = {
-  brandBloom: {
-    background:
-      'linear-gradient(90deg, rgba(62,153,245,0.14) 0%, rgba(92,61,245,0.12) 100%)',
-  },
+  /** Blue -> purple with a white glyph. Same contrast in both themes. */
+  logo: 'bg-gradient-to-br from-[#3E99F5] to-[#5C3DF5]',
 } as const;
