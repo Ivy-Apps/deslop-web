@@ -81,16 +81,23 @@ function YourRules({
         effective target = target − exclude
       </p>
 
+      {/*
+        No HTML entities in this paragraph, deliberately. A JSXText node that
+        contains one (&apos;, &ldquo;) loses the space between it and a
+        preceding element, so `<InlineCode>x</InlineCode> is the` renders as
+        "xis the". Keep the prose entity-free rather than fighting it with
+        {' '}, which the formatter collapses straight back out.
+      */}
       <p className={`mt-4 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
         Patterns are written in{' '}
         <ExternalLink href={GITHUB_GLOB_PLUS_URL} variant="text">
           Glob+
         </ExternalLink>
         , ordinary globs plus variables that capture from whichever module
-        matched. <InlineCode>{'{{FileName}}'}</InlineCode> is that module&apos;s
-        name and <InlineCode>{'{{TARGET_DIR}}'}</InlineCode> its directory,
-        which is how one rule can say &ldquo;next to whatever it matched&rdquo;
-        instead of naming a path.
+        matched. <InlineCode>{'{{FileName}}'}</InlineCode> is the name of that
+        module and <InlineCode>{'{{TARGET_DIR}}'}</InlineCode> is its directory,
+        so one rule can point next to whatever it matched instead of naming a
+        path.
       </p>
 
       <p className={`mt-6 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
