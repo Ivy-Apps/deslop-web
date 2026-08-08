@@ -4,6 +4,7 @@ import CodeBlock from '@/components/CodeBlock';
 import { tw } from '@/components/design-system/colors';
 import { typeScale } from '@/components/design-system/typography';
 import ExternalLink from '@/components/ExternalLink';
+import { InlineCode } from '@/components/InlineCode';
 import Section from '@/components/Section';
 import TerminalOutput from '@/components/TerminalOutput';
 import examples from '@/features/landing/components/example-output.json';
@@ -16,6 +17,9 @@ export type ExampleSectionProps = {
    * Storybook story render them; the story simply omits it and gets plain text.
    */
   transitiveRuleHtml?: string;
+  allowsRuleHtml?: string;
+  allowsSourceHtml?: string;
+  usesRuleHtml?: string;
   existsRuleHtml?: string;
   relativeDiffHtml?: string;
 };
@@ -30,12 +34,18 @@ export type ExampleSectionProps = {
  * here is shown repo-relative for readability. Do not "correct" it against a
  * real run.
  *
- * The samples live in JSON rather than in template literals because the
- * transitive one contains a real `import` statement, which Deslop's lexer reads
- * as an import belonging to this module. Verbatim output is data, not code.
+ * The samples live in JSON rather than in template literals because several of
+ * them contain real `import` statements, which Deslop's lexer reads as imports
+ * belonging to this module. Verbatim output is data, not code.
+ *
+ * Order follows ChecksSection: the four clauses a reader writes, then the two
+ * checks they get for free.
  */
 export default function ExampleSection({
   transitiveRuleHtml,
+  allowsRuleHtml,
+  allowsSourceHtml,
+  usesRuleHtml,
   existsRuleHtml,
   relativeDiffHtml,
 }: ExampleSectionProps): ReactNode {
@@ -51,9 +61,8 @@ export default function ExampleSection({
     >
       <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
         Every violation names the rule, the module that broke it, and what to do
-        about it. The <code className="font-mono text-sm">fix</code> text is
-        written by whoever wrote the rule, so it can say something specific
-        about your codebase.
+        about it. The <InlineCode>fix</InlineCode> text is written by whoever
+        wrote the rule, so it can say something specific about your codebase.
       </p>
 
       <div className="mt-8 space-y-4">
@@ -78,13 +87,60 @@ export default function ExampleSection({
 
       <div className="mt-12 space-y-4">
         <h3 className={`${typeScale.subTitle} ${tw.text.primary}`}>
+          One exception to a broad ban
+        </h3>
+        <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
+          Checkout may not import other features, except auth. The{' '}
+          <InlineCode>forbids</InlineCode> clause is deliberately broad and{' '}
+          <InlineCode>allows</InlineCode> carves the one hole in it.
+        </p>
+        <CodeBlock
+          code={examples.allowsRule}
+          highlightedHtml={allowsRuleHtml}
+          filename="deslop/rules/architecture.yaml"
+        />
+        <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
+          This module imports both:
+        </p>
+        <CodeBlock
+          code={examples.allowsSource}
+          highlightedHtml={allowsSourceHtml}
+          filename="src/features/checkout/checkout-service.ts"
+        />
+        <TerminalOutput command={NPX_COMMAND} output={examples.allowsOutput} />
+        <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
+          Only the billing import is reported. The auth import is not an
+          oversight in the output - it is the exception doing its job.
+        </p>
+      </div>
+
+      <div className="mt-12 space-y-4">
+        <h3 className={`${typeScale.subTitle} ${tw.text.primary}`}>
+          An import that has to be there
+        </h3>
+        <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
+          Where <InlineCode>forbids</InlineCode> catches an import that is
+          there, <InlineCode>uses</InlineCode> catches one that is not. Here a
+          spec that never imports the module it is named after is a test passing
+          for the wrong reason.
+        </p>
+        <CodeBlock
+          code={examples.usesRule}
+          highlightedHtml={usesRuleHtml}
+          filename="deslop/rules/quality.yaml"
+        />
+        <TerminalOutput command={NPX_COMMAND} output={examples.usesOutput} />
+      </div>
+
+      <div className="mt-12 space-y-4">
+        <h3 className={`${typeScale.subTitle} ${tw.text.primary}`}>
           A file that should exist and does not
         </h3>
         <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
-          <code className="font-mono text-sm">exists</code> checks the shape of
-          the codebase rather than the import graph. The{' '}
-          <code className="font-mono text-sm">{'{{FileName}}'}</code> variable
-          makes the rule relative to whichever module it matched.
+          <InlineCode>exists</InlineCode> checks the shape of the codebase
+          rather than the import graph. The{' '}
+          <InlineCode>{'{{FileName}}'}</InlineCode> variable makes the rule
+          relative to whichever module it matched.
         </p>
         <CodeBlock
           code={examples.existsRule}
@@ -99,17 +155,15 @@ export default function ExampleSection({
           A relative import, fixed for you
         </h3>
         <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
-          This one needs no rule — Deslop ships with it. Violations it can
-          repair itself are marked{' '}
-          <code className="font-mono text-sm">[AUTO-FIXABLE]</code>.
+          The last two need no rule — Deslop ships with them. Violations it can
+          repair itself are marked <InlineCode>[AUTO-FIXABLE]</InlineCode>.
         </p>
         <TerminalOutput
           command={NPX_COMMAND}
           output={examples.relativeCheckOutput}
         />
         <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
-          Run <code className="font-mono text-sm">fix</code> and it rewrites
-          them:
+          Run <InlineCode>fix</InlineCode> and it rewrites them:
         </p>
         <TerminalOutput
           command={FIX_COMMAND}
@@ -120,6 +174,18 @@ export default function ExampleSection({
           highlightedHtml={relativeDiffHtml}
           filename="src/features/home/home-component.ts"
         />
+      </div>
+
+      <div className="mt-12 space-y-4">
+        <h3 className={`${typeScale.subTitle} ${tw.text.primary}`}>
+          An import cycle
+        </h3>
+        <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
+          Also always on. Deslop prints the loop itself rather than the fact
+          that one exists, so the shortest edge to cut is visible from the
+          output.
+        </p>
+        <TerminalOutput command={NPX_COMMAND} output={examples.cycleOutput} />
       </div>
     </Section>
   );

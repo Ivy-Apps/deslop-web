@@ -31,13 +31,24 @@ export default function InstallSection(): ReactNode {
       id="install"
       title="Install"
       footer={
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <ExternalLink href={GITHUB_REPO_URL} variant="button">
-            View on GitHub
-          </ExternalLink>
-          <ExternalLink href={GITHUB_CI_URL}>
-            Example GitHub Actions workflow
-          </ExternalLink>
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <ExternalLink href={GITHUB_REPO_URL} variant="button">
+              View on GitHub
+            </ExternalLink>
+            <ExternalLink href={GITHUB_CI_URL}>
+              Example GitHub Actions workflow
+            </ExternalLink>
+          </div>
+          {/*
+            The only ask on the page, and it is last on purpose: by here the
+            reader has either decided to try Deslop or not, so a star costs them
+            nothing to consider and interrupts nothing.
+          */}
+          <p className={`${typeScale.bodySm} ${tw.text.muted}`}>
+            If it catches something on your codebase, a star helps other people
+            find it.
+          </p>
         </div>
       }
     >

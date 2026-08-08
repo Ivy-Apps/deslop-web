@@ -13,8 +13,19 @@ than restates.
 **Deslop**:
 A static analyzer for TypeScript that checks a project's import graph against
 rules the project author writes. Not a linter replacement — it enforces
-structure between modules, not style within them.
+structure between modules, not style within them. Site copy may describe what it
+gives you as *deterministic architecture guardrails*; the tool itself is still an
+analyzer, never "a guardrail engine".
 _Avoid_: linter, AI slop remover, guardrail engine
+
+**Architecture drift**:
+An architecture decaying by accumulation — each import that crosses a boundary
+is defensible on its own, and none of them is reviewed against the whole. This
+is the problem Deslop exists to solve, and the reason the site names the AI era
+at all: agents raise the volume of plausible-looking changes, so the review that
+used to catch drift no longer scales. AI is the cause of the problem, never a
+property of Deslop.
+_Avoid_: rot, entropy, tech debt, spaghetti
 
 **Import graph**:
 The graph formed by the `import` statements between a project's modules. This is
@@ -56,6 +67,28 @@ The Glob+ pattern selecting which modules a rule applies to, optionally narrowed
 by `exclude`.
 _Avoid_: scope, selector, matcher
 
+**Effective target**:
+The modules a rule actually applies to: `target` minus `exclude`. The site
+states it as a formula because it is the one piece of targeting a reader has to
+hold in their head, and because `exclude` is the fix for a rule that matches too
+much.
+_Avoid_: final target, resolved target, computed scope
+
+**Exclude vs allows**:
+Two different subtractions, and the pair most easily confused. `exclude` removes
+modules from the effective target, so the rule never runs on them. `allows`
+leaves the module in the target and still checks it, permitting one import that
+a broad `forbids` would otherwise catch. Any copy introducing one near the other
+must say which it is.
+_Avoid_: exception (for either, on its own), ignore, whitelist
+
+**Built-in check**:
+One of the two checks Deslop runs with no rulebook — `no-relative-imports` and
+`no-import-cycles`. Referred to by id, because the id is what a reader types
+into `deslop/baseline.yaml`. Distinct from a **rule**, which the project author
+writes.
+_Avoid_: default rule, preset, lint rule
+
 **Glob+**:
 Deslop's glob syntax extended with casing variables such as `{{FileName}}` and
 `{{TARGET_DIR}}`, which make a rule relative to whichever module it matched.
@@ -87,3 +120,10 @@ The site's role: orient a reader in one screen and hand them to the repo. The
 test for any proposed section is whether it helps someone decide to try Deslop —
 not whether it is true or interesting.
 _Avoid_: landing page, marketing site
+
+**Mental model**:
+The exact amount of Deslop the site teaches: targeting, Glob+ variables, the
+four clauses, the two built-in checks. Enough that every snippet on the page is
+readable without leaving it; anything past that is a link to the README. See
+docs/adr/0001.
+_Avoid_: overview, basics, the docs

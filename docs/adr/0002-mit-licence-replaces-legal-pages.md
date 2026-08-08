@@ -19,3 +19,22 @@ enough that old versions are no longer in circulation.
 If the site ever gains analytics, a form, or any other data collection, this
 decision has to be revisited — the absence of a privacy policy is a consequence
 of collecting nothing, not a standing position.
+
+## Amendment: one third-party request
+
+The navbar's GitHub star count is a shields.io badge, so the visitor's browser
+makes one request to `img.shields.io` and shields.io sees their IP and
+user-agent. The site itself still collects nothing: no analytics, no cookies, no
+forms, no logging of its own.
+
+We chose this over the two alternatives that would have kept the request count
+at zero. Fetching the count server-side with ISR means the page loses
+`force-static` and the number is stale for up to a revalidation window;
+proxying the badge through our own route handler is real code to write and keep
+working, for a star count. Neither cost was worth paying for a number that is
+decoration.
+
+This is the ceiling, not a precedent. One badge on one page does not need a
+privacy policy; a second third-party asset, or anything that reports back about
+the visitor, means revisiting the decision above properly rather than appending
+to this list.

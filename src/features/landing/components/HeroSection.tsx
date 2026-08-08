@@ -6,8 +6,13 @@ import ExternalLink from '@/components/ExternalLink';
 import { GITHUB_REPO_URL, NPM_PACKAGE_URL, NPX_COMMAND } from '@/lib/deslop';
 
 /**
- * States what the tool is before it states why anyone should care. AI is named
- * once, as a fact about determinism, rather than being the theme of the page.
+ * States what the tool is before it states why anyone should care, so the lead
+ * stays the definition and the drift sentence follows it rather than replacing
+ * it.
+ *
+ * AI is named twice and deliberately: once as the reason architecture drifts
+ * now, and once — after the command — as a fact about determinism. It is the
+ * problem Deslop answers, never a property of Deslop itself.
  */
 export default function HeroSection(): ReactNode {
   return (
@@ -17,6 +22,12 @@ export default function HeroSection(): ReactNode {
       <p className={`mt-5 max-w-2xl ${typeScale.lead} ${tw.text.secondary}`}>
         Static import-graph analyzer for TypeScript. You write architecture
         rules in YAML; Deslop checks them on every run.
+      </p>
+
+      <p className={`mt-5 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
+        Use-case: deterministic architecture guardrails for the move-fast AI
+        era. Code now lands faster than a human can review it, Deslop is what
+        keeps the architecture from drifting.
       </p>
 
       <div
