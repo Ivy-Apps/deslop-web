@@ -24,6 +24,7 @@ export type LandingViewProps = ChecksSectionProps & ExampleSectionProps;
  */
 export default function LandingView({
   snippetHtml,
+  anatomyHtml,
   ...exampleProps
 }: LandingViewProps): ReactNode {
   return (
@@ -31,7 +32,7 @@ export default function LandingView({
       <AppNavbar />
       <main>
         <HeroSection />
-        <ChecksSection snippetHtml={snippetHtml} />
+        <ChecksSection snippetHtml={snippetHtml} anatomyHtml={anatomyHtml} />
         <ExampleSection {...exampleProps} />
         <InstallSection />
       </main>

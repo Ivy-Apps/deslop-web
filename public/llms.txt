@@ -1,0 +1,743 @@
+# Deslop
+
+> Static import-graph analyzer for TypeScript. You write architecture rules in
+> YAML; Deslop checks them on every run. No AI, no heuristics: it walks the
+> import graph, so the same code always produces the same result.
+
+This file is the complete reference for writing Deslop rules. It is written for
+coding agents: everything needed to author a correct rulebook is here, with no
+other page to fetch.
+
+Applies to `@ivy-apps/deslop` 0.8.x. Canonical documentation for humans:
+https://github.com/Ivy-Apps/deslop
+
+---
+
+## What Deslop is for
+
+Deslop enforces *structure between modules*, not style within them. It is
+complementary to ESLint and Biome, not a replacement: it replaces the
+architecture enforcement you would otherwise spread across Dependency Cruiser
+configs and hand-written ESLint plugins.
+
+It answers four kinds of question:
+
+- May this module import that one? (`forbids`, `allows`)
+- Must this module import that one? (`uses`)
+- Does the companion file for this module exist? (`exists`)
+- Are there import cycles or relative imports? (built in, always on)
+
+Every check runs against the whole import graph, so a dependency reached through
+three intermediate modules is caught the same as a direct one.
+
+---
+
+## Project setup
+
+Deslop needs three things:
+
+1. **A `tsconfig.json` in the project root** with `compilerOptions.paths`
+   defining at least one alias, conventionally `"@/*": ["./src/*"]`.
+2. **A `deslop/rules/` directory** holding one or more rulebook YAML files.
+3. **The CLI**: `npm install --save-dev @ivy-apps/deslop`, or run it with
+   `npx @ivy-apps/deslop check .`.
+
+Recommended `package.json` scripts:
+
+```json
+{
+  "scripts": {
+    "deslop": "deslop check .",
+    "deslop:fix": "deslop fix . && npm run lint:fix",
+    "deslop:baseline": "deslop baseline ."
+  }
+}
+```
+
+Prebuilt binaries ship for `darwin-arm64`, `linux-x64` and `linux-arm64`.
+Windows is not supported yet.
+
+---
+
+## Rulebook file format
+
+Every file in `deslop/rules/` is a rulebook. A rulebook is a YAML document with
+four required top-level fields:
+
+```yaml
+id: architecture # used in violation ids, keep it short
+name: Architecture # human-readable title
+description: What this rulebook enforces as a whole
+rules:
+  - id: rule-id
+    description: What this rule checks and why
+    target: "@/features/**"
+    forbids:
+      - import: "@/app/**"
+    fix: What the developer should do about a violation
+```
+
+Rules across files are independent and all of them run. Split rulebooks by
+concern, layer or team as you like: `architecture.yaml`, `quality.yaml`,
+`nextjs.yaml`.
+
+**Constraints on the directory** (both of these abort the run, so they matter):
+
+- `deslop/rules/` must be **flat**. A subdirectory crashes the run with
+  `withFile: inappropriate type (is a directory)`.
+- Every entry in it is parsed as a rulebook. A stray `README.md` or `.gitkeep`
+  fails the load with an Aeson parse error. Put nothing else in there.
+
+---
+
+## Rule fields
+
+| Field | Required | Meaning |
+|---|---|---|
+| `id` | yes | Unique within the rulebook. Appears in violation ids and baseline keys. |
+| `description` | yes | Printed above every violation. Say what *and why*. |
+| `target` | yes | Glob+ pattern selecting the modules this rule applies to. |
+| `exclude` | no | List of Glob+ patterns removed from the target. |
+| `forbids` | no | Imports this module may not have. |
+| `allows` | no | Exceptions carved out of `forbids`. |
+| `uses` | no | Imports this module must have. |
+| `exists` | no | Modules that must exist. |
+| `fix` | yes | Plain-language instruction printed with every violation. |
+| `example` | no | TypeScript snippet showing correct code. |
+
+A rule with no clause fields is valid YAML and checks nothing. If you write a
+rule, give it at least one of `forbids` / `uses` / `exists`.
+
+Do not invent fields. Unknown keys are ignored silently, so a typo like
+`forbid:` or `excludes:` produces a rule that passes on everything.
+
+---
+
+## Targeting: `target` and `exclude`
+
+`target` selects modules. `exclude` removes modules from that selection.
+
+```
+effective target = target - exclude
+```
+
+```yaml
+target: "@/features/**/*"
+exclude:
+  - "**/*.spec"
+  - "**/*.stories"
+```
+
+A module removed by `exclude` is not checked by the rule at all. This is the
+correct tool for a **false positive** (the rule should never have matched that
+module).
+
+Contrast with `allows`, which is the tool for a **legitimate exception** (the
+module stays in the target and stays checked; one specific import is permitted).
+The two are the most commonly confused feature of the DSL:
+
+| Situation | Use |
+|---|---|
+| The rule matches modules it was never meant to | `exclude` |
+| The rule is right, but this one import is deliberate | `allows` |
+| A real violation you are not fixing today | `deslop baseline .` |
+
+---
+
+## Glob+ patterns
+
+Glob+ is ordinary glob plus variables captured from the matched module.
+
+### Wildcards
+
+| Token | Matches |
+|---|---|
+| `*` | any characters within a single path segment (no `/`) |
+| `**` | any characters across any number of segments |
+
+```yaml
+target: "@/app/**/route"       # every route handler
+target: "@/features/**/*View"  # every View module
+target: "**/*"                 # every module in the project
+```
+
+### Casing variables
+
+A variable in `target` **captures** a name; the same variable in a clause
+pattern **substitutes** it back. Capture once, then use whichever casing you
+need:
+
+| Variable | Casing | Captured `UserProfile` renders as |
+|---|---|---|
+| `{{FileName}}` | PascalCase | `UserProfile` |
+| `{{fileName}}` | camelCase | `userProfile` |
+| `{{file-name}}` | kebab-case | `user-profile` |
+| `{{FILE_NAME}}` | CONSTANT_CASE | `USER_PROFILE` |
+
+All four are derived automatically from one capture. A target that captures via
+`{{FileName}}` makes `{{file-name}}` available in its clauses.
+
+What each variable matches when capturing:
+
+- `{{FileName}}` matches `[A-Z][a-zA-Z0-9]*`
+- `{{fileName}}` matches `[a-z][a-zA-Z0-9]*`
+- `{{file-name}}` matches `[a-z0-9-]+`
+- `{{FILE_NAME}}` matches `[A-Z0-9_]+`
+
+Pick the variable whose shape matches your file naming, or the capture fails and
+the rule silently matches nothing.
+
+### `{{TARGET_DIR}}`
+
+The directory of the matched module. **Legal in clause patterns only** - never
+in `target` or `exclude`, because there is no matched module yet.
+
+### A full expansion
+
+```yaml
+- id: viewmodel-has-spec
+  description: Every ViewModel has a colocated unit test.
+  target: "@/features/**/use{{FileName}}ViewModel"
+  exists:
+    - module: "{{TARGET_DIR}}/use{{FileName}}ViewModel.spec"
+  fix: Add the missing .spec module next to the ViewModel.
+```
+
+Matching `@/features/profile/useUserProfileViewModel`:
+
+- `{{FileName}}` = `UserProfile` (only the part between `use` and `ViewModel`)
+- `{{TARGET_DIR}}` = `@/features/profile`
+- The `exists` pattern resolves to
+  `@/features/profile/useUserProfileViewModel.spec`
+
+### Where each pattern type is legal
+
+| Field | Wildcards | Casing variables | `{{TARGET_DIR}}` |
+|---|---|---|---|
+| `target` | yes | yes (captures) | no |
+| `exclude` | yes | yes (captures) | no |
+| `forbids.import` | yes | yes | yes |
+| `allows.import` | yes | yes | yes |
+| `uses.import` | yes | yes | yes |
+| `exists.module` | **no** | yes | yes |
+
+---
+
+## Clauses
+
+### `forbids`
+
+The target module may not import the pattern.
+
+```yaml
+forbids:
+  - import: "@/data/http-client"   # direct import only
+  - import: "@/server/**"
+    transitive: true               # reachable through any chain
+```
+
+`transitive: true` checks the entire reachable import graph. Use it whenever the
+thing you are protecting against can arrive through a helper - server-only code,
+database clients, heavy runtime dependencies. Use direct (the default) when you
+are enforcing a layering convention that intermediate modules are allowed to
+launder.
+
+All entries are checked independently; any match is a violation.
+
+### `allows`
+
+Whitelists imports that a `forbids` clause in the *same rule* would otherwise
+catch.
+
+```yaml
+- id: checkout-imports-only-auth
+  description: Checkout must not depend on other features, except auth.
+  target: "@/features/checkout/**"
+  forbids:
+    - import: "@/features/**"
+  allows:
+    - import: "@/features/auth/**"
+  fix: Remove the cross-feature import. Only @/features/auth is allowed.
+```
+
+`allows` only ever modifies `forbids`. It has no effect on `uses` or `exists`,
+and a rule with `allows` and no `forbids` does nothing.
+
+### `uses`
+
+The target module must import the pattern. A missing import is a violation.
+
+```yaml
+uses:
+  - import: "{{TARGET_DIR}}/{{FileName}}StateEvent"   # must import directly
+  - import: "@/lib/auth/session"
+    transitive: true                                  # anywhere in the chain
+```
+
+Every entry is required.
+
+### `exists`
+
+A module must exist at the resolved path. This checks the shape of the codebase
+rather than the import graph.
+
+```yaml
+exists:
+  - module: "{{TARGET_DIR}}/{{FileName}}View.stories"
+  - module: "{{TARGET_DIR}}/use{{FileName}}ViewModel.spec"
+```
+
+Two things to know:
+
+- **Wildcards are rejected.** A `*` or `**` in an `exists` pattern aborts the
+  run with `'exists' patterns must not contain wildcards`. Each entry must
+  resolve to exactly one path.
+- A file satisfies `exists` even if nothing imports it. Orphan test files count.
+
+### `fix` and `example`
+
+`fix` is printed with every violation and is the field agents and developers act
+on. Make it an instruction, not a restatement of the problem:
+
+```yaml
+# Good
+fix: Move the query into a server action under @/server and call that instead.
+
+# Useless
+fix: This import is not allowed.
+```
+
+`example` is an optional TypeScript snippet of correct code, shown in the
+output.
+
+---
+
+## What counts as an import
+
+Deslop lexes `import` statements. Verified behaviour:
+
+| Statement | Edge in the graph? |
+|---|---|
+| `import { x } from "@/a"` | yes |
+| `import type { T } from "@/a"` | **yes** - type-only imports count |
+| `import "@/a"` (side effect) | yes |
+| `await import("@/a")` (dynamic) | **yes** |
+| `export { x } from "@/a"` | **no** |
+| `export * from "@/a"` | **no** |
+| `require("@/a")` | no |
+
+### Re-exports are not edges
+
+This is the most important limitation to design around. A barrel file:
+
+```ts
+// @/features/home/index.ts
+export * from "@/features/home/home-service";
+```
+
+is a graph node with **no outgoing edges**. Consequences:
+
+- A transitive chain that runs through a barrel stops there. `@/a` imports
+  `@/features/home` (barrel) which re-exports something that imports `react`:
+  Deslop does not see `react` as reachable from `@/a`.
+- `uses` on a barrel always fails, since the barrel imports nothing.
+
+So: do not write rules whose transitive chain depends on passing through a
+barrel, and do not target barrels with `uses`. Rules that name the concrete
+module (`@/features/home/home-service`) work correctly.
+
+### Third-party packages
+
+Packages are modules too, addressed by their import specifier:
+
+```yaml
+forbids:
+  - import: "react"                 # exact
+  - import: "@tanstack/**"          # scoped packages match with globs
+  - import: "react-dom/client"      # subpaths match literally
+  - import: "next/navigation"
+```
+
+---
+
+## Module ids and resolution
+
+Deslop works with **module ids** - the aliased import path, without the file
+extension - not file paths on disk.
+
+```
+src/features/auth/AuthService.ts   ->   @/features/auth/AuthService
+```
+
+The mapping comes from `compilerOptions.paths` in the project's root
+`tsconfig.json`. Rule patterns are matched against module ids, so every pattern
+you write should start with an alias (`@/...`) or be a package name.
+
+Resolution facts that change what your rules match:
+
+- Only the **root `tsconfig.json`** is read, and only `compilerOptions.baseUrl`
+  (defaulting to `.`) and `compilerOptions.paths`. JSONC comments are stripped,
+  so a commented tsconfig is fine.
+- **`extends` is not followed.** A `tsconfig.json` whose `compilerOptions` live
+  in a base file aborts the run with `Could not parse TS config`. Inline the
+  `baseUrl` and `paths` in the root config.
+- A module not covered by any alias gets its **absolute file path** as its id,
+  and no `@/...` pattern will ever match it. If rules mysteriously match
+  nothing, this is why.
+- `index.ts` resolution follows TypeScript: `@/features/home` resolves to
+  `@/features/home/index.ts` when that file exists, and the module keeps the
+  directory-form id `@/features/home`. Write patterns against that form, not
+  against `@/features/home/index`.
+
+### Which files are analyzed
+
+Only `.ts` and `.tsx`, including `.d.ts`. JavaScript is never analyzed: `.js`,
+`.jsx`, `.mjs` and `.cjs` files are invisible to the graph.
+
+These directories are skipped: `node_modules`, `.git`, `dist`, `build`, `out`,
+`.next`, `.output`, `coverage`, `storybook-static`, `.turbo`, `.cache`,
+`.parcel-cache`, `.yarn`, `.direnv`, `.devenv`, `.svelte-kit`, `.nuxt`,
+`.astro`, `.vercel`, `.wrangler`, plus `next-env.d.ts`.
+
+---
+
+## Built-in checks
+
+Two checks run with no rulebook:
+
+| Id | Catches | Auto-fixable |
+|---|---|---|
+| `no-relative-imports` | `../../lib/util` where an alias like `@/lib/util` exists | yes |
+| `no-import-cycles` | circular imports, printed as the loop: `@/a -> @/b -> @/c -> @/a` | no |
+
+They report through the same pipeline as your rules, so `deslop baseline`
+silences them the same way.
+
+---
+
+## CLI
+
+| Command | What it does |
+|---|---|
+| `deslop check <dir>` | Reports every violation. Exits non-zero if any are found. |
+| `deslop fix <dir>` | Rewrites relative imports to aliased ones. |
+| `deslop baseline <dir>` | Writes `deslop/baseline.yaml` recording all current violations. |
+
+`<dir>` defaults to `.`. `--version` and `--help` are available.
+
+**`deslop fix` does not evaluate rulebooks.** It only applies the auto-fixable
+built-in check (`no-relative-imports`). It will never report or repair a
+`forbids` / `uses` / `exists` violation. Always use `deslop check` to see rule
+violations.
+
+After `deslop fix`, run your formatter - rewritten import lines may no longer
+match your import-order lint rule. The recommended script is
+`deslop fix . && npm run lint:fix`.
+
+In CI there is no key and no account: run `npx @ivy-apps/deslop check .` and let
+the exit code fail the job.
+
+---
+
+## Reading violations
+
+```
+# architecture#no-react-transitively-in-data#@/features/home/data/bad-repository
+Data layer modules must not transitively depend on React.
+
+Module '@/features/home/data/bad-repository' transitively imports 'react' via:
+@/features/home/data/bad-repository -> @/features/home/home-screen -> react.
+```ts
+import { HomeScreen } from "@/features/home/home-screen";
+```
+FIX: Remove any imports that transitively pull in React. Move React-dependent
+logic to a ViewModel or Container.
+```
+
+The first line is the violation id:
+
+- Rule violations: `{rulebook-id}#{rule-id}#{module-id}`
+- Built-in checks: `{check-id}#{relative-file-path}`
+
+Then the rule's `description`, the specific failure (with the full import chain
+for transitive violations and the offending statement), and the rule's `fix`.
+
+---
+
+## Baseline
+
+`deslop baseline .` writes `deslop/baseline.yaml` listing every violation that
+exists right now, so they stop being reported. Use it to adopt Deslop on a
+codebase that already violates the rules you want going forward.
+
+```yaml
+- "architecture#features-isolated#@/features/cart/cart-service"
+- "no-import-cycles#src/features/cart/cart-actions.ts"
+```
+
+Rules for agents working with the baseline:
+
+- **Never write or edit `deslop/baseline.yaml` by hand.** Always regenerate it
+  with `deslop baseline .`. The keys must match the engine's output exactly, and
+  a hand-typed key silences nothing while looking like it does.
+- `deslop baseline` **overwrites** the file with the full current set. It is a
+  re-record, not an append: violations you have since fixed drop out
+  automatically.
+- Baseline is for real violations you are deferring. For a rule matching
+  something it should not, narrow the rule with `exclude` instead.
+
+---
+
+## Rule cookbook
+
+Adapt these to the project's actual directory names. They are written for a
+`@/*` alias pointing at `src/`.
+
+### Keep server-only code out of client components
+
+```yaml
+- id: no-server-in-client
+  description: >-
+    Client components must not import server-only modules, even transitively.
+    A helper that imports a server action drags it into the browser bundle.
+  target: "@/components/**"
+  forbids:
+    - import: "@/server/**"
+      transitive: true
+    - import: "**/*.server"
+      transitive: true
+  fix: >-
+    Move the logic into a Server Component, a server action under @/server,
+    or a route handler, and pass the result down as props.
+```
+
+### Keep the database client on the server
+
+```yaml
+- id: db-stays-on-the-server
+  description: >-
+    The database client and its credentials must never be reachable from
+    code that can end up in the browser bundle.
+  target: "**/*"
+  exclude:
+    - "@/lib/db"
+    - "@/server/**"
+    - "@/app/**/route"
+  forbids:
+    - import: "@/lib/db"
+      transitive: true
+  fix: Call a server action in @/server instead of reaching for the database.
+```
+
+### Features must not import each other
+
+```yaml
+- id: features-isolated
+  description: >-
+    Features are independent slices. A cross-feature import couples two
+    slices and makes either one impossible to move or delete alone.
+  target: "@/features/**"
+  forbids:
+    - import: "@/features/**"
+  allows:
+    - import: "{{TARGET_DIR}}/**" # a feature's own directory is fine
+  fix: >-
+    Promote the shared code to @/components, @/hooks or @/lib and import it
+    from there.
+```
+
+### One feature may depend on exactly one other
+
+```yaml
+- id: checkout-imports-only-auth
+  description: Checkout must not depend on other features, except auth.
+  target: "@/features/checkout/**"
+  forbids:
+    - import: "@/features/**"
+  allows:
+    - import: "@/features/checkout/**"
+    - import: "@/features/auth/**"
+  fix: Remove the cross-feature import. Only @/features/auth is allowed.
+```
+
+`allows` is scoped to the rule it appears in, and every matching rule is
+evaluated independently. Shipping this rule *alongside* `features-isolated`
+means checkout still violates the broader rule. Pick one: either the blanket
+rule with a per-feature `exclude`, or per-feature rules.
+
+### Shared libraries stay framework-agnostic
+
+```yaml
+- id: lib-is-framework-agnostic
+  description: >-
+    @/lib must be usable from tests, scripts and server code, so it must not
+    pull in React or any UI or feature module.
+  target: "@/lib/**"
+  forbids:
+    - import: "react"
+      transitive: true
+    - import: "@/components/**"
+    - import: "@/features/**"
+    - import: "@/app/**"
+  fix: >-
+    Move the React-dependent logic into a component or hook and keep @/lib to
+    pure functions.
+```
+
+### Production code must not import test code
+
+```yaml
+- id: no-tests-in-prod
+  description: Test utilities must never be reachable from shipping code.
+  target: "**/*"
+  exclude:
+    - "**/*.spec"
+    - "**/*.test"
+    - "**/*.stories"
+    - "@test/**"
+    - "**/vitest.*"
+  forbids:
+    - import: "@test/**"
+      transitive: true
+    - import: "**/*.spec"
+      transitive: true
+  fix: >-
+    Remove the import. If production needs this helper, extract it into a
+    non-test module.
+```
+
+### Every test imports the module it is named after
+
+```yaml
+- id: spec-tests-its-module
+  description: >-
+    A spec that never imports its subject is a test passing for the wrong
+    reason. Catches renamed modules and empty test files.
+  target: "**/{{FileName}}.spec"
+  uses:
+    - import: "{{TARGET_DIR}}/{{FileName}}"
+  fix: >-
+    Import the module this spec is named after, or rename the spec to match
+    the module it actually tests.
+```
+
+### Every hook has a unit test
+
+```yaml
+- id: hooks-have-specs
+  description: Hooks hold logic worth testing and are cheap to test in isolation.
+  target: "@/hooks/use{{FileName}}"
+  exists:
+    - module: "{{TARGET_DIR}}/use{{FileName}}.spec"
+  fix: Add a use{{FileName}}.spec.ts next to the hook.
+```
+
+### Every shared component has a Storybook story
+
+```yaml
+- id: components-have-stories
+  description: Shared components are documented by their stories.
+  target: "@/components/{{FileName}}"
+  exists:
+    - module: "{{TARGET_DIR}}/{{FileName}}.stories"
+  fix: Add a {{FileName}}.stories.tsx next to the component.
+```
+
+### Next.js pages delegate to a feature view
+
+```yaml
+- id: page-renders-a-feature-view
+  description: >-
+    App Router pages are entry points for routing, metadata and data
+    fetching. UI belongs in a feature View so it can be tested and reused.
+  target: "@/app/**/page"
+  uses:
+    - import: "@/features/**/*View"
+  fix: >-
+    Move the JSX into @/features/<feature>/<Feature>View.tsx and render it
+    from the page.
+```
+
+### HTTP access stays in the data layer
+
+```yaml
+- id: http-client-only-in-data
+  description: >-
+    Only the data layer talks to the network, so caching, auth headers and
+    error handling live in one place.
+  target: "@/features/**"
+  exclude:
+    - "@/features/**/data/**"
+  forbids:
+    - import: "@/lib/http-client"
+      transitive: true
+  fix: >-
+    Add a function to the feature's data/ module and call that from the
+    component or hook.
+```
+
+### Environment variables are read in one module
+
+```yaml
+- id: env-access-is-centralized
+  description: >-
+    Reading process.env in many places makes it impossible to know what the
+    app requires to boot. @/lib/env parses and validates once.
+  target: "**/*"
+  exclude:
+    - "@/lib/env"
+    - "**/*.config"
+  forbids:
+    - import: "@/lib/raw-env"
+  fix: Import the parsed values from @/lib/env instead.
+```
+
+---
+
+## Workflow for agents
+
+When asked to set up or extend Deslop rules:
+
+1. **Read the codebase first.** Confirm the alias in `tsconfig.json` and the
+   real top-level directories under `src/`. Never emit `@/features/**` for a
+   project that has no `features/` directory. Rules that match nothing pass
+   silently, which is the worst failure mode.
+2. **Confirm the architecture with the user** if it is not obvious from the
+   tree. The rules encode intent, and intent is not always visible in the code.
+3. **Start with three to six rules**, not thirty. Each one should describe a
+   boundary the team actually cares about.
+4. **Write `description` and `fix` as prose a teammate can act on.** These are
+   the entire output of a violation; a rule with a vague `fix` is worse than no
+   rule.
+5. **Run `deslop check .`** and read every violation.
+6. **Triage each one:**
+   - The rule matched something it should not: add an `exclude` pattern.
+   - The import is a deliberate, permanent exception: add an `allows` entry.
+   - It is a real violation you are fixing now: fix the code.
+   - It is a real violation being deferred: leave it for the baseline.
+7. **Run `deslop baseline .`** once, when the remaining violations are all
+   deliberate deferrals. Never hand-write the file.
+8. **Wire it into CI** with `deslop check .` so the exit code fails the build.
+
+### Self-check before finishing
+
+- Every pattern starts with an alias (`@/`), a package name, or `**`.
+- No `{{TARGET_DIR}}` in a `target` or `exclude`.
+- No wildcards in an `exists` pattern.
+- The casing variable matches the project's actual file naming.
+- No rule depends on a transitive chain passing through a barrel file.
+- `deslop/rules/` is flat and contains only rulebook YAML files.
+- `deslop check .` was actually run and its output read.
+
+---
+
+## Further reading
+
+- [Ivy-Apps/deslop](https://github.com/Ivy-Apps/deslop) - the repository and
+  the canonical README
+- [Glob+ reference](https://github.com/Ivy-Apps/deslop/blob/main/docs/GLOB+.md) -
+  full pattern-matching semantics
+- [Example rulebooks](https://github.com/Ivy-Apps/deslop/tree/main/examples/rules) -
+  MVI, Clean Architecture, Feature-Sliced Design, Next.js App Router, quality
+- [deslop.dev](https://deslop.dev) - the overview for humans
+- [npm package](https://www.npmjs.com/package/@ivy-apps/deslop)
