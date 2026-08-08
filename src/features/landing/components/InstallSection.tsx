@@ -8,10 +8,24 @@ import { InlineCode } from '@/components/InlineCode';
 import Section from '@/components/Section';
 import {
   GITHUB_CI_URL,
+  GITHUB_EXAMPLES_URL,
   GITHUB_REPO_URL,
   INSTALL_COMMAND,
   NPX_COMMAND,
 } from '@/lib/deslop';
+
+/**
+ * The alias is a prerequisite rather than a nicety: Deslop identifies modules
+ * by their aliased import path, so a project without one gives every module an
+ * absolute file path as its id and every `@/...` pattern silently matches
+ * nothing. A reader whose first run reports zero violations on a codebase they
+ * know is messy has almost always landed here.
+ */
+const TSCONFIG_SNIPPET = `{
+  "compilerOptions": {
+    "paths": { "@/*": ["./src/*"] }
+  }
+}`;
 
 const COMMANDS = [
   { command: 'deslop check <dir>', effect: 'Report every violation.' },
@@ -59,6 +73,8 @@ export default function InstallSection(): ReactNode {
       </p>
       <CodeBlock code={NPX_COMMAND} copyable className="mt-3" />
 
+      <FirstRun />
+
       <dl className="mt-8 space-y-3">
         {COMMANDS.map(({ command, effect }) => (
           <div key={command} className="sm:flex sm:gap-4">
@@ -88,5 +104,54 @@ export default function InstallSection(): ReactNode {
         <InlineCode>linux-arm64</InlineCode>. Windows is not supported yet.
       </p>
     </Section>
+  );
+}
+
+/**
+ * Three steps because there are exactly three things between `npm install` and
+ * a green run, and the page previously named none of them: the alias Deslop
+ * resolves modules through, the directory it reads rules from, and the command.
+ * Ordered rather than prose - a reader here is following along in a terminal,
+ * not reading.
+ */
+function FirstRun(): ReactNode {
+  return (
+    <div className="mt-10">
+      <h3 className={`${typeScale.subTitle} ${tw.text.primary}`}>First run</h3>
+
+      <ol
+        className={`mt-4 max-w-2xl list-decimal space-y-6 pl-5 ${typeScale.body} ${tw.text.secondary}`}
+      >
+        <li>
+          <p>
+            Give your project a path alias. Deslop identifies modules by their
+            aliased import path, so without one no rule will match anything. It
+            reads the root <InlineCode>tsconfig.json</InlineCode> only and does
+            not follow <InlineCode>extends</InlineCode>, so this key has to be
+            in that file.
+          </p>
+          <CodeBlock
+            code={TSCONFIG_SNIPPET}
+            filename="tsconfig.json"
+            className="mt-3"
+          />
+        </li>
+        <li>
+          <p>
+            Create <InlineCode>deslop/rules/architecture.yaml</InlineCode>. The
+            rulebook above is a complete file - copy it and change the paths to
+            match your own layout, or start from a{' '}
+            <ExternalLink href={GITHUB_EXAMPLES_URL} variant="text">
+              ready-made rulebook
+            </ExternalLink>
+            .
+          </p>
+        </li>
+        <li>
+          <p>Run it. Every violation names the rule, the module and the fix.</p>
+          <CodeBlock code={NPX_COMMAND} copyable className="mt-3" />
+        </li>
+      </ol>
+    </div>
   );
 }

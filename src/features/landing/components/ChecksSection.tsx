@@ -10,8 +10,16 @@ import {
   type AutoFix,
   BUILT_IN_CHECKS,
 } from '@/features/landing/components/built-in-checks';
-import { CLAUSES, RULE_ANATOMY } from '@/features/landing/components/clauses';
-import { GITHUB_GLOB_PLUS_URL, GITHUB_WRITING_RULES_URL } from '@/lib/deslop';
+import {
+  CLAUSES,
+  GLOB_EXPANSION,
+  RULE_ANATOMY,
+} from '@/features/landing/components/clauses';
+import {
+  GITHUB_GLOB_PLUS_URL,
+  GITHUB_WRITING_RULES_URL,
+  LLMS_TXT_PATH,
+} from '@/lib/deslop';
 
 export type ChecksSectionProps = {
   /**
@@ -59,8 +67,9 @@ function YourRules({
       <h3 className={`${typeScale.subTitle} ${tw.text.primary}`}>Your rules</h3>
 
       <p className={`mt-3 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
-        Rules live in YAML files under <InlineCode>deslop/rules/</InlineCode>{' '}
-        and apply to <em>modules</em> - the import paths in your code, like{' '}
+        Rules live in YAML files you create under{' '}
+        <InlineCode>deslop/rules/</InlineCode> and apply to <em>modules</em> -
+        the import paths in your code, like{' '}
         <InlineCode>@/features/home/home-screen</InlineCode>, rather than file
         paths on disk. Each rule picks its modules with{' '}
         <InlineCode>target</InlineCode>, optionally narrows that selection with{' '}
@@ -68,7 +77,11 @@ function YourRules({
       </p>
 
       <div className="mt-4">
-        <CodeBlock code={RULE_ANATOMY} highlightedHtml={anatomyHtml} />
+        <CodeBlock
+          code={RULE_ANATOMY}
+          highlightedHtml={anatomyHtml}
+          filename="deslop/rules/architecture.yaml"
+        />
       </div>
 
       {/*
@@ -93,11 +106,29 @@ function YourRules({
         <ExternalLink href={GITHUB_GLOB_PLUS_URL} variant="text">
           Glob+
         </ExternalLink>
-        , ordinary globs plus variables that capture from whichever module
-        matched. <InlineCode>{'{{FileName}}'}</InlineCode> is the name of that
-        module and <InlineCode>{'{{TARGET_DIR}}'}</InlineCode> is its directory,
-        so one rule can point next to whatever it matched instead of naming a
-        path.
+        , ordinary globs plus variables. A variable in the{' '}
+        <InlineCode>target</InlineCode> captures a name from whichever module
+        matched, and the same variable in a clause substitutes it back:
+      </p>
+
+      <div className="mt-4">
+        <CodeBlock code={GLOB_EXPANSION} />
+      </div>
+
+      <p className={`mt-4 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
+        So{' '}
+        <InlineCode>
+          {'{{TARGET_DIR}}/use{{FileName}}ViewModel.spec'}
+        </InlineCode>{' '}
+        in a clause means exactly{' '}
+        <InlineCode>@/features/profile/useUserProfileViewModel.spec</InlineCode>
+        , and one rule covers every ViewModel in the codebase. The captured name
+        is available in all four casings -{' '}
+        <InlineCode>{'{{FileName}}'}</InlineCode>,{' '}
+        <InlineCode>{'{{fileName}}'}</InlineCode>,{' '}
+        <InlineCode>{'{{file-name}}'}</InlineCode> and{' '}
+        <InlineCode>{'{{FILE_NAME}}'}</InlineCode> - so the pattern can follow
+        whatever your files are named.
       </p>
 
       <p className={`mt-6 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
@@ -127,11 +158,18 @@ function YourRules({
         ))}
       </dl>
 
+      {/*
+        Placed at the end of the block rather than the start: an agent writing
+        the rules is only an attractive offer once the reader knows what a rule
+        is, and before that it reads as a way to avoid learning the DSL.
+      */}
       <p className={`mt-8 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
-        <InlineCode>transitive: true</InlineCode> is what separates Deslop from
-        a linter: it walks the whole import graph rather than the imports
-        written in one file, so a dependency reached through three other modules
-        is still caught.
+        You do not have to write these by hand. Describe your architecture to
+        your coding agent and point it at{' '}
+        <a href={LLMS_TXT_PATH} className={tw.link.accent}>
+          llms.txt
+        </a>
+        , the full rule-writing reference written for agents rather than people.
       </p>
     </div>
   );

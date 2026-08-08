@@ -94,6 +94,20 @@ Deslop's glob syntax extended with casing variables such as `{{FileName}}` and
 `{{TARGET_DIR}}`, which make a rule relative to whichever module it matched.
 _Avoid_: glob patterns, templates, placeholders
 
+**Capture**:
+What a casing variable in a `target` does: it extracts a name from the matched
+module, which the same variable then substitutes back into the rule's clauses.
+The site says *captures* and *substitutes* rather than describing the variable
+as being or meaning the name, because a reader who thinks `{{FileName}}` is a
+label cannot predict what a clause resolves to.
+_Avoid_: placeholder, interpolation, the name of the module
+
+**Path alias**:
+The `@/` prefix mapped to a source directory by `compilerOptions.paths` in the
+project's root `tsconfig.json`. Deslop resolves module ids through it, so it is
+a prerequisite rather than a convention: without one, no rule matches anything.
+_Avoid_: import alias, tsconfig path, module alias
+
 ### Results
 
 **Violation**:
@@ -123,7 +137,16 @@ _Avoid_: landing page, marketing site
 
 **Mental model**:
 The exact amount of Deslop the site teaches: targeting, Glob+ variables, the
-four clauses, the two built-in checks. Enough that every snippet on the page is
-readable without leaving it; anything past that is a link to the README. See
-docs/adr/0001.
+four clauses, the two built-in checks, and the three steps to a first run.
+Enough that every snippet on the page is readable without leaving it, and that a
+reader can get a green run on their own codebase; anything past that is a link
+to the README. See docs/adr/0001.
 _Avoid_: overview, basics, the docs
+
+**Agent doc**:
+`/llms.txt` - the complete Deslop reference the site serves for coding agents,
+and the one document the site owns rather than links. Named by its filename,
+because that is what a reader types and what an agent is pointed at. Distinct
+from the *mental model*, which is the human page's much smaller budget. See
+docs/adr/0004.
+_Avoid_: LLM docs, AI documentation, machine-readable docs, the reference

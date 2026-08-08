@@ -7,12 +7,21 @@ import ThemeToggle from '@/components/ThemeToggle';
 import {
   GITHUB_REPO_URL,
   GITHUB_STARS_BADGE_URL,
+  LLMS_TXT_PATH,
   NPM_PACKAGE_URL,
 } from '@/lib/deslop';
 
+/**
+ * GitHub and npm first because they are what a human reader came for.
+ * `llms.txt` sits last: a reader arriving with an agent goes looking for it by
+ * name rather than scanning, so it loses nothing by trailing the two links
+ * everyone else wants. It opens in a new tab like the rest: it is a raw text
+ * file, so returning to the page would otherwise mean a back button.
+ */
 const NAV_LINKS = [
   { label: 'GitHub', href: GITHUB_REPO_URL },
   { label: 'npm', href: NPM_PACKAGE_URL },
+  { label: 'llms.txt', href: LLMS_TXT_PATH },
 ] as const;
 
 /**

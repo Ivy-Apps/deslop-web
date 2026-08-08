@@ -23,6 +23,23 @@ export const GITHUB_CI_URL =
 export const NPM_PACKAGE_URL = 'https://www.npmjs.com/package/@ivy-apps/deslop';
 
 /**
+ * The one document this site owns rather than links - see
+ * docs/adr/0004-llms-txt-is-the-site-s-own-doc.md. Served from `public/`, so
+ * the path is the link and the absolute URL is what goes inside the prompt: an
+ * agent given a bare `/llms.txt` has no host to resolve it against.
+ */
+export const LLMS_TXT_PATH = '/llms.txt';
+export const LLMS_TXT_URL = 'https://deslop.dev/llms.txt';
+
+/**
+ * Written as a working instruction rather than a description of one, because
+ * the reader's next action is pasting it into an agent. It names the file and
+ * the outcome and nothing else - anything longer gets edited before it is sent,
+ * which defeats the copy button.
+ */
+export const AGENT_PROMPT = `Read ${LLMS_TXT_URL} and write Deslop rules for my architecture.`;
+
+/**
  * The star count, rendered by shields.io so it is current on every load rather
  * than frozen at build time. This is the only third-party request the site
  * makes — see docs/adr/0002.
