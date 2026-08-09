@@ -13,10 +13,18 @@ const DESCRIPTION =
 /**
  * The two halves of an unfurl say different things on purpose.
  *
- * The card image carries the definition, so `openGraph.title` carries the claim
- * instead - it is rendered directly beside the image, and repeating the
- * definition there would spend the whole unfurl on one sentence. The browser
- * `title` stays the definition, because that is what a search result needs.
+ * The card image carries the definition, so `openGraph.title` carries the
+ * use-case instead - it is rendered directly beside the image, and repeating
+ * the definition there would spend the whole unfurl on one sentence. The
+ * browser `title` stays the definition, because that is what a search result
+ * needs.
+ *
+ * Naming the AI era in the title is only safe because of that split. Read on
+ * its own it invites "so this is an AI tool", which is the one thing Deslop is
+ * not; read beside a card that says "static import-graph analyzer" and shows
+ * deterministic CLI output, the era is clearly the problem being solved rather
+ * than the technique. The title cannot be lifted away from the image without
+ * reintroducing that ambiguity.
  *
  * `metadataBase` is what turns the relative image path Next generates from
  * opengraph-image.tsx into the absolute URL every crawler requires.
@@ -29,12 +37,12 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/',
     siteName: 'Deslop',
-    title: 'Catches what a linter structurally cannot',
+    title: 'Architecture guardrails for the AI era',
     description: DESCRIPTION,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Catches what a linter structurally cannot',
+    title: 'Architecture guardrails for the AI era',
     description: DESCRIPTION,
   },
 };
