@@ -18,10 +18,19 @@ export function DeslopMark(): ReactNode {
   );
 }
 
-/** Brand link. No client JS — the page is one route, so it always goes home. */
+/**
+ * Brand link. No client JS — the page is one route, so it always goes home.
+ *
+ * The mark is 28px, which is a small thing to hit with a thumb, so the link
+ * itself is given a touch-sized box below `sm`. It does not change the header's
+ * height: the hamburger beside it is already 44px.
+ */
 export default function DeslopWordmark(): ReactNode {
   return (
-    <a href="/" className="flex items-center gap-2.5 no-underline">
+    <a
+      href="/"
+      className="flex min-h-11 items-center gap-2.5 no-underline sm:min-h-0"
+    >
       <DeslopMark />
       <span className={`${textPresets.navBrand} ${tw.text.primary}`}>
         Deslop

@@ -33,8 +33,37 @@ html.dark {
 
 body {
   min-height: 100dvh;
-  /* Extends the background into iOS / PWA safe areas. */
+  /*
+   * Extends the background into iOS / PWA safe areas. The horizontal insets
+   * matter because the viewport is `viewportFit: cover` (see layout.tsx): in
+   * landscape on a notched phone, without them the first characters of every
+   * line sit under the notch.
+   */
   padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/*
+ * Code and terminal blocks hold lines far wider than a phone - the rulebook
+ * anatomy needs 682px in a 340px column - so below `sm` they scroll sideways.
+ * This fades the last of the visible line to say so, because a scroll container
+ * with no affordance reads as truncated rather than scrollable.
+ *
+ * It masks the element's own painting only, and these scroll containers have no
+ * background of their own, so a sample short enough to fit shows no fade at
+ * all. That is what makes an always-on mask acceptable: CSS cannot ask whether
+ * an element actually overflows.
+ */
+@utility scroll-hint {
+  @media (width < 40rem) {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      black calc(100% - 2rem),
+      transparent
+    );
+    mask-image: linear-gradient(to right, black calc(100% - 2rem), transparent);
+  }
 }
 
 /*

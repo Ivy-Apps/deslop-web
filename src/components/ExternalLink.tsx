@@ -32,7 +32,7 @@ export default function ExternalLink({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className={`inline-flex items-center gap-1.5 rounded-md border ${tw.border.default} ${tw.bg.surface} px-4 py-2 ${typeScale.bodySm} ${tw.text.primary} no-underline transition-colors ${tw.bg.hover}`}
+          className={`inline-flex min-h-11 items-center gap-1.5 rounded-md border sm:min-h-0 ${tw.border.default} ${tw.bg.surface} px-4 py-2 ${typeScale.bodySm} ${tw.text.primary} no-underline transition-colors ${tw.bg.hover}`}
         >
           {children}
           <ArrowUpRight className="h-4 w-4 shrink-0 opacity-60" aria-hidden />
@@ -54,13 +54,20 @@ export default function ExternalLink({
           {children}
         </a>
       );
+    /*
+     * A touch-sized box below `sm`. This variant closes a section rather than
+     * sitting inside a sentence, so growing it costs no line rhythm - unlike
+     * `text`, which is left alone deliberately (WCAG 2.2 SC 2.5.8 exempts links
+     * inline in prose, and there is no way to enlarge one without wrecking the
+     * paragraph around it).
+     */
     case 'inline':
       return (
         <a
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className={`inline-flex items-center gap-1 ${typeScale.bodySm} ${tw.link.accent}`}
+          className={`inline-flex min-h-11 items-center gap-1 sm:min-h-0 ${typeScale.bodySm} ${tw.link.accent}`}
         >
           {children}
           <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden />

@@ -99,7 +99,7 @@ export default function TerminalOutput({
         <span className="select-none">$ </span>
         {command}
       </div>
-      <div className="overflow-x-auto p-4">
+      <div className="scroll-hint overflow-x-auto p-4">
         <pre className={`m-0 ${textPresets.terminal} ${tw.text.secondary}`}>
           {segments.map((segment) => (
             <span key={segment.offset} className={segmentClassName(segment)}>

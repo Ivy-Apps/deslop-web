@@ -29,7 +29,7 @@ import {
  */
 export default function HeroSection(): ReactNode {
   return (
-    <section className="mx-auto max-w-3xl px-6 pt-16 pb-12 md:pt-24 md:pb-16">
+    <section className="mx-auto max-w-3xl px-4 pt-16 pb-12 sm:px-6 md:pt-24 md:pb-16">
       <h1 className={`${typeScale.display} ${tw.text.primary}`}>Deslop</h1>
 
       <p className={`mt-5 max-w-2xl ${typeScale.lead} ${tw.text.secondary}`}>
