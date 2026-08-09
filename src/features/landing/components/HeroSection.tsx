@@ -40,7 +40,7 @@ export default function HeroSection(): ReactNode {
       <p className={`mt-5 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
         It catches what a linter structurally cannot: a Client Component that
         reaches your database client through two helpers, a feature quietly
-        importing another feature, a hook shipped without a test.
+        importing another feature (spaghetti), a hook shipped without a test.
       </p>
 
       <p className={`mt-5 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
@@ -76,8 +76,8 @@ export default function HeroSection(): ReactNode {
       </p>
 
       <p className={`mt-6 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
-        No AI and no heuristics — it walks the import graph, so the same code
-        always produces the same result.
+        No AI and no heuristics — Deslop walks the import graph, so the same
+        code always produces the same result. <b>100% determinism</b>
       </p>
 
       <p className={`mt-3 ${typeScale.bodySm} ${tw.text.muted}`}>
