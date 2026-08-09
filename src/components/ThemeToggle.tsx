@@ -32,7 +32,10 @@ export default function ThemeToggle(): ReactNode {
       // Static label: the button's action is the same in both states, and a
       // state-dependent label cannot be rendered correctly before hydration.
       aria-label="Switch between light and dark theme"
-      className={`inline-flex h-9 w-9 items-center justify-center rounded-md ${tw.link.quiet} ${tw.bg.hover}`}
+      // 44px below `sm`, where it sits beside the hamburger and is one of only
+      // two controls in the bar; 36px from `sm` up, which is the density the
+      // desktop header is tuned to.
+      className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md sm:h-9 sm:w-9 ${tw.link.quiet} ${tw.bg.hover}`}
     >
       <Moon className="h-4 w-4 dark:hidden" aria-hidden />
       <Sun className="hidden h-4 w-4 dark:block" aria-hidden />

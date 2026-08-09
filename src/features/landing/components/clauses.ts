@@ -92,6 +92,7 @@ export const CLAUSES: Clause[] = [
     description:
       'Carves an exception out of a broad forbids. Unlike exclude, the module stays in the target and stays checked; only the listed import is let through.',
     snippet: `allows:
+  - import: "@/features/auth/**"
   - import: "{{TARGET_DIR}}/**"`,
   },
   {

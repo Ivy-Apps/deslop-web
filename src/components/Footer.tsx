@@ -27,15 +27,20 @@ const FOOTER_LINKS = [
 export default function Footer(): ReactNode {
   return (
     <footer className={`border-t ${tw.border.default}`}>
-      <div className="mx-auto max-w-3xl px-6 py-10">
-        <ul className="flex flex-wrap gap-x-6 gap-y-3">
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+        {/*
+          Six links wrapping across two or three rows on a phone, so each one
+          gets a touch-sized box below `sm`. The row gap closes to match, or the
+          taller links would leave the list looking twice as airy as it is.
+        */}
+        <ul className="flex flex-wrap gap-x-6 gap-y-0 sm:gap-y-3">
           {FOOTER_LINKS.map((link) => (
             <li key={link.label}>
               <a
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${typeScale.bodySm} ${tw.link.quiet}`}
+                className={`flex min-h-11 items-center sm:min-h-0 ${typeScale.bodySm} ${tw.link.quiet}`}
               >
                 {link.label}
               </a>

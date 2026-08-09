@@ -34,7 +34,7 @@ export default function CodeBlock({
 }: CodeBlockProps): ReactNode {
   return (
     <div
-      className={`relative overflow-hidden rounded-lg border ${tw.border.default} ${tw.bg.code} ${className}`}
+      className={`overflow-hidden rounded-lg border ${tw.border.default} ${tw.bg.code} ${className}`}
     >
       {filename && (
         <div
@@ -43,21 +43,33 @@ export default function CodeBlock({
           {filename}
         </div>
       )}
-      {copyable && (
-        <CopyButton text={code.trimEnd()} className="absolute top-2 right-2" />
-      )}
-      <div className="overflow-x-auto p-4">
-        {highlightedHtml ? (
-          <div
-            className={`${textPresets.codeBlock} [&_code]:font-mono [&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0`}
-            /* Shiki output, generated at build time from string literals in
-               this repo. No user input reaches it. */
-            dangerouslySetInnerHTML={{ __html: highlightedHtml }}
-          />
-        ) : (
-          <pre className={`m-0 ${textPresets.codeBlock} ${tw.text.secondary}`}>
-            <code>{code.trimEnd()}</code>
-          </pre>
+      {/*
+        The copy button sits in the row rather than floating over it, so the code
+        area simply ends where the button begins. Absolute positioning cannot
+        work here: the code scrolls sideways on a phone, and no amount of
+        padding moves an overflowing line out from under an overlay - the last
+        characters of `npx @ivy-apps/deslop check .` ended up beneath it.
+        `min-w-0` is what lets the scroll container shrink below its content.
+      */}
+      <div className="flex items-start">
+        <div className="scroll-hint min-w-0 flex-1 overflow-x-auto p-4">
+          {highlightedHtml ? (
+            <div
+              className={`${textPresets.codeBlock} [&_code]:font-mono [&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0`}
+              /* Shiki output, generated at build time from string literals in
+                 this repo. No user input reaches it. */
+              dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+            />
+          ) : (
+            <pre
+              className={`m-0 ${textPresets.codeBlock} ${tw.text.secondary}`}
+            >
+              <code>{code.trimEnd()}</code>
+            </pre>
+          )}
+        </div>
+        {copyable && (
+          <CopyButton text={code.trimEnd()} className="m-2 shrink-0" />
         )}
       </div>
     </div>

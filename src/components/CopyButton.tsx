@@ -42,7 +42,8 @@ export default function CopyButton({
       type="button"
       onClick={handleCopy}
       aria-label={copied ? 'Copied' : 'Copy to clipboard'}
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-md ${tw.link.quiet} ${tw.bg.hover} ${className}`}
+      // 44px below `sm` so it is a thumb target rather than a pointer one.
+      className={`inline-flex h-11 w-11 items-center justify-center rounded-md sm:h-8 sm:w-8 ${tw.link.quiet} ${tw.bg.hover} ${className}`}
     >
       {copied ? (
         <Check className={`h-4 w-4 ${tw.result.pass}`} aria-hidden />

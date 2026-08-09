@@ -23,8 +23,15 @@ export default function Section({
   footer,
 }: SectionProps): ReactNode {
   return (
-    <section id={id} className={`border-t ${tw.border.default}`}>
-      <div className="mx-auto max-w-3xl px-6 py-12 md:py-16">
+    /*
+     * `scroll-mt` clears the sticky header, which would otherwise cover the
+     * heading of whichever section an inbound deep link lands on.
+     */
+    <section
+      id={id}
+      className={`scroll-mt-16 border-t sm:scroll-mt-20 ${tw.border.default}`}
+    >
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 md:py-16">
         <h2 className={`${typeScale.sectionTitle} ${tw.text.primary}`}>
           {title}
         </h2>
