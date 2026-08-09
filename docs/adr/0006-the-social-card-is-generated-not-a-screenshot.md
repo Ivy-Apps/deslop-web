@@ -11,10 +11,19 @@ the brand changes, and nobody remembers it exists.
 
 The card carries the definition - what Deslop is, and that you write the rules
 in YAML - and one real violation: the transitive React rule, which is the check
-a single-file linter structurally cannot perform. The claim goes in
-`openGraph.title` instead of on the image, because every unfurl renders that
-title directly beside the card - putting the definition in both spends the whole
-unfurl on one sentence.
+a single-file linter structurally cannot perform. The use-case - "Architecture
+guardrails for the AI era" - goes in `openGraph.title` instead of on the image,
+because every unfurl renders that title directly beside the card, and putting
+the definition in both spends the whole unfurl on one sentence.
+
+That title is load-bearing on the split. `CONTEXT.md` is emphatic that AI is the
+problem Deslop answers and never a property of Deslop, and the phrasing the
+glossary sanctions is *deterministic* architecture guardrails. Read alone, this
+title drops that word and invites exactly the misreading the glossary forbids.
+It survives because it is never shown alone: the card beside it says "static
+import-graph analyzer" and shows deterministic CLI output, which fixes the era
+as the thing being solved rather than the technique. Anywhere the title might
+travel without the image, it needs "deterministic" back.
 
 The violation is verbatim within each block, but only two of the five blocks the
 CLI prints survive: the rule header and the import chain. The full output is
