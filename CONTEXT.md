@@ -143,6 +143,13 @@ reader can get a green run on their own codebase; anything past that is a link
 to the README. See docs/adr/0001.
 _Avoid_: overview, basics, the docs
 
+**Social card**:
+The 1200x630 image an unfurled deslop.dev link renders in a feed or a chat. It
+is half of a pair: the card states what Deslop is and shows one violation, and
+the unfurl title beside it states what Deslop catches. Neither says the other's
+half. See docs/adr/0006.
+_Avoid_: OG image, preview image, thumbnail, banner
+
 **Agent doc**:
 `/llms.txt` - the complete Deslop reference the site serves for coding agents,
 and the one document the site owns rather than links. Named by its filename,

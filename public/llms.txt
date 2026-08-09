@@ -442,7 +442,7 @@ the exit code fail the job.
 ## Reading violations
 
 ```
-# architecture#no-react-transitively-in-data#@/features/home/data/bad-repository
+# architecture#no-react-in-data#@/features/home/data/bad-repository
 Data layer modules must not transitively depend on React.
 
 Module '@/features/home/data/bad-repository' transitively imports 'react' via:
