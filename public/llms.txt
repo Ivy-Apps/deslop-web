@@ -125,7 +125,7 @@ concern, layer or team as you like: `architecture.yaml`, `quality.yaml`,
 | `uses` | no | Imports this module must have. |
 | `exists` | no | Modules that must exist. |
 | `fix` | yes | Plain-language instruction printed with every violation. Variables are interpolated. |
-| `example` | no | TypeScript snippet showing correct code. |
+| `example` | no | TypeScript snippet showing correct code. Not printed in 0.10.x. |
 
 A rule with no clause fields is valid YAML and checks nothing. If you write a
 rule, give it at least one of `forbids` / `uses` / `exists`.
@@ -713,7 +713,10 @@ back to it.
 
 ### `example`
 
-An optional TypeScript snippet of correct code, shown in the violation output.
+An optional TypeScript snippet of correct code. It is accepted and validated,
+but **0.10.x does not print it**: a violation shows the rule's `description`, the
+offending import statement, and `fix`, and nothing else. Put anything a developer
+must actually read into `fix`.
 
 ```yaml
 example: |
@@ -1028,11 +1031,18 @@ wrong for any file in a subfolder: see [Advanced usage](#13-advanced-usage).
     - "@/features/**/data/**"
   forbids:
     - import: "@/lib/http-client"
-      transitive: true
   fix: >-
     Add a function to the feature's data/ module and call that from the
     component or hook.
 ```
+
+Note this one is deliberately **direct**, not `transitive: true`. The whole point
+of the layer is that a component reaches the network *through* `data/`, so the
+data module is exactly the intermediate that is allowed to launder the import.
+Adding `transitive: true` here would report every component that correctly calls
+its own `data/` module - the rule would fire on the code its own `fix` asks for.
+`exclude` cannot prevent that: it drops the data module from the rule's *target*,
+not from anyone else's import chain.
 
 ### Environment variables are read in one module
 
@@ -1067,16 +1077,23 @@ This is the worked example, verified against a real run:
 
 ```yaml
 - id: feature-isolation
-  description: Features must not import other features.
+  description: >-
+    Features must not import other features, or reach into a shared tree
+    they do not own.
   target: "@/features/{{feature-name}}/**"
   forbids:
     - import: "@/features/**"
+    - import: "@/shared/**"
   allows:
     - import: "{{TARGET_DIR}}/**"              # the file's OWN dir, not the feature root
     - import: "{{TARGET_DIR}}/../shared/**"
     - import: "{{TARGET_DIR}}/../../shared/**"
   fix: Promote the shared code out of the feature folders.
 ```
+
+Both `forbids` entries matter to what follows. An `allows` only ever narrows a
+`forbids`, so a module no `forbids` entry matches is never reported however the
+`allows` resolve - and `@/shared/Util` does not match `@/features/**`.
 
 Because the target ends in `**`, it matches files at every depth, and each one
 gets its own `{{TARGET_DIR}}`:
@@ -1126,16 +1143,21 @@ with a variable, and the rule is depth-safe:
 
 ```yaml
 - id: feature-isolation
-  description: Features must not import other features.
+  description: >-
+    Features must not import other features, or reach into a shared tree
+    they do not own.
   target: "@/features/{{feature-name}}/**"
   forbids:
     - import: "@/features/**"
+    - import: "@/shared/**"
   allows:
     - import: "@/features/{{feature-name}}/**"  # own feature, at ANY depth
     - import: "@/features/shared/**"            # sibling shared dir
     - import: "@/shared/**"                     # top-level shared dir
   fix: Promote the shared code out of the feature folders.
 ```
+
+Now every one of the three files above is silent, at every depth.
 
 Alternatively, pin the depth so `{{TARGET_DIR}}` is constant, by writing a
 target with no `**`:
