@@ -8,12 +8,12 @@ This file is the complete reference for writing Deslop rules. It is written for
 coding agents: everything needed to author a correct rulebook is here, with no
 other page to fetch.
 
-Applies to `@ivy-apps/deslop` 0.8.x. Canonical documentation for humans:
+Applies to `@ivy-apps/deslop` 0.10.x. Canonical documentation for humans:
 https://github.com/Ivy-Apps/deslop
 
 ---
 
-## What Deslop is for
+## 1. What Deslop is for
 
 Deslop enforces *structure between modules*, not style within them. It is
 complementary to ESLint and Biome, not a replacement: it replaces the
@@ -30,9 +30,24 @@ It answers four kinds of question:
 Every check runs against the whole import graph, so a dependency reached through
 three intermediate modules is caught the same as a direct one.
 
+### The mental model
+
+Deslop holds one data structure: a directed graph whose nodes are **module ids**
+and whose edges are **import statements**. Everything else is a query over it.
+
+```
+rule = (a set of modules)  ×  (a predicate about their edges)
+       ^^^^^^^^^^^^^^^^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+       target - exclude       forbids / allows / uses / exists
+```
+
+A rule that selects no modules asks nothing and passes. This is the single most
+common failure mode when writing rules, and Deslop does not warn about it: see
+[Probing](#14-probing-and-verifying-your-rules).
+
 ---
 
-## Project setup
+## 2. Project setup
 
 Deslop needs three things:
 
@@ -57,9 +72,16 @@ Recommended `package.json` scripts:
 Prebuilt binaries ship for `darwin-arm64`, `linux-x64` and `linux-arm64`.
 Windows is not supported yet.
 
+**Constraints on `deslop/rules/`** (both abort the run, so they matter):
+
+- The directory must be **flat**. A subdirectory crashes the run with
+  `withFile: inappropriate type (is a directory)`.
+- Every entry in it is parsed as a rulebook. A stray `README.md` or `.gitkeep`
+  fails the load with a parse error. Put nothing else in there.
+
 ---
 
-## Rulebook file format
+## 3. Rulebook and rule anatomy
 
 Every file in `deslop/rules/` is a rulebook. A rulebook is a YAML document with
 four required top-level fields:
@@ -81,29 +103,29 @@ Rules across files are independent and all of them run. Split rulebooks by
 concern, layer or team as you like: `architecture.yaml`, `quality.yaml`,
 `nextjs.yaml`.
 
-**Constraints on the directory** (both of these abort the run, so they matter):
+### Rulebook fields
 
-- `deslop/rules/` must be **flat**. A subdirectory crashes the run with
-  `withFile: inappropriate type (is a directory)`.
-- Every entry in it is parsed as a rulebook. A stray `README.md` or `.gitkeep`
-  fails the load with an Aeson parse error. Put nothing else in there.
+| Field | Required | Meaning |
+|---|---|---|
+| `id` | yes | Prefix of every violation id this rulebook produces. |
+| `name` | yes | Human-readable title. |
+| `description` | yes | What the rulebook enforces as a whole. |
+| `rules` | yes | The list of rules. |
 
----
-
-## Rule fields
+### Rule fields
 
 | Field | Required | Meaning |
 |---|---|---|
 | `id` | yes | Unique within the rulebook. Appears in violation ids and baseline keys. |
-| `description` | yes | Printed above every violation. Say what *and why*. |
+| `description` | yes | Printed above every violation. Say what *and why*. Variables are interpolated. |
 | `target` | yes | Glob+ pattern selecting the modules this rule applies to. |
-| `exclude` | no | List of Glob+ patterns removed from the target. |
+| `exclude` | no | List of plain-glob patterns removed from the target. |
 | `forbids` | no | Imports this module may not have. |
 | `allows` | no | Exceptions carved out of `forbids`. |
 | `uses` | no | Imports this module must have. |
 | `exists` | no | Modules that must exist. |
-| `fix` | yes | Plain-language instruction printed with every violation. |
-| `example` | no | TypeScript snippet showing correct code. |
+| `fix` | yes | Plain-language instruction printed with every violation. Variables are interpolated. |
+| `example` | no | TypeScript snippet showing correct code. Not printed in 0.10.x. |
 
 A rule with no clause fields is valid YAML and checks nothing. If you write a
 rule, give it at least one of `forbids` / `uses` / `exists`.
@@ -113,257 +135,10 @@ Do not invent fields. Unknown keys are ignored silently, so a typo like
 
 ---
 
-## Targeting: `target` and `exclude`
+## 4. Module ids and resolution
 
-`target` selects modules. `exclude` removes modules from that selection.
-
-```
-effective target = target - exclude
-```
-
-```yaml
-target: "@/features/**/*"
-exclude:
-  - "**/*.spec"
-  - "**/*.stories"
-```
-
-A module removed by `exclude` is not checked by the rule at all. This is the
-correct tool for a **false positive** (the rule should never have matched that
-module).
-
-Contrast with `allows`, which is the tool for a **legitimate exception** (the
-module stays in the target and stays checked; one specific import is permitted).
-The two are the most commonly confused feature of the DSL:
-
-| Situation | Use |
-|---|---|
-| The rule matches modules it was never meant to | `exclude` |
-| The rule is right, but this one import is deliberate | `allows` |
-| A real violation you are not fixing today | `deslop baseline .` |
-
----
-
-## Glob+ patterns
-
-Glob+ is ordinary glob plus variables captured from the matched module.
-
-### Wildcards
-
-| Token | Matches |
-|---|---|
-| `*` | any characters within a single path segment (no `/`) |
-| `**` | any characters across any number of segments |
-
-```yaml
-target: "@/app/**/route"       # every route handler
-target: "@/features/**/*View"  # every View module
-target: "**/*"                 # every module in the project
-```
-
-### Casing variables
-
-A variable in `target` **captures** a name; the same variable in a clause
-pattern **substitutes** it back. Capture once, then use whichever casing you
-need:
-
-| Variable | Casing | Captured `UserProfile` renders as |
-|---|---|---|
-| `{{FileName}}` | PascalCase | `UserProfile` |
-| `{{fileName}}` | camelCase | `userProfile` |
-| `{{file-name}}` | kebab-case | `user-profile` |
-| `{{FILE_NAME}}` | CONSTANT_CASE | `USER_PROFILE` |
-
-All four are derived automatically from one capture. A target that captures via
-`{{FileName}}` makes `{{file-name}}` available in its clauses.
-
-What each variable matches when capturing:
-
-- `{{FileName}}` matches `[A-Z][a-zA-Z0-9]*`
-- `{{fileName}}` matches `[a-z][a-zA-Z0-9]*`
-- `{{file-name}}` matches `[a-z0-9-]+`
-- `{{FILE_NAME}}` matches `[A-Z0-9_]+`
-
-Pick the variable whose shape matches your file naming, or the capture fails and
-the rule silently matches nothing.
-
-### `{{TARGET_DIR}}`
-
-The directory of the matched module. **Legal in clause patterns only** - never
-in `target` or `exclude`, because there is no matched module yet.
-
-### A full expansion
-
-```yaml
-- id: viewmodel-has-spec
-  description: Every ViewModel has a colocated unit test.
-  target: "@/features/**/use{{FileName}}ViewModel"
-  exists:
-    - module: "{{TARGET_DIR}}/use{{FileName}}ViewModel.spec"
-  fix: Add the missing .spec module next to the ViewModel.
-```
-
-Matching `@/features/profile/useUserProfileViewModel`:
-
-- `{{FileName}}` = `UserProfile` (only the part between `use` and `ViewModel`)
-- `{{TARGET_DIR}}` = `@/features/profile`
-- The `exists` pattern resolves to
-  `@/features/profile/useUserProfileViewModel.spec`
-
-### Where each pattern type is legal
-
-| Field | Wildcards | Casing variables | `{{TARGET_DIR}}` |
-|---|---|---|---|
-| `target` | yes | yes (captures) | no |
-| `exclude` | yes | yes (captures) | no |
-| `forbids.import` | yes | yes | yes |
-| `allows.import` | yes | yes | yes |
-| `uses.import` | yes | yes | yes |
-| `exists.module` | **no** | yes | yes |
-
----
-
-## Clauses
-
-### `forbids`
-
-The target module may not import the pattern.
-
-```yaml
-forbids:
-  - import: "@/data/http-client"   # direct import only
-  - import: "@/server/**"
-    transitive: true               # reachable through any chain
-```
-
-`transitive: true` checks the entire reachable import graph. Use it whenever the
-thing you are protecting against can arrive through a helper - server-only code,
-database clients, heavy runtime dependencies. Use direct (the default) when you
-are enforcing a layering convention that intermediate modules are allowed to
-launder.
-
-All entries are checked independently; any match is a violation.
-
-### `allows`
-
-Whitelists imports that a `forbids` clause in the *same rule* would otherwise
-catch.
-
-```yaml
-- id: checkout-imports-only-auth
-  description: Checkout must not depend on other features, except auth.
-  target: "@/features/checkout/**"
-  forbids:
-    - import: "@/features/**"
-  allows:
-    - import: "@/features/auth/**"
-  fix: Remove the cross-feature import. Only @/features/auth is allowed.
-```
-
-`allows` only ever modifies `forbids`. It has no effect on `uses` or `exists`,
-and a rule with `allows` and no `forbids` does nothing.
-
-### `uses`
-
-The target module must import the pattern. A missing import is a violation.
-
-```yaml
-uses:
-  - import: "{{TARGET_DIR}}/{{FileName}}StateEvent"   # must import directly
-  - import: "@/lib/auth/session"
-    transitive: true                                  # anywhere in the chain
-```
-
-Every entry is required.
-
-### `exists`
-
-A module must exist at the resolved path. This checks the shape of the codebase
-rather than the import graph.
-
-```yaml
-exists:
-  - module: "{{TARGET_DIR}}/{{FileName}}View.stories"
-  - module: "{{TARGET_DIR}}/use{{FileName}}ViewModel.spec"
-```
-
-Two things to know:
-
-- **Wildcards are rejected.** A `*` or `**` in an `exists` pattern aborts the
-  run with `'exists' patterns must not contain wildcards`. Each entry must
-  resolve to exactly one path.
-- A file satisfies `exists` even if nothing imports it. Orphan test files count.
-
-### `fix` and `example`
-
-`fix` is printed with every violation and is the field agents and developers act
-on. Make it an instruction, not a restatement of the problem:
-
-```yaml
-# Good
-fix: Move the query into a server action under @/server and call that instead.
-
-# Useless
-fix: This import is not allowed.
-```
-
-`example` is an optional TypeScript snippet of correct code, shown in the
-output.
-
----
-
-## What counts as an import
-
-Deslop lexes `import` statements. Verified behaviour:
-
-| Statement | Edge in the graph? |
-|---|---|
-| `import { x } from "@/a"` | yes |
-| `import type { T } from "@/a"` | **yes** - type-only imports count |
-| `import "@/a"` (side effect) | yes |
-| `await import("@/a")` (dynamic) | **yes** |
-| `export { x } from "@/a"` | **no** |
-| `export * from "@/a"` | **no** |
-| `require("@/a")` | no |
-
-### Re-exports are not edges
-
-This is the most important limitation to design around. A barrel file:
-
-```ts
-// @/features/home/index.ts
-export * from "@/features/home/home-service";
-```
-
-is a graph node with **no outgoing edges**. Consequences:
-
-- A transitive chain that runs through a barrel stops there. `@/a` imports
-  `@/features/home` (barrel) which re-exports something that imports `react`:
-  Deslop does not see `react` as reachable from `@/a`.
-- `uses` on a barrel always fails, since the barrel imports nothing.
-
-So: do not write rules whose transitive chain depends on passing through a
-barrel, and do not target barrels with `uses`. Rules that name the concrete
-module (`@/features/home/home-service`) work correctly.
-
-### Third-party packages
-
-Packages are modules too, addressed by their import specifier:
-
-```yaml
-forbids:
-  - import: "react"                 # exact
-  - import: "@tanstack/**"          # scoped packages match with globs
-  - import: "react-dom/client"      # subpaths match literally
-  - import: "next/navigation"
-```
-
----
-
-## Module ids and resolution
-
-Deslop works with **module ids** - the aliased import path, without the file
-extension - not file paths on disk.
+Deslop works with **module ids**: the aliased import path, without the file
+extension, not file paths on disk.
 
 ```
 src/features/auth/AuthService.ts   ->   @/features/auth/AuthService
@@ -384,10 +159,32 @@ Resolution facts that change what your rules match:
 - A module not covered by any alias gets its **absolute file path** as its id,
   and no `@/...` pattern will ever match it. If rules mysteriously match
   nothing, this is why.
-- `index.ts` resolution follows TypeScript: `@/features/home` resolves to
-  `@/features/home/index.ts` when that file exists, and the module keeps the
-  directory-form id `@/features/home`. Write patterns against that form, not
-  against `@/features/home/index`.
+
+### `index.ts` and barrels
+
+This one is subtle and it changes what your rules can see.
+
+- The **file** `src/features/home/index.ts` is registered under the module id
+  **`@/features/home/index`**. That node owns the file's outgoing edges.
+- An **import written `"@/features/home"`** is resolved to that same file, but
+  the edge deliberately keeps the directory form and points at
+  **`@/features/home`**.
+
+These are two distinct nodes in the graph. The directory-form node is a **sink
+with no outgoing edges**. Three consequences:
+
+```yaml
+target: "@/features/home"          # matches NOTHING, the file is /index
+target: "@/features/home/index"    # correct
+```
+
+- A transitive chain that enters a barrel by its directory form **stops there**,
+  even when the barrel uses real `import` statements.
+- `exists: "@/features/home"` passes as soon as anything imports that specifier,
+  because the phantom sink node counts as existing. It is not evidence the file
+  is there.
+
+See [Limitations](#15-limitations) for the full reproducer.
 
 ### Which files are analyzed
 
@@ -399,23 +196,561 @@ These directories are skipped: `node_modules`, `.git`, `dist`, `build`, `out`,
 `.parcel-cache`, `.yarn`, `.direnv`, `.devenv`, `.svelte-kit`, `.nuxt`,
 `.astro`, `.vercel`, `.wrangler`, plus `next-env.d.ts`.
 
+Files ignored by `.gitignore` are skipped too. Deslop reads only `.gitignore`
+files found in the project tree; it ignores `.git/info/exclude` and the user's
+global git ignore file, so a given commit lints identically on every machine and
+in CI.
+
 ---
 
-## Built-in checks
+## 5. What counts as an import
+
+Deslop lexes `import` statements. Verified behaviour:
+
+| Statement | Edge in the graph? |
+|---|---|
+| `import { x } from "@/a"` | yes |
+| `import type { T } from "@/a"` | **yes**, type-only imports count |
+| `import "@/a"` (side effect) | yes |
+| `await import("@/a")` (dynamic) | **yes** |
+| `export { x } from "@/a"` | **no** |
+| `export * from "@/a"` | **no** |
+| `require("@/a")` | no |
+
+### Re-exports are not edges
+
+A barrel file written with re-exports:
+
+```ts
+// @/features/home/index.ts
+export * from "@/features/home/home-service";
+```
+
+is a graph node with **no outgoing edges**. Combined with the directory-form
+split above, this means barrels break transitive reachability in two independent
+ways. Rules that name the concrete module (`@/features/home/home-service`) work
+correctly; rules whose transitive chain has to pass through a barrel do not.
+
+### Third-party packages
+
+Packages are modules too, addressed by their import specifier:
+
+```yaml
+forbids:
+  - import: "react"                 # exact
+  - import: "@tanstack/**"          # scoped packages match with globs
+  - import: "react-dom/client"      # subpaths match literally
+  - import: "next/navigation"
+```
+
+---
+
+## 6. Glob+ patterns
+
+Glob+ is ordinary glob plus **named variables** captured from the matched
+module.
+
+### Paths are segments
+
+A module id is a list of `/`-separated **segments**, and a Glob+ pattern is a
+list of segment patterns matched against them one for one. Everything else
+follows from that: `**` is the only token that changes how many segments a
+pattern consumes; every other token consumes exactly one segment, or part of one.
+
+```
+@/components/stripe/CheckoutView   ->   [@] [components] [stripe] [CheckoutView]
+```
+
+### Wildcards
+
+| Token | Scope | Meaning |
+|---|---|---|
+| `**` | a whole segment | zero or many segments |
+| `*` | inside a segment | zero or more characters, never a `/` |
+| `..` | a whole segment | one directory back, **clause patterns only** |
+
+`**` must stand alone as a segment. `@/a/**View` does not compile. Write
+`@/a/*View` to match inside one segment, or `@/a/**/*View` to cross segments.
+
+`*` is an ordinary part of a segment and may sit beside literals and variables:
+`use*ViewModel`, `*.spec`, and a bare `*` matching exactly one segment of any
+content.
+
+### `**` means zero, so `a/**` matches `a`
+
+```
+@/lib/**        matches  @/lib          (** stands for nothing)
+                matches  @/lib/jwt
+                matches  @/lib/auth/user
+```
+
+This is verified behaviour, and it is why `forbids: "@/internal/**"` catches an
+import of the module `@/internal` itself, not only what sits beneath it. It also
+means a `**` target selects files at *every* depth, which matters enormously for
+`{{TARGET_DIR}}`: see [Advanced usage](#13-advanced-usage).
+
+### Variables
+
+A variable is **a name written in a casing**. The spelling determines both: the
+words give the variable its identity, and the way they are cased says which form
+you want at that spot.
+
+```
+{{ProviderName}}   -> variable "provider-name", PascalCase
+{{providerName}}   -> variable "provider-name", camelCase
+{{provider-name}}  -> variable "provider-name", kebab-case
+{{PROVIDER_NAME}}  -> variable "provider-name", CONSTANT_CASE
+```
+
+All four are the **same variable**. Capture it in one casing and you can use it
+in any of the others. `{{FileName}}` is not a special token: it is a variable
+named `file-name`, which is why `{{file-name}}` refers to the same value.
+
+Capturing `UserProfile` makes all four forms available:
+
+| Variable | Casing | Renders as |
+|---|---|---|
+| `{{FileName}}` | PascalCase | `UserProfile` |
+| `{{fileName}}` | camelCase | `userProfile` |
+| `{{file-name}}` | kebab-case | `user-profile` |
+| `{{FILE_NAME}}` | CONSTANT_CASE | `USER_PROFILE` |
+
+Every variable is enriched independently from its own capture, so a rule with
+three variables gets twelve usable forms.
+
+### Casing is inferred, never declared
+
+A token compiles to whichever casing it is a valid spelling of:
+
+| Casing | Valid spelling |
+|---|---|
+| PascalCase | `^[A-Z][a-zA-Z0-9]*$` |
+| camelCase | `^[a-z][a-zA-Z0-9]*$` |
+| kebab-case | `^[a-z0-9]+(-[a-z0-9]+)*$` |
+| CONSTANT_CASE | `^[A-Z0-9]+(_[A-Z0-9]+)*$` |
+
+If exactly one matches, that is the casing. If none or more than one match, the
+rule fails to compile:
+
+| Token | Result |
+|---|---|
+| `{{ProviderName}}` | `provider-name`, PascalCase |
+| `{{provider-name}}` | `provider-name`, kebab-case |
+| `{{Provider}}` | `provider`, PascalCase, a lone capitalised word is unambiguous |
+| `{{provider}}` | **error**, reads as both camelCase and kebab-case |
+| `{{PROVIDER}}` | **error**, reads as both PascalCase and CONSTANT_CASE |
+| `{{Provider-Name}}` | **error**, not a recognised casing |
+| `{{provider_name}}` | **error**, snake_case is not supported |
+| `{{HTTPClient}}` | **error**, consecutive capitals have no word boundary |
+
+Use two or more words and every case resolves. This is about the **pattern**,
+not your files: a file named `HTTPClient.tsx` is captured happily by
+`{{ProviderName}}`. You choose what your rule says, so an ambiguous variable
+there is a mistake worth stopping for; you do not choose what the codebase is
+called, so an ambiguous value is read as generously as it can be.
+
+### Capturing several parts of a path
+
+A pattern may capture as many variables as the path has meaningful parts:
+
+```yaml
+target: "@/components/{{provider-name}}/{{service-type}}/{{FileName}}View"
+```
+
+Matching `@/components/stripe-connect/payment/CheckoutView`:
+
+| Variable | kebab-case | PascalCase | camelCase | CONSTANT_CASE |
+|---|---|---|---|---|
+| `provider-name` | `stripe-connect` | `StripeConnect` | `stripeConnect` | `STRIPE_CONNECT` |
+| `service-type` | `payment` | `Payment` | `payment` | `PAYMENT` |
+| `file-name` | `checkout` | `Checkout` | `checkout` | `CHECKOUT` |
+
+A clause may then compose them:
+
+```yaml
+- id: view-model-calls-its-own-provider-service
+  description: A ViewModel may only talk to its own provider's service module.
+  target: "@/components/{{provider-name}}/{{service-type}}/use{{FileName}}ViewModel"
+  uses:
+    - import: "@/services/{{provider-name}}/{{service-type}}-{{file-name}}"
+  fix: Import your own provider's service module.
+```
+
+`@/components/stripe-connect/payout/useTransferViewModel` must import
+`@/services/stripe-connect/payout-transfer`. Because the expected module name is
+derived from all three variables, no other provider's service satisfies it.
+
+### Where a variable may stand
+
+**A variable must be anchored.** In a `target`, a variable may not have `**` on
+both sides:
+
+```
+@/{{provider-name}}/**/{{FileName}}View     OK, each variable anchored on one side
+@/**/{{provider-name}}/{{FileName}}View     OK, anchored from the end
+@/**/{{provider-name}}/**/{{FileName}}View  ERROR, nothing says which directory it is
+@/**/{{provider-name}}/**                   ERROR, same
+```
+
+With `**` on both sides the *path* would decide which directory the variable
+names rather than the pattern. Anchor it against a literal, or use `*` to fix
+the depth. Clause patterns are exempt: they substitute rather than capture.
+
+**Two variables need a literal between them.**
+
+```
+@/x/{{FileName}}{{ServiceType}}          ERROR, no boundary
+@/x/{{FileName}}*{{ServiceType}}         ERROR, a * can match nothing
+@/x/{{provider-name}}-{{service-type}}   OK
+@/x/{{provider-name}}/{{service-type}}   OK
+```
+
+### Repeating a variable
+
+The same variable may appear twice, which constrains both places to the same
+value:
+
+```yaml
+target: "@/components/{{provider-name}}/{{ProviderName}}View"
+```
+
+```
+@/components/stripe-connect/StripeConnectView   matches
+@/components/stripe-connect/PaypalView          does not match, rule does not apply
+```
+
+A repeated variable is a **narrower** filter: it matches strictly less than two
+distinct variables would. To *require* the matching file rather than skip the
+files that lack it, use `exists`.
+
+### `{{TARGET_DIR}}`
+
+The directory of the matched module: every segment but the last.
+
+```
+matched:          @/features/home/HomeContainer
+{{TARGET_DIR}} -> @/features/home
+```
+
+**Legal in clause patterns only**, never in `target` or `exclude`, because there
+is no matched module yet. The name `target-dir` is reserved in every casing:
+`{{targetDir}}`, `{{target-dir}}` and `{{TargetDir}}` are all errors pointing at
+the one accepted spelling.
+
+`{{TARGET_DIR}}` is the directory of the **matched file**, so under a target
+containing `**` it is a different directory for files at different depths. This
+is the single sharpest edge in the DSL: see
+[Advanced usage](#13-advanced-usage).
+
+### `..` goes one directory back
+
+A clause pattern may use `..`, which cancels the segment to its left. It is what
+lets a clause reach *sideways* from `{{TARGET_DIR}}` rather than only downwards.
+
+```yaml
+target: "@/client/{{feature-name}}/{{FileName}}View"
+forbids:
+  - import: "@/client/**"
+allows:
+  - import: "{{TARGET_DIR}}/**"              # my own folder
+  - import: "{{TARGET_DIR}}/../shared/**"    # my sibling shared/ folder
+```
+
+Matched at `@/client/home/HomeView`, `{{TARGET_DIR}}` is `@/client/home` and the
+second `allows` resolves to `@/client/shared/**`:
+
+```
+[@] [client] [home] [..] [shared] [**]   ->   @/client/shared/**
+             ^^^^^^ ^^^^ cancel each other
+```
+
+Each `..` goes back exactly **one** directory. Cancellation happens after
+substitution, which is why a `..` after `{{TARGET_DIR}}` drops one directory of
+it rather than all of it.
+
+`..` is a whole segment or it is nothing. `..foo`, `...` and `a..b` are plain
+text; `.` is not special either.
+
+**It may only go back past a directory the pattern names:**
+
+```
+{{TARGET_DIR}}/../shared/**      OK
+@/client/home/../shared/**       OK, a literal
+@/client/{{feature-name}}/../x   OK, a variable is literal text once substituted
+@/client/**/widgets/../shared    OK, the .. cancels widgets, not the **
+
+@/client/**/../shared/**         ERROR, ** is zero or many segments: which one?
+@/client/*/../shared/**          ERROR, a * names no directory in particular
+@/a*/b/../../shared              ERROR, the second .. reaches a*
+```
+
+`target` and `exclude` reject `..` outright: both are matched against whole
+module ids, so there is nothing to be relative to. Write the path you mean.
+
+---
+
+## 7. Targeting: `target` and `exclude`
+
+`target` selects modules. `exclude` removes modules from that selection.
+
+```
+effective target = target - exclude
+```
+
+```yaml
+target: "@/features/**/*"
+exclude:
+  - "**/*.spec"
+  - "**/*.stories"
+```
+
+A module removed by `exclude` is not checked by the rule at all.
+
+**`exclude` is a plain glob.** It supports `*` and `**` and nothing else.
+Variables are rejected at load time, because an exclude pattern filters the
+target and binds nothing, so a variable there could never resolve:
+
+```
+  rule 'exclude-var'
+    exclude: "@/lib/{{FileName}}"
+      {{FileName}} cannot be used in an exclude pattern.
+        An exclude pattern filters the target and binds no variables.
+        Use a wildcard instead, e.g. * or **.
+```
+
+### Where each pattern type is legal
+
+| Field | `*` and `**` | Variables | `{{TARGET_DIR}}` | `..` |
+|---|---|---|---|---|
+| `target` | yes | yes (captures) | **no** | **no** |
+| `exclude` | yes | **no** | **no** | **no** |
+| `forbids.import` | yes | yes (substitutes) | yes | yes |
+| `allows.import` | yes | yes (substitutes) | yes | yes |
+| `uses.import` | yes | yes (substitutes) | yes | yes |
+| `exists.module` | **no** | yes (substitutes) | yes | yes |
+
+A clause may only use variables its own rule's `target` captures. A typo is
+caught at load time rather than silently widening the rule:
+
+```
+  rule 'view-wires-view-model'
+    uses.import: "{{TARGET_DIR}}/{{provider-nam}}Service"
+      unknown variable {{provider-nam}}.
+        Variables bound by this rule's target: file-name, provider-name, service-type
+        Did you mean {{provider-name}}?
+```
+
+### `exclude` vs `allows` vs baseline
+
+The three are the most commonly confused part of the DSL:
+
+| Situation | Use |
+|---|---|
+| The rule matches modules it was never meant to | `exclude` |
+| The rule is right, but this one import is deliberate | `allows` |
+| A real violation you are not fixing today | `deslop baseline .` |
+
+`exclude` removes the module from the rule entirely. `allows` keeps the module
+checked and permits one specific import.
+
+---
+
+## 8. Clauses
+
+### `forbids`
+
+The target module may not import the pattern.
+
+```yaml
+forbids:
+  - import: "@/data/http-client"   # direct import only
+  - import: "@/server/**"
+    transitive: true               # reachable through any chain
+```
+
+`transitive: true` checks the entire reachable import graph. Use it whenever the
+thing you are protecting against can arrive through a helper: server-only code,
+database clients, heavy runtime dependencies. Use direct (the default) when you
+are enforcing a layering convention that intermediate modules are allowed to
+launder.
+
+All entries are checked independently; any match is a violation.
+
+### `allows`
+
+Whitelists imports that a `forbids` clause in the *same rule* would otherwise
+catch.
+
+```yaml
+- id: checkout-imports-only-auth
+  description: Checkout must not depend on other features, except auth.
+  target: "@/features/checkout/**"
+  forbids:
+    - import: "@/features/**"
+  allows:
+    - import: "@/features/checkout/**"
+    - import: "@/features/auth/**"
+  fix: Remove the cross-feature import. Only @/features/auth is allowed.
+```
+
+Two things to know, both verified:
+
+- **`allows` only ever modifies `forbids`.** It has no effect on `uses` or
+  `exists`, and a rule with `allows` and no `forbids` does nothing.
+- **On a transitive `forbids`, `allows` matches the endpoint of the chain, not
+  the modules along it.** You cannot whitelist a path.
+
+```yaml
+# @/app/A -> @/mid/M -> @/bad/Bad
+forbids:
+  - import: "@/bad/**"
+    transitive: true
+allows:
+  - import: "@/mid/**"    # does NOT suppress: @/mid is an intermediate
+  - import: "@/bad/Bad"   # DOES suppress: @/bad/Bad is the endpoint
+```
+
+`allows` is scoped to the rule it appears in, and every matching rule is
+evaluated independently. Shipping a narrow rule *alongside* a blanket one means
+the blanket rule still fires. Pick one: either the blanket rule with a
+per-feature `exclude`, or per-feature rules.
+
+### `uses`
+
+The target module must import the pattern. A missing import is a violation.
+
+```yaml
+uses:
+  - import: "{{TARGET_DIR}}/{{FileName}}StateEvent"   # must import directly
+  - import: "@/lib/auth/session"
+    transitive: true                                  # anywhere in the chain
+```
+
+Every entry is required. `transitive: true` is satisfied if the module appears
+anywhere in the reachable graph, which is the right choice when a Screen
+delegates to a Container that does the actual wiring.
+
+### `exists`
+
+A module must exist at the resolved path. This checks the shape of the codebase
+rather than the import graph.
+
+```yaml
+exists:
+  - module: "{{TARGET_DIR}}/{{FileName}}View.stories"
+  - module: "{{TARGET_DIR}}/use{{FileName}}ViewModel.spec"
+```
+
+Three things to know:
+
+- **Wildcards are rejected**, because each entry must resolve to exactly one
+  path. But this is a **runtime** abort, raised the first time a target actually
+  matches:
+
+  ```
+  Error: Invalid rule configuration: Rule 'does-match' in rulebook 'probe':
+  'exists' patterns must not contain wildcards (* or **).
+  ```
+
+  A rulebook containing a wildcard `exists` **loads successfully and reports no
+  problems** as long as its target matches nothing. A green run is not evidence
+  the pattern is legal.
+- A file satisfies `exists` even if nothing imports it. Orphan test files count.
+- `exists` on a **directory-form barrel** passes vacuously. `moduleExists` only
+  asks whether the graph has a node with that id, and an import written
+  `"@/features/home"` creates one whether or not the file is there.
+
+---
+
+## 9. `fix`, `description` and `example`
+
+`fix` is printed with every violation and is the field agents and developers act
+on. Make it an instruction, not a restatement of the problem:
+
+```yaml
+# Good
+fix: Move the query into a server action under @/server and call that instead.
+
+# Useless
+fix: This import is not allowed.
+```
+
+### Variables are interpolated into `fix` and `description`
+
+Any variable the rule's `target` captured, plus `{{TARGET_DIR}}`, is substituted
+in both fields, in the casing you spell it in, so the message names the actual
+file rather than the pattern.
+
+```yaml
+target: "@/features/**/{{FileName}}Container"
+description: "{{FileName}}Container must be driven by a ViewModel."
+fix: Import use{{FileName}}ViewModel from {{TARGET_DIR}} and drive the View from it.
+```
+
+For `@/features/checkout/PaymentContainer` that prints:
+
+```
+PaymentContainer must be driven by a ViewModel.
+FIX: Import usePaymentViewModel from @/features/checkout and drive the View from it.
+```
+
+All four casings work. A token naming nothing in scope, whether a typo or a
+variable this rule's target never captured, is printed **exactly as written**
+rather than blanked out, and does **not** fail the load:
+
+```yaml
+fix: "unknown={{nope-here}}"   # prints literally: unknown={{nope-here}}
+```
+
+This is the one place an unbound variable is not a compile error, so a typo here
+is silent. Read your own output once.
+
+**`..` is not collapsed in a message.** Interpolation is plain text
+substitution; `..` cancellation is a *pattern* operation. So a `fix` containing
+`{{TARGET_DIR}}/..` prints the literal `@/features/home/widgets/..` rather than
+`@/features/home`. Write the directory you mean in prose instead of counting
+back to it.
+
+### `example`
+
+An optional TypeScript snippet of correct code. It is accepted and validated,
+but **0.10.x does not print it**: a violation shows the rule's `description`, the
+offending import statement, and `fix`, and nothing else. Put anything a developer
+must actually read into `fix`.
+
+```yaml
+example: |
+  import { HomeStateEvent } from "@/features/home/HomeStateEvent";
+  export function HomeContainer() { ... }
+```
+
+---
+
+## 10. Built-in checks
 
 Two checks run with no rulebook:
 
 | Id | Catches | Auto-fixable |
 |---|---|---|
 | `no-relative-imports` | `../../lib/util` where an alias like `@/lib/util` exists | yes |
-| `no-import-cycles` | circular imports, printed as the loop: `@/a -> @/b -> @/c -> @/a` | no |
+| `no-import-cycles` | circular imports, printed as the loop | no |
 
 They report through the same pipeline as your rules, so `deslop baseline`
-silences them the same way.
+silences them the same way. Their baseline keys use the lint format
+`{check-id}#{relative-file-path}`.
+
+Cycles are reported **one problem per strongly connected component**, not one
+per distinct loop, because the number of elementary cycles is exponential and
+would make the baseline unbounded. Each component is reported against its
+alphabetically first module, showing the shortest loop from that module back to
+itself.
+
+These two count toward the rule total in the run summary, so a project with no
+rulebook still reports `enforcing 2 rules`.
 
 ---
 
-## CLI
+## 11. CLI, violations and the baseline
 
 | Command | What it does |
 |---|---|
@@ -430,41 +765,67 @@ built-in check (`no-relative-imports`). It will never report or repair a
 `forbids` / `uses` / `exists` violation. Always use `deslop check` to see rule
 violations.
 
-After `deslop fix`, run your formatter - rewritten import lines may no longer
+After `deslop fix`, run your formatter: rewritten import lines may no longer
 match your import-order lint rule. The recommended script is
 `deslop fix . && npm run lint:fix`.
 
 In CI there is no key and no account: run `npx @ivy-apps/deslop check .` and let
 the exit code fail the job.
 
----
+### Reading a violation
 
-## Reading violations
-
-```
+````
+🚀 Checking project: /path/to/project
+📚 Loaded 2 rulebooks, 9 rules
+Found 32 problems:
+─────────────────────────────────────────
 # architecture#no-react-in-data#@/features/home/data/bad-repository
 Data layer modules must not transitively depend on React.
 
-Module '@/features/home/data/bad-repository' transitively imports 'react' via:
-@/features/home/data/bad-repository -> @/features/home/home-screen -> react.
+Module '@/features/home/data/bad-repository' transitively imports 'react' (2 hops) via:
+@/features/home/data/bad-repository → @/features/home/home-screen → react.
 ```ts
 import { HomeScreen } from "@/features/home/home-screen";
 ```
-FIX: Remove any imports that transitively pull in React. Move React-dependent
-logic to a ViewModel or Container.
-```
+FIX: Move React-dependent logic to a ViewModel or Container.
+─────────────────────────────────────────
+⏱  Checked 45 modules enforcing 11 rules in 10ms
+❌ Error: Found 32 problems, 17 of them auto-fixable.
+   Run `deslop fix` to fix the 17 auto-fixable problems.
+   Run `deslop baseline` to silence all 32 problems.
+````
 
 The first line is the violation id:
 
 - Rule violations: `{rulebook-id}#{rule-id}#{module-id}`
 - Built-in checks: `{check-id}#{relative-file-path}`
 
-Then the rule's `description`, the specific failure (with the full import chain
-for transitive violations and the offending statement), and the rule's `fix`.
+Then the rule's `description` (interpolated), the specific failure, the
+offending import statement, and the rule's `fix` (interpolated).
 
----
+The final `Checked N modules enforcing M rules` line is your sanity check on
+scope. If `N` is far smaller than your codebase, your alias or your ignore rules
+are wrong.
 
-## Baseline
+### Duplicate transitive violations are compacted
+
+One forbidden import usually drags a whole subtree of forbidden modules behind
+it, and every module in that subtree is a transitive violation of the same rule,
+all repaired by the same single edit. Deslop collapses them:
+
+```
+Module '@/hooks/useThing' transitively imports '@/ui/View' (1 hop) via:
+@/hooks/useThing → @/ui/View.
+Also reaches 3 more forbidden modules through this import.
+```
+
+The survivor is the **shortest** chain, and it names the imports the dropped
+ones came through, so nothing actionable is hidden. Only same-kind duplicates of
+the same violation id are collapsed: a rule a module breaks in two different
+ways still reports both. Compaction never drops a violation id, so it cannot
+change what a baseline suppresses.
+
+### Baseline
 
 `deslop baseline .` writes `deslop/baseline.yaml` listing every violation that
 exists right now, so they stop being reported. Use it to adopt Deslop on a
@@ -488,10 +849,11 @@ Rules for agents working with the baseline:
 
 ---
 
-## Rule cookbook
+## 12. Rule cookbook
 
 Adapt these to the project's actual directory names. They are written for a
-`@/*` alias pointing at `src/`.
+`@/*` alias pointing at `src/`. Every recipe here has been run against a fixture
+that proves it fires on a violation and stays silent on correct code.
 
 ### Keep server-only code out of client components
 
@@ -531,16 +893,20 @@ Adapt these to the project's actual directory names. They are written for a
 
 ### Features must not import each other
 
+Note the shape: the feature root is named by a **variable**, in both the target
+and the `allows`. This is depth-safe. Writing `{{TARGET_DIR}}/**` here would be
+wrong for any file in a subfolder: see [Advanced usage](#13-advanced-usage).
+
 ```yaml
 - id: features-isolated
   description: >-
     Features are independent slices. A cross-feature import couples two
     slices and makes either one impossible to move or delete alone.
-  target: "@/features/**"
+  target: "@/features/{{feature-name}}/**"
   forbids:
     - import: "@/features/**"
   allows:
-    - import: "{{TARGET_DIR}}/**" # a feature's own directory is fine
+    - import: "@/features/{{feature-name}}/**" # a feature's own directory, at any depth
   fix: >-
     Promote the shared code to @/components, @/hooks or @/lib and import it
     from there.
@@ -559,11 +925,6 @@ Adapt these to the project's actual directory names. They are written for a
     - import: "@/features/auth/**"
   fix: Remove the cross-feature import. Only @/features/auth is allowed.
 ```
-
-`allows` is scoped to the rule it appears in, and every matching rule is
-evaluated independently. Shipping this rule *alongside* `features-isolated`
-means checkout still violates the broader rule. Pick one: either the blanket
-rule with a per-feature `exclude`, or per-feature rules.
 
 ### Shared libraries stay framework-agnostic
 
@@ -670,11 +1031,18 @@ rule with a per-feature `exclude`, or per-feature rules.
     - "@/features/**/data/**"
   forbids:
     - import: "@/lib/http-client"
-      transitive: true
   fix: >-
     Add a function to the feature's data/ module and call that from the
     component or hook.
 ```
+
+Note this one is deliberately **direct**, not `transitive: true`. The whole point
+of the layer is that a component reaches the network *through* `data/`, so the
+data module is exactly the intermediate that is allowed to launder the import.
+Adding `transitive: true` here would report every component that correctly calls
+its own `data/` module - the rule would fire on the code its own `fix` asks for.
+`exclude` cannot prevent that: it drops the data module from the rule's *target*,
+not from anyone else's import chain.
 
 ### Environment variables are read in one module
 
@@ -694,21 +1062,276 @@ rule with a per-feature `exclude`, or per-feature rules.
 
 ---
 
-## Workflow for agents
+## 13. Advanced usage
 
-When asked to set up or extend Deslop rules:
+Everything in this section changes what a rule matches. Read it before writing a
+rule that uses `{{TARGET_DIR}}`, `..`, or a variable in more than one casing.
+
+### `{{TARGET_DIR}}` is relative to the file, not to the rule
+
+`{{TARGET_DIR}}` is the directory of the **matched file**. Under a target
+containing `**`, matched files sit at different depths, so the same clause
+resolves to a different directory for each of them.
+
+This is the worked example, verified against a real run:
+
+```yaml
+- id: feature-isolation
+  description: >-
+    Features must not import other features, or reach into a shared tree
+    they do not own.
+  target: "@/features/{{feature-name}}/**"
+  forbids:
+    - import: "@/features/**"
+    - import: "@/shared/**"
+  allows:
+    - import: "{{TARGET_DIR}}/**"              # the file's OWN dir, not the feature root
+    - import: "{{TARGET_DIR}}/../shared/**"
+    - import: "{{TARGET_DIR}}/../../shared/**"
+  fix: Promote the shared code out of the feature folders.
+```
+
+Both `forbids` entries matter to what follows. An `allows` only ever narrows a
+`forbids`, so a module no `forbids` entry matches is never reported however the
+`allows` resolve - and `@/shared/Util` does not match `@/features/**`.
+
+Because the target ends in `**`, it matches files at every depth, and each one
+gets its own `{{TARGET_DIR}}`:
+
+| matched module | `{{TARGET_DIR}}` | `{{TARGET_DIR}}/**` | `../shared/**` | `../../shared/**` |
+|---|---|---|---|---|
+| `@/features/home/HomeView` | `@/features/home` | `@/features/home/**` | `@/features/shared/**` | `@/shared/**` |
+| `@/features/home/widgets/Card` | `@/features/home/widgets` | `@/features/home/widgets/**` | `@/features/home/shared/**` | `@/features/shared/**` |
+| `@/features/home/widgets/deep/Deep` | `@/features/home/widgets/deep` | `.../deep/**` | `.../widgets/shared/**` | `@/features/home/shared/**` |
+
+Run against files at all three depths, each importing the same two modules:
+
+| module | `@/features/shared/Button` | `@/shared/Util` |
+|---|---|---|
+| `@/features/home/HomeView` | allowed via `../shared` | allowed via `../../shared` |
+| `@/features/home/widgets/Card` | allowed via `../../shared` | **violation** |
+| `@/features/home/widgets/deep/Deep` | **violation** | **violation** |
+
+The same import, with the same intent, is reported for one file and not another.
+Three consequences worth knowing:
+
+**1. `{{TARGET_DIR}}/**` does not mean "my feature".** It means "my containing
+directory". For `@/features/home/widgets/Card` it hydrates to
+`@/features/home/widgets/**`, so the file cannot import its own feature's
+`@/features/home/HomeService`. This is a false positive, and it is the most
+common mistake in real rulebooks.
+
+**2. A clause that widens can neutralise the `forbids` it qualifies.**
+
+```yaml
+forbids:
+  - import: "@/features/**"
+allows:
+  - import: "{{TARGET_DIR}}/../**"     # "my parent folder"
+```
+
+| matched file | resolves to | effect |
+|---|---|---|
+| `@/features/home/widgets/Card` | `@/features/home/**` | scoped as intended |
+| `@/features/home/HomeView` | `@/features/**` | **forbids nothing at all** |
+
+**3. `exists` can demand a file in the wrong place**, for exactly the same
+reason.
+
+**The fix: name the directory, do not count back to it.** Pin the feature root
+with a variable, and the rule is depth-safe:
+
+```yaml
+- id: feature-isolation
+  description: >-
+    Features must not import other features, or reach into a shared tree
+    they do not own.
+  target: "@/features/{{feature-name}}/**"
+  forbids:
+    - import: "@/features/**"
+    - import: "@/shared/**"
+  allows:
+    - import: "@/features/{{feature-name}}/**"  # own feature, at ANY depth
+    - import: "@/features/shared/**"            # sibling shared dir
+    - import: "@/shared/**"                     # top-level shared dir
+  fix: Promote the shared code out of the feature folders.
+```
+
+Now every one of the three files above is silent, at every depth.
+
+Alternatively, pin the depth so `{{TARGET_DIR}}` is constant, by writing a
+target with no `**`:
+
+```yaml
+target: "@/features/{{feature-name}}/{{FileName}}View"   # always @/features/<feature>
+allows:
+  - import: "{{TARGET_DIR}}/../shared/**"                # always @/features/shared
+```
+
+### Too many `..` clamps to a silently dead clause
+
+As `/..` is `/` on a Unix path, a `..` with nothing left to cancel is a no-op.
+A clause that counts back further than `{{TARGET_DIR}}` is deep therefore
+resolves to a path with **no leading alias segment**, which matches no module id
+at all:
+
+```yaml
+target: "@/{{feature-name}}/**"
+allows:
+  - import: "{{TARGET_DIR}}/../../shared/**"
+```
+
+| matched file | `{{TARGET_DIR}}` | resolves to | result |
+|---|---|---|---|
+| `@/home/a/b/DeepView` | `@/home/a/b` | `@/home/shared/**` | live |
+| `@/home/HomeView` | `@/home` | `shared/**` | **dead, matches nothing** |
+
+Nothing warns about this. In an `allows` it means extra violations; in a
+`forbids` it means silence. **Count the `..` against the shallowest file your
+target can match.**
+
+### Polarity: `forbids` accepts more spellings than `uses`
+
+Writing a variable in a casing it was not captured in is a guess, because
+PascalCase and camelCase mark word boundaries with a capital and any word may be
+written wholly in capitals. Deslop guesses in whichever direction costs a **false
+positive** rather than a **false negative**: a false positive is visible and can
+be silenced, while a rule that quietly stops enforcing is not visible at all.
+
+| Field | Polarity | A match means | Spellings accepted |
+|---|---|---|---|
+| `target` | **Widen** | the rule applies here | any name that spells every occurrence |
+| `exclude` | n/a | the module is dropped | *(no variables allowed)* |
+| `forbids` | **Widen** | a violation | **every** spelling of the name |
+| `allows` | **Narrow** | exempt from `forbids` | the canonical spelling only |
+| `uses` | **Narrow** | the rule is satisfied | the canonical spelling only |
+| `exists` | **Narrow** | the rule is satisfied | the canonical spelling only |
+
+Verified, with one file `src/internal/DBConnection.ts` and a target capturing
+kebab-case `db-connection`:
+
+```yaml
+target: "@/widgets/{{file-name}}"      # captures "db-connection"
+
+forbids:
+  - import: "@/internal/{{FileName}}"  # MATCHES the real DBConnection (widen)
+uses:
+  - import: "@/internal/{{FileName}}"  # DEMANDS DbConnection, reports it missing (narrow)
+```
+
+Same pattern text, same capture, opposite behaviour. **Same-casing use is never
+a guess**, so polarity only bites where a clause writes a variable in a casing
+its target did not capture it in. Name the folder in kebab-case or
+CONSTANT_CASE in the target and the reading is exact.
+
+### Acronyms cannot always be read back
+
+A run of capitals carries no word boundary, so Deslop reads it as one word:
+
+```
+DBConnection -> db-connection    HTTPClient -> http-client    IOStream -> io-stream
+```
+
+Two readings it cannot recover:
+
+| Written | Read as | You probably meant |
+|---|---|---|
+| `AWSS3Client` | `awss3-client` | `aws-s3-client` |
+| `ABTest` | `ab-test` | `a-b-test` |
+
+This only bites where the name is captured **only** in PascalCase or camelCase.
+Name the folder in the target too and the reading is exact, because kebab-case
+and CONSTANT_CASE have no ambiguity.
+
+### Variables bind greedily, unless something else pins them
+
+Where a boundary within one segment is genuinely ambiguous, the leftmost
+variable takes as much as it can:
+
+```
+@/x/{{provider-name}}-{{service-type}}      on @/x/stripe-connect-payment-service
+  ->  provider-name = "stripe-connect-payment",  service-type = "service"
+```
+
+Greedy is only the order the splits are tried in: the first that satisfies every
+variable in the rule wins, so naming the variable again elsewhere settles it
+exactly.
+
+```
+@/c/{{provider-name}}/{{provider-name}}-{{service-type}}   on @/c/stripe/stripe-connect-payment
+  ->  provider-name = "stripe",  service-type = "connect-payment"
+```
+
+Otherwise, separate them with a character no casing can contain, such as `/`
+or `.`.
+
+### A target's casing is a filter
+
+`{{provider-name}}` matches a kebab-case segment and nothing else. A directory
+named `AWS_S3` is simply not a target of that rule, and Deslop says nothing
+about it. A rule that matches no module at all is **not reported**: it may be
+guarding a layer you have not built yet. If a rule seems to be doing nothing,
+check that its casings match your conventions.
+
+---
+
+## 14. Probing and verifying your rules
+
+A rule that matches nothing passes. A green run is therefore **not** evidence
+your rule works. Prove it.
+
+### The verification loop
+
+1. Write the rule.
+2. Create **two** fixtures: one file that *should* violate it, and one that
+   *should not*.
+3. Run `deslop check .`.
+4. Confirm **both** verdicts. The violation must be reported, and the correct
+   file must be silent.
+
+A scratch project is enough, and takes about thirty seconds:
+
+```bash
+mkdir -p probe/src/features/home/widgets probe/deslop/rules
+cd probe
+echo '{ "compilerOptions": { "baseUrl": ".", "paths": { "@/*": ["./src/*"] } } }' > tsconfig.json
+# ... write the fixture files and deslop/rules/probe.yaml ...
+npx @ivy-apps/deslop check .
+```
+
+Check the `Checked N modules enforcing M rules` line: if `N` is 0 or far too
+small, your alias or your ignore rules are wrong, and nothing below it means
+anything.
+
+### Bisecting a silent rule
+
+The rule loads, the run is green, and you do not know whether it works.
+
+1. **Widen the target to `**/*`.** If violations appear, the target was the
+   problem. If not, the clause is.
+2. **Add a deliberate violation** in a file you are certain the target matches.
+   Still silent means the clause pattern never matches.
+3. **Narrow the target back one segment at a time**, re-running each time. The
+   step where the violation disappears is the segment that is wrong.
+4. Common culprits, in order of frequency:
+   - the casing variable does not match the real file naming
+   - the pattern does not start with an alias, so it matches no module id
+   - `{{TARGET_DIR}}` hydrated to a deeper directory than you expected
+   - a `..` clamped to a dead clause
+   - the chain passes through a directory-form barrel
+   - the module has no alias at all, so its id is an absolute file path
+
+### Workflow for agents
 
 1. **Read the codebase first.** Confirm the alias in `tsconfig.json` and the
    real top-level directories under `src/`. Never emit `@/features/**` for a
-   project that has no `features/` directory. Rules that match nothing pass
-   silently, which is the worst failure mode.
+   project that has no `features/` directory.
 2. **Confirm the architecture with the user** if it is not obvious from the
-   tree. The rules encode intent, and intent is not always visible in the code.
-3. **Start with three to six rules**, not thirty. Each one should describe a
+   tree. Rules encode intent, and intent is not always visible in the code.
+3. **Start with three to six rules**, not thirty. Each should describe a
    boundary the team actually cares about.
 4. **Write `description` and `fix` as prose a teammate can act on.** These are
-   the entire output of a violation; a rule with a vague `fix` is worse than no
-   rule.
+   the entire output of a violation.
 5. **Run `deslop check .`** and read every violation.
 6. **Triage each one:**
    - The rule matched something it should not: add an `exclude` pattern.
@@ -721,13 +1344,94 @@ When asked to set up or extend Deslop rules:
 
 ### Self-check before finishing
 
-- Every pattern starts with an alias (`@/`), a package name, or `**`.
-- No `{{TARGET_DIR}}` in a `target` or `exclude`.
-- No wildcards in an `exists` pattern.
-- The casing variable matches the project's actual file naming.
-- No rule depends on a transitive chain passing through a barrel file.
-- `deslop/rules/` is flat and contains only rulebook YAML files.
-- `deslop check .` was actually run and its output read.
+- [ ] Every pattern starts with an alias (`@/`), a package name, or `**`.
+- [ ] No `{{TARGET_DIR}}` and no `..` in a `target` or `exclude`.
+- [ ] No variables in an `exclude` pattern.
+- [ ] No wildcards in an `exists` pattern (it would abort only once a target
+      matches, so a green run does not clear this).
+- [ ] The casing variable matches the project's actual file naming.
+- [ ] `{{TARGET_DIR}}/**` is not being used to mean "my feature" under a `**`
+      target. Name the root with a variable instead.
+- [ ] Every `..` was counted against the **shallowest** file the target matches.
+- [ ] No rule depends on a transitive chain passing through a barrel imported by
+      its directory form.
+- [ ] No `uses` or `exists` targets a barrel.
+- [ ] `deslop/rules/` is flat and contains only rulebook YAML files.
+- [ ] `deslop check .` was actually run, its output read, and at least one rule
+      proven to fire on a deliberate violation.
+
+---
+
+## 15. Limitations
+
+### Barrels split into two graph nodes, silently dropping transitive violations
+
+This is a known engine defect, not a design choice.
+
+A file `src/a/index.ts` is registered under the id `@/a/index`. An import written
+`"@/a"` resolves to that same file but keeps the directory form, creating a
+second node `@/a` with **no outgoing edges**. Reproducer:
+
+```ts
+// src/app/DirForm.ts
+import { a } from "@/a";        // NO violation reported
+// src/app/IdxForm.ts
+import { a } from "@/a/index";  // violation: @/app/IdxForm -> @/a/index -> react
+// src/a/index.ts
+import * as React from "react";
+```
+
+```yaml
+target: "@/app/**"
+forbids:
+  - import: "react"
+    transitive: true
+```
+
+Same file, same `react` import, two import spellings, two different verdicts.
+Consequences:
+
+- Any transitive chain entering a barrel by its directory form **stops there**.
+- `target: "@/a"` matches nothing. Use `@/a/index`.
+- `exists: "@/a"` passes vacuously whenever anything imports that specifier.
+
+Until this is fixed: do not write rules whose transitive chain depends on passing
+through a barrel, and do not target barrels with `uses` or `exists`. Rules that
+name the concrete module work correctly.
+
+### Re-exports are not edges
+
+`export { x } from "@/a"` and `export * from "@/a"` create no edge, independently
+of the issue above. A barrel written purely with re-exports has no outgoing edges
+under either id.
+
+### `exists` wildcards abort at runtime, not at load
+
+A rulebook containing a wildcard in an `exists` pattern loads successfully and
+reports no problems for as long as its target matches nothing. The run aborts the
+first time a target does match.
+
+### A repeated variable matches less, not more
+
+`@/components/{{provider-name}}/{{ProviderName}}View` applies only where the
+folder and the file are two spellings of one name. `stripe-connect/PaypalView` is
+not a target of it, and is not reported. To *require* the matching file, use
+`exists`.
+
+### A variable cannot sit between two `**`
+
+`@/**/{{provider-name}}/**/{{FileName}}View` does not compile. With a globstar on
+both sides the *path* would decide which directory the variable names. Anchor it
+against a literal, or use `*` to fix the depth.
+
+### Other
+
+- **Windows is not supported yet.**
+- **Monorepos** need one run per package; full multi-tsconfig support is in
+  progress.
+- **`extends` in `tsconfig.json` is not followed.** Inline `baseUrl` and `paths`.
+- **JavaScript is never analyzed.** `.js`, `.jsx`, `.mjs`, `.cjs` are invisible.
+- **A rule matching zero modules is never reported.** Silence is not success.
 
 ---
 
