@@ -18,6 +18,12 @@ const YAML_SAMPLES = {
   existsRuleHtml: examples.existsRule,
 } as const;
 
+/** The same map for the two `fix` diffs, which highlight as `diff` not `yaml`. */
+const DIFF_SAMPLES = {
+  relativeDiffHtml: examples.relativeDiff,
+  reExportDiffHtml: examples.reExportDiff,
+} as const;
+
 /**
  * Highlighting happens here rather than inside the sections so the whole tree
  * stays synchronous below this point. Wrapping it in <Suspense> instead would
@@ -25,20 +31,19 @@ const YAML_SAMPLES = {
  * show a flash of unhighlighted code on a page that is entirely static.
  */
 export default async function HomePage() {
-  const [yamlHtml, clauseHtml, allowsSourceHtml, relativeDiffHtml] =
-    await Promise.all([
-      highlightAll(YAML_SAMPLES, 'yaml'),
-      highlightAll(clauseSnippets(), 'yaml'),
-      highlightCode(examples.allowsSource, 'ts'),
-      highlightCode(examples.relativeDiff, 'diff'),
-    ]);
+  const [yamlHtml, clauseHtml, allowsSourceHtml, diffHtml] = await Promise.all([
+    highlightAll(YAML_SAMPLES, 'yaml'),
+    highlightAll(clauseSnippets(), 'yaml'),
+    highlightCode(examples.allowsSource, 'ts'),
+    highlightAll(DIFF_SAMPLES, 'diff'),
+  ]);
 
   return (
     <LandingView
       {...yamlHtml}
+      {...diffHtml}
       snippetHtml={clauseHtml}
       allowsSourceHtml={allowsSourceHtml}
-      relativeDiffHtml={relativeDiffHtml}
     />
   );
 }

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { InlineCode } from '@/components/InlineCode';
 
 /**
- * The two checks Deslop runs without being asked. They are listed rather than
+ * The three checks Deslop runs without being asked. They are listed rather than
  * demonstrated here because they need no rulebook — there is nothing to teach,
  * only an inventory to hand over. The worked examples live further down the
  * page.
@@ -41,6 +41,22 @@ export const BUILT_IN_CHECKS: BuiltInCheck[] = [
       <>
         <InlineCode>../../lib/util</InlineCode> where an alias like{' '}
         <InlineCode>@/lib/util</InlineCode> exists
+      </>
+    ),
+    autoFix: { kind: 'automatic' },
+  },
+  {
+    /*
+      A separate id from `no-relative-imports` rather than a widening of it,
+      because a lint problem is baselined as `{id}#{file}`. One shared id would
+      mean that accepting a legacy relative import in a file also silenced every
+      relative re-export in it.
+    */
+    id: 'no-relative-exports',
+    catches: (
+      <>
+        <InlineCode>export * from &apos;./util&apos;</InlineCode> where an alias
+        like <InlineCode>@/lib/util</InlineCode> exists
       </>
     ),
     autoFix: { kind: 'automatic' },

@@ -22,6 +22,7 @@ export type ExampleSectionProps = {
   usesRuleHtml?: string;
   existsRuleHtml?: string;
   relativeDiffHtml?: string;
+  reExportDiffHtml?: string;
 };
 
 /**
@@ -30,15 +31,11 @@ export type ExampleSectionProps = {
  * with its ANSI colours intact. Nothing is a mock-up, so if the CLI's format
  * changes this page becomes visibly wrong rather than quietly wrong.
  *
- * One deliberate edit: `deslop fix` prints absolute paths, and its changelog
- * here is shown repo-relative for readability. Do not "correct" it against a
- * real run.
- *
  * The samples live in JSON rather than in template literals because several of
  * them contain real `import` statements, which Deslop's lexer reads as imports
  * belonging to this module. Verbatim output is data, not code.
  *
- * Order follows ChecksSection: the four clauses a reader writes, then the two
+ * Order follows ChecksSection: the four clauses a reader writes, then the three
  * checks they get for free.
  */
 export default function ExampleSection({
@@ -48,6 +45,7 @@ export default function ExampleSection({
   usesRuleHtml,
   existsRuleHtml,
   relativeDiffHtml,
+  reExportDiffHtml,
 }: ExampleSectionProps): ReactNode {
   return (
     <Section
@@ -152,18 +150,28 @@ export default function ExampleSection({
 
       <div className="mt-12 space-y-4">
         <h3 className={`${typeScale.subTitle} ${tw.text.primary}`}>
-          A relative import, fixed for you
+          A relative import and a relative re-export, fixed for you
         </h3>
         <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
-          The last two need no rule — Deslop ships with them. Violations it can
-          repair itself are marked <InlineCode>[AUTO-FIXABLE]</InlineCode>.
+          The last three need no rule — Deslop ships with them. Violations it
+          can repair itself are marked <InlineCode>[AUTO-FIXABLE]</InlineCode>.
         </p>
         <TerminalOutput
           command={NPX_COMMAND}
           output={examples.relativeCheckOutput}
         />
         <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
-          Run <InlineCode>fix</InlineCode> and it rewrites them:
+          A re-export is an import edge like any other, so a barrel written{' '}
+          <InlineCode>export * from &apos;./util&apos;</InlineCode> is caught
+          too — under its own id, <InlineCode>no-relative-exports</InlineCode>,
+          so baselining one spelling never silences the other:
+        </p>
+        <TerminalOutput
+          command={NPX_COMMAND}
+          output={examples.reExportCheckOutput}
+        />
+        <p className={`max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
+          One run of <InlineCode>fix</InlineCode> rewrites both:
         </p>
         <TerminalOutput
           command={FIX_COMMAND}
@@ -173,6 +181,11 @@ export default function ExampleSection({
           code={examples.relativeDiff}
           highlightedHtml={relativeDiffHtml}
           filename="src/features/home/home-component.ts"
+        />
+        <CodeBlock
+          code={examples.reExportDiff}
+          highlightedHtml={reExportDiffHtml}
+          filename="src/lib/index.ts"
         />
       </div>
 
