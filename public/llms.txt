@@ -8,7 +8,7 @@ This file is the complete reference for writing Deslop rules. It is written for
 coding agents: everything needed to author a correct rulebook is here, with no
 other page to fetch.
 
-Applies to `@ivy-apps/deslop` 0.10.x. Canonical documentation for humans:
+Applies to `@ivy-apps/deslop` 0.11.x. Canonical documentation for humans:
 https://github.com/Ivy-Apps/deslop
 
 ---
@@ -25,14 +25,15 @@ It answers four kinds of question:
 - May this module import that one? (`forbids`, `allows`)
 - Must this module import that one? (`uses`)
 - Does the companion file for this module exist? (`exists`)
-- Are there import cycles or relative imports? (built in, always on)
+- Are there import cycles, relative imports or relative re-exports? (built
+  in, always on)
 
 Every check runs against the whole import graph, so a dependency reached through
 three intermediate modules is caught the same as a direct one.
 
 ### The mental model
 
-Deslop holds one data structure: a directed graph whose nodes are **module ids**
+Deslop holds one data structure: a directed graph whose nodes are **modules**
 and whose edges are **import statements**. Everything else is a query over it.
 
 ```
@@ -69,8 +70,8 @@ Recommended `package.json` scripts:
 }
 ```
 
-Prebuilt binaries ship for `darwin-arm64`, `linux-x64` and `linux-arm64`.
-Windows is not supported yet.
+Prebuilt binaries ship for `darwin-arm64`, `linux-arm64`, `linux-x64` and
+`win32-x64`. There is no `darwin-x64` build, so an Intel Mac builds from source.
 
 **Constraints on `deslop/rules/`** (both abort the run, so they matter):
 
@@ -122,22 +123,36 @@ concern, layer or team as you like: `architecture.yaml`, `quality.yaml`,
 | `exclude` | no | List of plain-glob patterns removed from the target. |
 | `forbids` | no | Imports this module may not have. |
 | `allows` | no | Exceptions carved out of `forbids`. |
+| `allows-only` | no | `forbids: "**"` and `allows:` said in one breath. Sugar, expanded before compilation. |
 | `uses` | no | Imports this module must have. |
 | `exists` | no | Modules that must exist. |
 | `fix` | yes | Plain-language instruction printed with every violation. Variables are interpolated. |
-| `example` | no | TypeScript snippet showing correct code. Not printed in 0.10.x. |
+| `example` | no | TypeScript snippet showing correct code. Not printed in 0.11.x. |
 
 A rule with no clause fields is valid YAML and checks nothing. If you write a
 rule, give it at least one of `forbids` / `uses` / `exists`.
 
-Do not invent fields. Unknown keys are ignored silently, so a typo like
-`forbid:` or `excludes:` produces a rule that passes on everything.
+**Do not invent fields: an unknown key fails the load.** A typo no longer
+produces a rule that quietly passes on everything - the run aborts, names the
+file and names the field. Verified at every level of the document:
+
+```
+deslop/rules/probe.yaml
+  AesonException "Error in $.rules[0]: parsing Deslop.Rule.Book.Dto.RuleDto(RuleDto) failed, unknown fields: ["forbid"]"
+```
+
+A misspelt clause key is caught the same way, with the path to it:
+`Error in $.rules[0].forbids[0]: unknown fields: ["imports"]`. So is a misspelt
+top-level key: `Error in $: ... unknown fields: ["ruless"]`.
+
+**A rulebook key of two or more words is kebab-case.** `allows-only` is the
+first and so far only one; every other key is a single word.
 
 ---
 
-## 4. Module ids and resolution
+## 4. Module names and resolution
 
-Deslop works with **module ids**: the aliased import path, without the file
+Deslop works with **module names**: the aliased import path, without the file
 extension, not file paths on disk.
 
 ```
@@ -145,46 +160,80 @@ src/features/auth/AuthService.ts   ->   @/features/auth/AuthService
 ```
 
 The mapping comes from `compilerOptions.paths` in the project's root
-`tsconfig.json`. Rule patterns are matched against module ids, so every pattern
-you write should start with an alias (`@/...`) or be a package name.
+`tsconfig.json`. Rule patterns are matched against module names, so every
+pattern you write should start with an alias (`@/...`) or be a package name.
 
 Resolution facts that change what your rules match:
 
-- Only the **root `tsconfig.json`** is read, and only `compilerOptions.baseUrl`
-  (defaulting to `.`) and `compilerOptions.paths`. JSONC comments are stripped,
-  so a commented tsconfig is fine.
-- **`extends` is not followed.** A `tsconfig.json` whose `compilerOptions` live
-  in a base file aborts the run with `Could not parse TS config`. Inline the
-  `baseUrl` and `paths` in the root config.
-- A module not covered by any alias gets its **absolute file path** as its id,
-  and no `@/...` pattern will ever match it. If rules mysteriously match
-  nothing, this is why.
+- The project's root `tsconfig.json` is read, and so is **every config it
+  `extends`**, resolved into one effective config. Only
+  `compilerOptions.baseUrl` and `compilerOptions.paths` are used. JSONC comments
+  are stripped, so a commented tsconfig is fine.
+- A module not covered by any alias gets a **project-rooted, `/`-prefixed name**
+  built from its path: `scripts/release.ts` is `/scripts/release`. It is still
+  targetable - `target: "/scripts/**"` matches it - but no `@/...` pattern will.
+  If rules mysteriously match nothing, check this first.
 
-### `index.ts` and barrels
+### A module answers to every name that resolves to it
 
-This one is subtle and it changes what your rules can see.
+A module is identified by the *file it resolves to*, not by the text an author
+typed, so one module can have several names and a pattern matching **any** of
+them matches the module.
 
-- The **file** `src/features/home/index.ts` is registered under the module id
-  **`@/features/home/index`**. That node owns the file's outgoing edges.
-- An **import written `"@/features/home"`** is resolved to that same file, but
-  the edge deliberately keeps the directory form and points at
-  **`@/features/home`**.
-
-These are two distinct nodes in the graph. The directory-form node is a **sink
-with no outgoing edges**. Three consequences:
+- A barrel at `src/features/home/index.ts` answers to both
+  `@/features/home/index` and `@/features/home`. Both `target:` spellings select
+  it; both import spellings reach it.
+- If `tsconfig.json` maps two aliases onto the same directory, both alias
+  spellings name the same module. Verified with `"@/*"` and `"~/*"` both
+  pointing at `./src/*`: a rule written `forbids: - import: "@/server/**"`
+  fires on a file whose source says `import { db } from "~/server/db"`, and
+  reports it as `@/server/db`.
+- **A violation id is built from the module's canonical name, not from the
+  spelling in your rule.** Verified: a rule written `target: "@/a"` matching a
+  barrel reports `probe#rule#@/a/index`. So switching a rule between two
+  spellings of the same module does not churn `deslop/baseline.yaml`.
 
 ```yaml
-target: "@/features/home"          # matches NOTHING, the file is /index
-target: "@/features/home/index"    # correct
+target: "@/features/home"          # matches the barrel
+target: "@/features/home/index"    # matches the same barrel
 ```
 
-- A transitive chain that enters a barrel by its directory form **stops there**,
-  even when the barrel uses real `import` statements.
-- `exists: "@/features/home"` passes as soon as anything imports that specifier,
-  because the phantom sink node counts as existing. It is not evidence the file
-  is there.
+Write whichever spelling your imports use.
 
-See [Limitations](#15-limitations) for the full reproducer.
+### `extends` in `tsconfig.json`
+
+The whole chain is resolved and folded into one effective config, following
+`tsc` exactly:
+
+- A base is named by a **relative** (`./config/base.json`) or **rooted** path,
+  and `.json` is appended when absent. An **array** of bases is followed left to
+  right, later entries winning.
+- `compilerOptions` overlay key by key, and **`paths` is one key**: a config
+  declaring any `paths` discards its base's entirely. There is no union. This is
+  what `tsc` does, and disagreeing with it would resolve aliases the compiler
+  rejects.
+- A relative `baseUrl` is made absolute against the directory of the file that
+  *declared* it. With no `baseUrl` anywhere in the chain, `paths` values resolve
+  against the directory of the config that declared `paths`.
+- A base named by a **package specifier** (`@repo/typescript-config/base.json`)
+  is **skipped with a warning**, not followed. Shared config packages carry
+  strictness flags rather than `paths`, so failing would break every Turborepo
+  workspace over a file Deslop does not read. If your aliases live in one, copy
+  them into a config Deslop can reach.
+
+  ```
+  WARNING: Ignoring "extends": "@repo/typescript-config/base.json" in 'tsconfig.json'.
+  Deslop resolves only relative and rooted paths, not package specifiers,
+  so any path alias declared in that package is not applied.
+  ```
+- Everything else in the chain is fatal - a missing base, an unparseable base, a
+  cycle, an `extends` of the wrong type - and the error carries the trail that
+  reached it:
+
+```
+❌ Error: TS config not found: 'config/nope.json'
+   extended from: 'tsconfig.json'
+```
 
 ### Which files are analyzed
 
@@ -213,23 +262,45 @@ Deslop lexes `import` statements. Verified behaviour:
 | `import type { T } from "@/a"` | **yes**, type-only imports count |
 | `import "@/a"` (side effect) | yes |
 | `await import("@/a")` (dynamic) | **yes** |
-| `export { x } from "@/a"` | **no** |
-| `export * from "@/a"` | **no** |
+| `export { x } from "@/a"` | **yes**, a re-export is an import edge |
+| `export * from "@/a"` | **yes** |
+| `export type { T } from "@/a"` | **yes** |
 | `require("@/a")` | no |
 
-### Re-exports are not edges
+### Barrels are ordinary modules
 
-A barrel file written with re-exports:
+A barrel written entirely with re-exports has outgoing edges like any other
+file, so a transitive chain runs straight through it:
 
 ```ts
-// @/features/home/index.ts
-export * from "@/features/home/home-service";
+// src/a/index.ts
+export * from "@/a/impl";
+// src/a/impl.ts
+import * as React from "react";
 ```
 
-is a graph node with **no outgoing edges**. Combined with the directory-form
-split above, this means barrels break transitive reachability in two independent
-ways. Rules that name the concrete module (`@/features/home/home-service`) work
-correctly; rules whose transitive chain has to pass through a barrel do not.
+```yaml
+target: "@/app/**"
+forbids:
+  - import: "react"
+    transitive: true
+```
+
+Verified: both `import { impl } from "@/a"` and `import { impl } from "@/a/index"`
+are reported, with the same chain and the same hop count -
+
+```
+Module '@/app/DirForm' transitively imports 'react' (3 hops) via: @/app/DirForm → @/a/index → @/a/impl → react.
+```
+
+Nothing about barrels needs working around. Target them, require them with
+`uses`, assert them with `exists`, and route transitive rules through them.
+
+The one thing to know is that the re-export grammar is deliberately strict,
+because `deslop fix` rewrites what it classifies. The full
+`export [type] (* [as ns] | { ... }) from "specifier"` shape is an edge;
+anything else is ordinary code. `export const cfg = "./config"` is a string, not
+a re-export, and is never rewritten.
 
 ### Third-party packages
 
@@ -252,7 +323,7 @@ module.
 
 ### Paths are segments
 
-A module id is a list of `/`-separated **segments**, and a Glob+ pattern is a
+A module name is a list of `/`-separated **segments**, and a Glob+ pattern is a
 list of segment patterns matched against them one for one. Everything else
 follows from that: `**` is the only token that changes how many segments a
 pattern consumes; every other token consumes exactly one segment, or part of one.
@@ -485,7 +556,85 @@ text; `.` is not special either.
 ```
 
 `target` and `exclude` reject `..` outright: both are matched against whole
-module ids, so there is nothing to be relative to. Write the path you mean.
+module names, so there is nothing to be relative to. Write the path you mean.
+
+### `..*` goes zero or many directories back
+
+`..*` is `..` repeated as many times as it can be. One written clause stands for
+one resolution per **zero-or-more** directories back - `{{TARGET_DIR}}` itself,
+then each ancestor above it - and the clause matches if **any** of them matches.
+Verified: a file whose own directory holds the `shared/` folder satisfies the
+clause just as one four levels below it does.
+
+```yaml
+target: "@/client/**/{{FileName}}View"
+allows-only:
+  - import: "{{TARGET_DIR}}/**"
+  - import: "{{TARGET_DIR}}/..*/shared/**"   # a shared/ at or above me
+```
+
+Matched at `@/client/billing/invoices/InvoiceView`, `{{TARGET_DIR}}` is
+`@/client/billing/invoices` and the second clause stands for all of:
+
+```
+@/client/billing/invoices/shared/**
+@/client/billing/shared/**
+@/client/shared/**
+@/shared/**
+shared/**                    (clamped past the root; matches no module)
+```
+
+**This is the answer to the depth problem.** A fixed `../shared/**` names a
+different folder at each depth and holds at only one of them; `..*` names them
+all, so the rule means the same thing however deep the matched file sits. See
+[Advanced usage](#13-advanced-usage) for the failure it removes.
+
+How many resolutions there are is decided by how deep `{{TARGET_DIR}}` actually
+is, when the clause is hydrated. There is no depth limit to configure and no
+constant to tune.
+
+`..*` is a whole segment or it is nothing, exactly like `..`: `..*shared` and
+`a..*b` are plain text.
+
+**Every segment behind a `..*` must name one directory.** A single `..` is
+checked against the one segment it would cancel; a `..*` may cancel any prefix,
+so all of them are checked:
+
+```
+{{TARGET_DIR}}/..*/shared/**      OK
+@/client/..*/shared/**            OK, literals all the way back
+@/client/{{feature-name}}/..*/x   OK, a variable is literal text once substituted
+
+@/client/**/..*/shared/**         ERROR, ** is zero or many segments: which one?
+@/**/a/b/..*/shared/**            ERROR, the ..* could reach that ** too
+@/client/*View/..*/shared         ERROR, a segment holding * names no directory
+```
+
+A `**` *ahead* of the `..*` is fine - `{{TARGET_DIR}}/..*/shared/**` is the
+motivating example. Neither rejection costs you anything: in the first case the
+`..*` could climb nothing at all and would be a silent no-op, and in the second
+the widest resolution is `@/**/shared/**`, which already subsumes every narrower
+one. Write that instead.
+
+**`..*` is rejected in `target`, `exclude` and `exists`.** The first two for the
+same reason `..` is; `exists` because it must name exactly one module. All three
+fail when the rulebook loads:
+
+```
+  rule 'exists-cannot-name-one-module'
+    exists.module: "{{TARGET_DIR}}/..*/registry"
+      "..*" cannot be used here: this pattern must name exactly one module.
+        "*", "**" and "..*" each stand for more than one path, so there
+        would be no single module to require. Write the module you mean, or
+        reach it from {{TARGET_DIR}}.
+```
+
+**In a `uses:` message, `..*` is printed as written.** There is no single module
+to name, so the token is kept the way `**` already is:
+
+```
+Module '@/client/billing/invoices/InvoiceContainer' must import '@/client/billing/invoices/..*/shared/registry'.
+```
 
 ---
 
@@ -520,14 +669,17 @@ target and binds nothing, so a variable there could never resolve:
 
 ### Where each pattern type is legal
 
-| Field | `*` and `**` | Variables | `{{TARGET_DIR}}` | `..` |
-|---|---|---|---|---|
-| `target` | yes | yes (captures) | **no** | **no** |
-| `exclude` | yes | **no** | **no** | **no** |
-| `forbids.import` | yes | yes (substitutes) | yes | yes |
-| `allows.import` | yes | yes (substitutes) | yes | yes |
-| `uses.import` | yes | yes (substitutes) | yes | yes |
-| `exists.module` | **no** | yes (substitutes) | yes | yes |
+| Field | `*` and `**` | Variables | `{{TARGET_DIR}}` | `..` | `..*` |
+|---|---|---|---|---|---|
+| `target` | yes | yes (captures) | **no** | **no** | **no** |
+| `exclude` | yes | **no** | **no** | **no** | **no** |
+| `forbids.import` | yes | yes (substitutes) | yes | yes | yes |
+| `allows.import` | yes | yes (substitutes) | yes | yes | yes |
+| `allows-only.import` | yes | yes (substitutes) | yes | yes | yes |
+| `uses.import` | yes | yes (substitutes) | yes | yes | yes |
+| `exists.module` | **no** | yes (substitutes) | yes | yes | **no** |
+
+Every **no** in this table is a load-time error, not a silent no-op.
 
 A clause may only use variables its own rule's `target` captures. A typo is
 caught at load time rather than silently widening the rule:
@@ -615,6 +767,65 @@ evaluated independently. Shipping a narrow rule *alongside* a blanket one means
 the blanket rule still fires. Pick one: either the blanket rule with a
 per-feature `exclude`, or per-feature rules.
 
+### `allows-only`
+
+Syntax sugar: `allows-only: [x]` is exactly `forbids: "**"` plus `allows: [x]`.
+These two rules are the same rule.
+
+```yaml
+# with allows-only                    # written out longhand
+target: "@/features/**"               target: "@/features/**"
+allows-only:                          forbids:
+  - import: "{{TARGET_DIR}}/**"         - import: "**"
+                                      allows:
+                                        - import: "{{TARGET_DIR}}/**"
+```
+
+Use it when the allowance is the point and the `forbids: "**"` is only how you
+say "and nothing else". It is expanded before the rulebook is compiled, so it
+adds no semantics of its own and everything true of `forbids` and `allows` is
+true of it.
+
+**It appends to a hand-written `forbids` or `allows`, it does not replace one.**
+The combination is meaningful, because the generated forbid covers **direct**
+imports only:
+
+```yaml
+target: "@/client/**"
+forbids:
+  - import: "@/server/**"
+    transitive: true       # allows-only's generated forbid is direct-only
+allows-only:
+  - import: "{{TARGET_DIR}}/**"
+  - import: "@/mid/**"
+```
+
+Verified: `@/mid/**` is allowed as a direct import and the transitive
+`@/server/**` violation through it is still reported.
+
+**`**` means everything, including npm packages.** An unresolved import such as
+`react` is a module like any other, so `allows-only` forbids it too. This is the
+same behaviour a hand-written `forbids: "**"` has always had, but `allows-only`
+reads as though it were narrower. Verified against a real run: a file whose only
+import is `import React from "react"` is reported. List what you need:
+
+```yaml
+allows-only:
+  - import: "{{TARGET_DIR}}/**"
+  - import: "react"
+  - import: "next/*"
+```
+
+**A compile error in an `allows-only` glob is labelled `allows.import`.** The
+glob is quoted verbatim so you can still find it, but the key named is not the
+one you wrote:
+
+```
+  rule 'allows-only-bad-glob'
+    allows.import: "@/**/{{nope}}/**"
+      {{nope}} is ambiguous: a single-word name reads as both camelCase and kebab-case.
+```
+
 ### `uses`
 
 The target module must import the pattern. A missing import is a violation.
@@ -643,22 +854,29 @@ exists:
 
 Three things to know:
 
-- **Wildcards are rejected**, because each entry must resolve to exactly one
-  path. But this is a **runtime** abort, raised the first time a target actually
-  matches:
+- **`*`, `**` and `..*` are rejected when the rulebook loads**, because each
+  entry must name exactly one module. The failure arrives with every other error
+  in the file, before a single module is checked - a green run no longer hides
+  an illegal `exists`:
 
   ```
-  Error: Invalid rule configuration: Rule 'does-match' in rulebook 'probe':
-  'exists' patterns must not contain wildcards (* or **).
+    rule 'exists-wildcard'
+      exists.module: "{{TARGET_DIR}}/*.spec"
+        "*.spec" cannot be used here: this pattern must name exactly one module.
+          "*", "**" and "..*" each stand for more than one path, so there
+          would be no single module to require. Write the module you mean, or
+          reach it from {{TARGET_DIR}}.
   ```
 
-  A rulebook containing a wildcard `exists` **loads successfully and reports no
-  problems** as long as its target matches nothing. A green run is not evidence
-  the pattern is legal.
+- **`exists` means a module Deslop actually parsed answers to that name.** It is
+  not satisfied by the fact that something imports the specifier. Verified: with
+  `import { g } from "@/ghost/missing"` in the source and no such file on disk,
+  `exists: "@/ghost/missing"` is **reported as missing**. It follows that
+  `exists` on an npm package always fails, and that a file excluded from the
+  scan - gitignored, or under a skipped directory - does not count as existing.
 - A file satisfies `exists` even if nothing imports it. Orphan test files count.
-- `exists` on a **directory-form barrel** passes vacuously. `moduleExists` only
-  asks whether the graph has a node with that id, and an import written
-  `"@/features/home"` creates one whether or not the file is there.
+- A barrel satisfies `exists` under **either** of its names, because both name
+  the file that is really there.
 
 ---
 
@@ -714,7 +932,7 @@ back to it.
 ### `example`
 
 An optional TypeScript snippet of correct code. It is accepted and validated,
-but **0.10.x does not print it**: a violation shows the rule's `description`, the
+but **0.11.x does not print it**: a violation shows the rule's `description`, the
 offending import statement, and `fix`, and nothing else. Put anything a developer
 must actually read into `fix`.
 
@@ -728,12 +946,29 @@ example: |
 
 ## 10. Built-in checks
 
-Two checks run with no rulebook:
+Three checks run with no rulebook:
 
 | Id | Catches | Auto-fixable |
 |---|---|---|
-| `no-relative-imports` | `../../lib/util` where an alias like `@/lib/util` exists | yes |
+| `no-relative-imports` | `import { x } from "../../lib/util"` where an alias like `@/lib/util` exists | yes |
+| `no-relative-exports` | `export * from "./util"` where an alias like `@/lib/util` exists | yes |
 | `no-import-cycles` | circular imports, printed as the loop | no |
+
+`no-relative-exports` is a **separate id** from `no-relative-imports`, not an
+extension of it, because a lint problem's baseline key is `{check-id}#{file}`.
+One shared id would mean that accepting a legacy relative import in a file also
+silenced - and stopped `deslop fix` repairing - every relative re-export in it.
+All four re-export spellings are covered:
+
+```
+[AUTO-FIXABLE] # no-relative-exports#src/lib/index.ts
+src/lib/index.ts:3
+Relative re-exports are not allowed. Use aliased ones.
+```ts
+export type { X } from "./types";
+```
+FIX: Use ```export type { X } from "@/lib/types";``` instead.
+```
 
 They report through the same pipeline as your rules, so `deslop baseline`
 silences them the same way. Their baseline keys use the lint format
@@ -745,8 +980,8 @@ would make the baseline unbounded. Each component is reported against its
 alphabetically first module, showing the shortest loop from that module back to
 itself.
 
-These two count toward the rule total in the run summary, so a project with no
-rulebook still reports `enforcing 2 rules`.
+These three count toward the rule total in the run summary, so a project with no
+rulebook still reports `enforcing 3 rules`.
 
 ---
 
@@ -760,10 +995,10 @@ rulebook still reports `enforcing 2 rules`.
 
 `<dir>` defaults to `.`. `--version` and `--help` are available.
 
-**`deslop fix` does not evaluate rulebooks.** It only applies the auto-fixable
-built-in check (`no-relative-imports`). It will never report or repair a
-`forbids` / `uses` / `exists` violation. Always use `deslop check` to see rule
-violations.
+**`deslop fix` does not evaluate rulebooks.** It only applies the two
+auto-fixable built-in checks, `no-relative-imports` and `no-relative-exports`.
+It will never report or repair a `forbids` / `uses` / `exists` violation. Always
+use `deslop check` to see rule violations.
 
 After `deslop fix`, run your formatter: rewritten import lines may no longer
 match your import-order lint rule. The recommended script is
@@ -775,11 +1010,12 @@ the exit code fail the job.
 ### Reading a violation
 
 ````
-🚀 Checking project: /path/to/project
+🚀 Checking project: my-app
 📚 Loaded 2 rulebooks, 9 rules
 Found 32 problems:
 ─────────────────────────────────────────
 # architecture#no-react-in-data#@/features/home/data/bad-repository
+src/features/home/data/bad-repository.ts:4
 Data layer modules must not transitively depend on React.
 
 Module '@/features/home/data/bad-repository' transitively imports 'react' (2 hops) via:
@@ -789,7 +1025,7 @@ import { HomeScreen } from "@/features/home/home-screen";
 ```
 FIX: Move React-dependent logic to a ViewModel or Container.
 ─────────────────────────────────────────
-⏱  Checked 45 modules enforcing 11 rules in 10ms
+⏱  Checked 45 modules enforcing 12 rules in 10ms
 ❌ Error: Found 32 problems, 17 of them auto-fixable.
    Run `deslop fix` to fix the 17 auto-fixable problems.
    Run `deslop baseline` to silence all 32 problems.
@@ -797,11 +1033,21 @@ FIX: Move React-dependent logic to a ViewModel or Container.
 
 The first line is the violation id:
 
-- Rule violations: `{rulebook-id}#{rule-id}#{module-id}`
+- Rule violations: `{rulebook-id}#{rule-id}#{module-name}`
 - Built-in checks: `{check-id}#{relative-file-path}`
+
+The second line is **where**: the file, relative to the project root, and the
+1-based line the offending statement is written on. It is printed for the two
+kinds of violation that have a statement to point at - a forbidden import and a
+cycle. A `uses` or `exists` violation prints the file with **no line**, because
+the complaint is that nobody wrote the statement.
 
 Then the rule's `description` (interpolated), the specific failure, the
 offending import statement, and the rule's `fix` (interpolated).
+
+**The location is not part of the violation id**, so editing a file above an
+accepted problem does not unsuppress it and `deslop/baseline.yaml` does not
+churn when lines move.
 
 The final `Checked N modules enforcing M rules` line is your sanity check on
 scope. If `N` is far smaller than your codebase, your alias or your ignore rules
@@ -1066,6 +1312,7 @@ not from anyone else's import chain.
 
 Everything in this section changes what a rule matches. Read it before writing a
 rule that uses `{{TARGET_DIR}}`, `..`, or a variable in more than one casing.
+Most of it is the depth problem, and `..*` is the way out of it.
 
 ### `{{TARGET_DIR}}` is relative to the file, not to the rule
 
@@ -1138,8 +1385,18 @@ allows:
 **3. `exists` can demand a file in the wrong place**, for exactly the same
 reason.
 
-**The fix: name the directory, do not count back to it.** Pin the feature root
-with a variable, and the rule is depth-safe:
+**Two fixes. Either name the directory, or climb with `..*`.**
+
+`..*` resolves once per ancestor and matches if any resolution matches, so the
+clause means the same thing at every depth:
+
+```yaml
+  allows:
+    - import: "{{TARGET_DIR}}/..*/shared/**"   # a shared/ at or above me
+```
+
+The other fix pins the feature root with a variable, which is better whenever
+you mean one specific directory rather than "any ancestor":
 
 ```yaml
 - id: feature-isolation
@@ -1172,8 +1429,8 @@ allows:
 
 As `/..` is `/` on a Unix path, a `..` with nothing left to cancel is a no-op.
 A clause that counts back further than `{{TARGET_DIR}}` is deep therefore
-resolves to a path with **no leading alias segment**, which matches no module id
-at all:
+resolves to a path with **no leading alias segment**, which matches no module
+name at all:
 
 ```yaml
 target: "@/{{feature-name}}/**"
@@ -1188,7 +1445,8 @@ allows:
 
 Nothing warns about this. In an `allows` it means extra violations; in a
 `forbids` it means silence. **Count the `..` against the shallowest file your
-target can match.**
+target can match** - or write `..*`, which climbs as far as there is anything to
+climb and so has nothing to count.
 
 ### Polarity: `forbids` accepts more spellings than `uses`
 
@@ -1315,11 +1573,11 @@ The rule loads, the run is green, and you do not know whether it works.
    step where the violation disappears is the segment that is wrong.
 4. Common culprits, in order of frequency:
    - the casing variable does not match the real file naming
-   - the pattern does not start with an alias, so it matches no module id
+   - the pattern does not start with an alias, so it matches no module name
    - `{{TARGET_DIR}}` hydrated to a deeper directory than you expected
-   - a `..` clamped to a dead clause
-   - the chain passes through a directory-form barrel
-   - the module has no alias at all, so its id is an absolute file path
+   - a `..` clamped to a dead clause, where `..*` would have held
+   - the module has no alias at all, so its name is `/`-rooted rather than
+     `@/`-prefixed
 
 ### Workflow for agents
 
@@ -1344,18 +1602,21 @@ The rule loads, the run is green, and you do not know whether it works.
 
 ### Self-check before finishing
 
-- [ ] Every pattern starts with an alias (`@/`), a package name, or `**`.
-- [ ] No `{{TARGET_DIR}}` and no `..` in a `target` or `exclude`.
+- [ ] Every pattern starts with an alias (`@/`), a `/`-rooted path, a package
+      name, or `**`.
+- [ ] No `{{TARGET_DIR}}`, `..` or `..*` in a `target` or `exclude`.
 - [ ] No variables in an `exclude` pattern.
-- [ ] No wildcards in an `exists` pattern (it would abort only once a target
-      matches, so a green run does not clear this).
+- [ ] No `*`, `**` or `..*` in an `exists` pattern.
+- [ ] Every key is spelled exactly as this document spells it. An unknown key
+      aborts the load, so a typo shows up immediately - but check the spelling
+      of `allows-only`, the one kebab-case key.
 - [ ] The casing variable matches the project's actual file naming.
 - [ ] `{{TARGET_DIR}}/**` is not being used to mean "my feature" under a `**`
-      target. Name the root with a variable instead.
-- [ ] Every `..` was counted against the **shallowest** file the target matches.
-- [ ] No rule depends on a transitive chain passing through a barrel imported by
-      its directory form.
-- [ ] No `uses` or `exists` targets a barrel.
+      target. Name the root with a variable, or reach it with `..*`.
+- [ ] Every `..` was counted against the **shallowest** file the target matches,
+      or replaced with `..*`.
+- [ ] Every `allows-only` lists the npm packages the target legitimately needs.
+      `**` forbids `react` too.
 - [ ] `deslop/rules/` is flat and contains only rulebook YAML files.
 - [ ] `deslop check .` was actually run, its output read, and at least one rule
       proven to fire on a deliberate violation.
@@ -1363,53 +1624,6 @@ The rule loads, the run is green, and you do not know whether it works.
 ---
 
 ## 15. Limitations
-
-### Barrels split into two graph nodes, silently dropping transitive violations
-
-This is a known engine defect, not a design choice.
-
-A file `src/a/index.ts` is registered under the id `@/a/index`. An import written
-`"@/a"` resolves to that same file but keeps the directory form, creating a
-second node `@/a` with **no outgoing edges**. Reproducer:
-
-```ts
-// src/app/DirForm.ts
-import { a } from "@/a";        // NO violation reported
-// src/app/IdxForm.ts
-import { a } from "@/a/index";  // violation: @/app/IdxForm -> @/a/index -> react
-// src/a/index.ts
-import * as React from "react";
-```
-
-```yaml
-target: "@/app/**"
-forbids:
-  - import: "react"
-    transitive: true
-```
-
-Same file, same `react` import, two import spellings, two different verdicts.
-Consequences:
-
-- Any transitive chain entering a barrel by its directory form **stops there**.
-- `target: "@/a"` matches nothing. Use `@/a/index`.
-- `exists: "@/a"` passes vacuously whenever anything imports that specifier.
-
-Until this is fixed: do not write rules whose transitive chain depends on passing
-through a barrel, and do not target barrels with `uses` or `exists`. Rules that
-name the concrete module work correctly.
-
-### Re-exports are not edges
-
-`export { x } from "@/a"` and `export * from "@/a"` create no edge, independently
-of the issue above. A barrel written purely with re-exports has no outgoing edges
-under either id.
-
-### `exists` wildcards abort at runtime, not at load
-
-A rulebook containing a wildcard in an `exists` pattern loads successfully and
-reports no problems for as long as its target matches nothing. The run aborts the
-first time a target does match.
 
 ### A repeated variable matches less, not more
 
@@ -1426,10 +1640,11 @@ against a literal, or use `*` to fix the depth.
 
 ### Other
 
-- **Windows is not supported yet.**
-- **Monorepos** need one run per package; full multi-tsconfig support is in
-  progress.
-- **`extends` in `tsconfig.json` is not followed.** Inline `baseUrl` and `paths`.
+- **One `tsconfig.json` per run.** The `extends` chain is followed, so aliases
+  declared in a shared base config are picked up, but a workspace with a
+  `tsconfig.json` per package still needs one run per package.
+- **A base named by a package specifier is skipped**, with a warning. Aliases
+  declared in a shared config *package* are not applied.
 - **JavaScript is never analyzed.** `.js`, `.jsx`, `.mjs`, `.cjs` are invisible.
 - **A rule matching zero modules is never reported.** Silence is not success.
 

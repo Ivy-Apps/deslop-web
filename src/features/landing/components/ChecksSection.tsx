@@ -34,7 +34,7 @@ export type ChecksSectionProps = {
 
 /**
  * Two blocks, in the order a reader needs them: the rules they write, then the
- * two checks they get without writing anything. Targeting comes before the
+ * three checks they get without writing anything. Targeting comes before the
  * clauses because a clause fragment is unreadable without knowing what it is
  * scoped to.
  */
@@ -189,7 +189,7 @@ function BuiltInChecks(): ReactNode {
       </h3>
 
       <p className={`mt-3 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
-        Two checks are always on and need no rulebook. They report through the
+        Three checks are always on and need no rulebook. They report through the
         same pipeline as your own rules, so{' '}
         <InlineCode>deslop baseline</InlineCode> silences them the same way.
       </p>
