@@ -1,9 +1,13 @@
+import type { ReactNode } from 'react';
+
+import { InlineCode } from '@/components/InlineCode';
+
 /**
  * The content of the "Your rules" block: one whole rule, then the four clauses
- * it can carry. Showing a complete rule first is what makes the clause snippets
- * below readable — on their own they are fragments with no `target`, and a
- * reader who has not seen `target` cannot tell what `{{TARGET_DIR}}` is
- * relative to.
+ * it can carry and the one shorthand over them. Showing a complete rule first
+ * is what makes the clause snippets below readable — on their own they are
+ * fragments with no `target`, and a reader who has not seen `target` cannot
+ * tell what `{{TARGET_DIR}}` is relative to.
  *
  * Kept beside ChecksSection rather than in a shared module because the
  * `features-isolated` rule only permits imports from within the same directory.
@@ -67,7 +71,12 @@ matched         @/features/profile/useUserProfileViewModel
 
 export type Clause = {
   name: string;
-  description: string;
+  /**
+   * Markup rather than a string, because these sentences name other clauses and
+   * pattern tokens. A `forbids: "**"` set in body text reads as prose until it
+   * is set as code, and `allows-only` is defined in terms of two of them.
+   */
+  description: ReactNode;
   /** A YAML fragment, highlighted by the page before it reaches the section. */
   snippet: string;
 };
@@ -94,6 +103,30 @@ export const CLAUSES: Clause[] = [
     snippet: `allows:
   - import: "@/features/auth/**"
   - import: "{{TARGET_DIR}}/**"`,
+  },
+  /*
+   * Sugar rather than a constraint, so it sits after the two clauses it stands
+   * for rather than among the four. The npm sentence is not a caveat we could
+   * drop: `**` reads as "every module of mine" to almost everyone who writes
+   * it, and the one thing that makes `allows-only` bite in a real project is
+   * that it forbids `react` too.
+   */
+  {
+    name: 'allows-only',
+    description: (
+      <>
+        The target may import <em>only</em> what this clause lists, and nothing
+        else. It is syntax sugar for a{' '}
+        <InlineCode>forbids: &quot;**&quot;</InlineCode> and an{' '}
+        <InlineCode>allows:</InlineCode> written as one clause, and it adds to a
+        hand-written <InlineCode>forbids</InlineCode> rather than replacing it.
+        Note that <InlineCode>**</InlineCode> means every module, npm packages
+        included, so list the ones the target legitimately needs.
+      </>
+    ),
+    snippet: `allows-only:
+  - import: "{{TARGET_DIR}}/**"
+  - import: "react"`,
   },
   {
     name: 'uses',

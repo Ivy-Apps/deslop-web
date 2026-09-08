@@ -132,7 +132,8 @@ function YourRules({
       </p>
 
       <p className={`mt-6 max-w-2xl ${typeScale.body} ${tw.text.secondary}`}>
-        The constraint is one of four clauses:
+        The constraint is one of four clauses, with a shorthand for the
+        commonest pair of them:
       </p>
 
       <dl className="mt-6 space-y-8">
