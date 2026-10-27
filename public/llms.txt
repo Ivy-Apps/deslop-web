@@ -1,15 +1,22 @@
 # Deslop
 
-> Static import-graph analyzer for TypeScript. You write architecture rules in
-> YAML; Deslop checks them on every run. No AI, no heuristics: it walks the
-> import graph, so the same code always produces the same result.
+> Static import-graph analyzer for TypeScript, Haskell and Nix. You write
+> architecture rules in YAML; Deslop checks them on every run. No AI, no
+> heuristics: it walks the import graph, so the same code always produces the
+> same result.
 
 This file is the complete reference for writing Deslop rules. It is written for
 coding agents: everything needed to author a correct rulebook is here, with no
 other page to fetch.
 
-Applies to `@ivy-apps/deslop` 0.11.x. Canonical documentation for humans:
+Applies to `@ivy-apps/deslop` 0.12.x. Canonical documentation for humans:
 https://github.com/Ivy-Apps/deslop
+
+Three languages are supported: TypeScript (a root `tsconfig.json`), Haskell (a
+root `*.cabal`) and Nix (a root `flake.nix` or `default.nix`). The rule DSL is
+the same for all three. Every example in this file is TypeScript; what differs
+for Haskell and Nix is in
+[Haskell and Nix projects](#6-haskell-and-nix-projects).
 
 ---
 
@@ -26,7 +33,7 @@ It answers four kinds of question:
 - Must this module import that one? (`uses`)
 - Does the companion file for this module exist? (`exists`)
 - Are there import cycles, relative imports or relative re-exports? (built
-  in, always on)
+  in, always on; the relative checks are TypeScript only)
 
 Every check runs against the whole import graph, so a dependency reached through
 three intermediate modules is caught the same as a direct one.
@@ -44,19 +51,37 @@ rule = (a set of modules)  ×  (a predicate about their edges)
 
 A rule that selects no modules asks nothing and passes. This is the single most
 common failure mode when writing rules, and Deslop does not warn about it: see
-[Probing](#14-probing-and-verifying-your-rules).
+[Probing](#15-probing-and-verifying-your-rules).
 
 ---
 
 ## 2. Project setup
 
-Deslop needs three things:
+Deslop reads the project's language from its root, trying each in order; the
+first match wins:
+
+1. **TypeScript**: a `tsconfig.json`.
+2. **Haskell**: a `*.cabal` file. Two `.cabal` files at the root are an error,
+   and so is a `cabal.project` naming any package other than that one.
+3. **Nix**: a `flake.nix` or a `default.nix`.
+
+So a Haskell package with a `flake.nix` for its dev shell is read as Haskell,
+and a repository with both a `tsconfig.json` and a `.cabal` file is read as
+TypeScript. A directory matching none fails the run with exit code 1:
+
+```
+❌ Error: No supported project found in /tmp/probe-none. Looked for: TypeScript (tsconfig.json), Haskell (*.cabal), Nix (flake.nix or default.nix)
+```
+
+A TypeScript project needs three things:
 
 1. **A `tsconfig.json` in the project root** with `compilerOptions.paths`
    defining at least one alias, conventionally `"@/*": ["./src/*"]`.
 2. **A `deslop/rules/` directory** holding one or more rulebook YAML files.
 3. **The CLI**: `npm install --save-dev @ivy-apps/deslop`, or run it with
    `npx @ivy-apps/deslop check .`.
+
+A Haskell or Nix project needs only the last two.
 
 Recommended `package.json` scripts:
 
@@ -127,7 +152,7 @@ concern, layer or team as you like: `architecture.yaml`, `quality.yaml`,
 | `uses` | no | Imports this module must have. |
 | `exists` | no | Modules that must exist. |
 | `fix` | yes | Plain-language instruction printed with every violation. Variables are interpolated. |
-| `example` | no | TypeScript snippet showing correct code. Not printed in 0.11.x. |
+| `example` | no | TypeScript snippet showing correct code. Not printed in 0.12.x. |
 
 A rule with no clause fields is valid YAML and checks nothing. If you write a
 rule, give it at least one of `forbids` / `uses` / `exists`.
@@ -153,7 +178,9 @@ first and so far only one; every other key is a single word.
 ## 4. Module names and resolution
 
 Deslop works with **module names**: the aliased import path, without the file
-extension, not file paths on disk.
+extension, not file paths on disk. This section and the next describe
+TypeScript; Haskell and Nix name their modules as in
+[Haskell and Nix projects](#6-haskell-and-nix-projects).
 
 ```
 src/features/auth/AuthService.ts   ->   @/features/auth/AuthService
@@ -237,13 +264,19 @@ The whole chain is resolved and folded into one effective config, following
 
 ### Which files are analyzed
 
-Only `.ts` and `.tsx`, including `.d.ts`. JavaScript is never analyzed: `.js`,
-`.jsx`, `.mjs` and `.cjs` files are invisible to the graph.
+In a TypeScript project, only `.ts` and `.tsx`, including `.d.ts`. JavaScript
+is never analyzed: `.js`, `.jsx`, `.mjs` and `.cjs` files are invisible to the
+graph.
 
-These directories are skipped: `node_modules`, `.git`, `dist`, `build`, `out`,
-`.next`, `.output`, `coverage`, `storybook-static`, `.turbo`, `.cache`,
-`.parcel-cache`, `.yarn`, `.direnv`, `.devenv`, `.svelte-kit`, `.nuxt`,
-`.astro`, `.vercel`, `.wrangler`, plus `next-env.d.ts`.
+In every language, these directories are never walked: `.git`, `.direnv`,
+`.devenv`, `.cache`, and the agent directories `.claude`, `.codex`, `.cursor`,
+`.opencode` and `.windsurf`. No `.gitignore` rule can re-include them.
+
+A TypeScript project also skips `node_modules`, `dist`, `build`, `out`, `.next`,
+`.output`, `coverage`, `storybook-static`, `.turbo`, `.parcel-cache`, `.yarn`,
+`.svelte-kit`, `.nuxt`, `.astro`, `.vercel`, `.wrangler`, plus `next-env.d.ts`.
+What Haskell and Nix skip is in
+[Haskell and Nix projects](#6-haskell-and-nix-projects).
 
 Files ignored by `.gitignore` are skipped too. Deslop reads only `.gitignore`
 files found in the project tree; it ignores `.git/info/exclude` and the user's
@@ -316,7 +349,97 @@ forbids:
 
 ---
 
-## 6. Glob+ patterns
+## 6. Haskell and Nix projects
+
+Everything from section 7 on - Glob+, `target` and `exclude`, every clause,
+`fix`, `description`, the baseline - works the same in every language. Module
+names are spelled with `/` in every language, so `Data.Text` is `Data/Text`.
+What differs is what a module is, what it is called, and what counts as an
+edge.
+
+### Haskell
+
+Deslop reads the single package at the root with Cabal's own parser, resolving
+`common` stanzas and taking every `if` branch at once. hpack-only and
+stack-only projects are not supported: there must be a `.cabal` file.
+
+- **A module is every `.hs` file** in a component's `hs-source-dirs`.
+- **The canonical name is `<kind>/<component>/<Name>`**, with kinds `lib`,
+  `exe`, `test` and `bench`: `lib/my-app/Data/Store`,
+  `test/my-app-test/Data/StoreSpec`, `exe/my-app/Main`. Violation ids and
+  baseline keys use it. The bare GHC name, `Data/Store`, is an alias, so
+  `Data/**` matches whichever component compiles it and `lib/*/**` matches only
+  libraries.
+- **Imports resolve** to the importing component's own source directories
+  first, then to the project libraries its `build-depends` names. Everything
+  else is external: `import Data.Text` reaches `Data/Text`.
+- **hspec-discover drivers** (`{-# OPTIONS_GHC -F -pgmF hspec-discover #-}`)
+  get an edge to every `*Spec` module below their directory. Verified:
+
+  ```
+  Module 'test/p-test/Main' transitively imports 'Data/Text' (4 hops) via: test/p-test/Main → test/p-test/Core/ASpec → lib/p/Core/A → lib/p/Core/B → Data/Text.
+  ```
+- **Files behind CPP or another `-F -pgmF` preprocessor** are modules with no
+  imports, and the run warns:
+
+  ```
+  WARNING: src/Core/A.hs is preprocessed by CPP (line 1), so its imports were not read.
+  ```
+- **`.lhs` and `.hs-boot` files are not read.**
+- **Skipped directories:** `dist-newstyle`, `dist`, `.stack-work`, `.hie`,
+  `.hpc` and `.cabal-sandbox`.
+
+### Nix
+
+Deslop reads what is written and never evaluates it.
+
+- **Every `.nix` file is a module**, and **every path written outside a
+  comment is an edge**, whatever it is for: `import ./x.nix`,
+  `imports = [ ./x.nix ]` and `builtins.readFile ./x.sh` all count.
+- **Names** are paths from the root without `.nix`: `modules/home/git.nix` is
+  `modules/home/git`. `d/default.nix` is canonically `d/default`, with the
+  alias `d`. `flake.nix` is `flake`. A non-Nix file a path reaches is a module
+  named with its extension: `secrets/common.yaml`.
+- **`self` resolves from the project root**, so `"${self}/mods/a.nix"` reaches
+  `mods/a`. Name the other identifiers your configuration binds the root to in
+  the optional `deslop/nix.yaml`:
+
+  ```yaml
+  roots: [root]   # specialArgs = { root = self; }
+  ```
+- **Outside the project:** `<nixpkgs/nixos/modules/x.nix>` is
+  `nixpkgs/nixos/modules/x`, and each input the root `flake.nix` declares is
+  `inputs/<name>/...`: `inputs.hm.nixosModules.default` is
+  `inputs/hm/nixosModules/default`.
+- **A computed path is Unresolved.** `dir + "/${n}"` names nothing until
+  evaluation, so a `forbids` reports it as one it cannot judge, with the id
+  `{rulebook-id}#{rule-id}#{module}#unresolved#{specifier}`. Verified:
+
+  ```
+  # layers#hosts-no-flake#hosts/laptop/extra#unresolved#dir + "/${n}"
+  hosts/laptop/extra.nix:1
+  Hosts never import the flake.
+
+  Module 'hosts/laptop/extra' imports 'dir + "/${n}"', which Deslop cannot resolve to a module, so whether it breaks this Rule cannot be judged.
+  ```
+  A computed path with a literal base, such as `./plugins/${name}.nix`,
+  reaches every file on disk it can match instead. Baseline the Unresolved ones
+  you accept.
+- **Skipped:** `result` and `result-*`, the links `nix build` leaves.
+- **`deslop fix` changes nothing** in a Nix project.
+
+### What is TypeScript only
+
+- `@/` and every other `tsconfig.json` alias.
+- The `no-relative-imports` and `no-relative-exports` checks, and so
+  everything `deslop fix` repairs.
+
+Every clause, every Glob+ feature and `no-import-cycles` work in all three
+languages.
+
+---
+
+## 7. Glob+ patterns
 
 Glob+ is ordinary glob plus **named variables** captured from the matched
 module.
@@ -358,7 +481,7 @@ content.
 This is verified behaviour, and it is why `forbids: "@/internal/**"` catches an
 import of the module `@/internal` itself, not only what sits beneath it. It also
 means a `**` target selects files at *every* depth, which matters enormously for
-`{{TARGET_DIR}}`: see [Advanced usage](#13-advanced-usage).
+`{{TARGET_DIR}}`: see [Advanced usage](#14-advanced-usage).
 
 ### Variables
 
@@ -511,7 +634,7 @@ the one accepted spelling.
 `{{TARGET_DIR}}` is the directory of the **matched file**, so under a target
 containing `**` it is a different directory for files at different depths. This
 is the single sharpest edge in the DSL: see
-[Advanced usage](#13-advanced-usage).
+[Advanced usage](#14-advanced-usage).
 
 ### `..` goes one directory back
 
@@ -587,7 +710,7 @@ shared/**                    (clamped past the root; matches no module)
 **This is the answer to the depth problem.** A fixed `../shared/**` names a
 different folder at each depth and holds at only one of them; `..*` names them
 all, so the rule means the same thing however deep the matched file sits. See
-[Advanced usage](#13-advanced-usage) for the failure it removes.
+[Advanced usage](#14-advanced-usage) for the failure it removes.
 
 How many resolutions there are is decided by how deep `{{TARGET_DIR}}` actually
 is, when the clause is hydrated. There is no depth limit to configure and no
@@ -638,7 +761,7 @@ Module '@/client/billing/invoices/InvoiceContainer' must import '@/client/billin
 
 ---
 
-## 7. Targeting: `target` and `exclude`
+## 8. Targeting: `target` and `exclude`
 
 `target` selects modules. `exclude` removes modules from that selection.
 
@@ -707,7 +830,7 @@ checked and permits one specific import.
 
 ---
 
-## 8. Clauses
+## 9. Clauses
 
 ### `forbids`
 
@@ -880,7 +1003,7 @@ Three things to know:
 
 ---
 
-## 9. `fix`, `description` and `example`
+## 10. `fix`, `description` and `example`
 
 `fix` is printed with every violation and is the field agents and developers act
 on. Make it an instruction, not a restatement of the problem:
@@ -932,7 +1055,7 @@ back to it.
 ### `example`
 
 An optional TypeScript snippet of correct code. It is accepted and validated,
-but **0.11.x does not print it**: a violation shows the rule's `description`, the
+but **0.12.x does not print it**: a violation shows the rule's `description`, the
 offending import statement, and `fix`, and nothing else. Put anything a developer
 must actually read into `fix`.
 
@@ -944,15 +1067,15 @@ example: |
 
 ---
 
-## 10. Built-in checks
+## 11. Built-in checks
 
-Three checks run with no rulebook:
+These checks run with no rulebook:
 
-| Id | Catches | Auto-fixable |
-|---|---|---|
-| `no-relative-imports` | `import { x } from "../../lib/util"` where an alias like `@/lib/util` exists | yes |
-| `no-relative-exports` | `export * from "./util"` where an alias like `@/lib/util` exists | yes |
-| `no-import-cycles` | circular imports, printed as the loop | no |
+| Id | Catches | Auto-fixable | Languages |
+|---|---|---|---|
+| `no-relative-imports` | `import { x } from "../../lib/util"` where an alias like `@/lib/util` exists | yes | TypeScript |
+| `no-relative-exports` | `export * from "./util"` where an alias like `@/lib/util` exists | yes | TypeScript |
+| `no-import-cycles` | circular imports, printed as the loop | no | all |
 
 `no-relative-exports` is a **separate id** from `no-relative-imports`, not an
 extension of it, because a lint problem's baseline key is `{check-id}#{file}`.
@@ -980,25 +1103,28 @@ would make the baseline unbounded. Each component is reported against its
 alphabetically first module, showing the shortest loop from that module back to
 itself.
 
-These three count toward the rule total in the run summary, so a project with no
-rulebook still reports `enforcing 3 rules`.
+The built-in checks count toward the rule total in the run summary, so a
+TypeScript project with no rulebook still reports `enforcing 3 rules`, and a
+Haskell or Nix project `enforcing 1 rule`.
 
 ---
 
-## 11. CLI, violations and the baseline
+## 12. CLI, violations and the baseline
 
 | Command | What it does |
 |---|---|
 | `deslop check <dir>` | Reports every violation. Exits non-zero if any are found. |
 | `deslop fix <dir>` | Rewrites relative imports to aliased ones. |
 | `deslop baseline <dir>` | Writes `deslop/baseline.yaml` recording all current violations. |
+| `deslop explore <dir>` | Writes an interactive module graph to `deslop/diagram/index.html`. See [`deslop explore`](#deslop-explore). |
 
 `<dir>` defaults to `.`. `--version` and `--help` are available.
 
 **`deslop fix` does not evaluate rulebooks.** It only applies the two
 auto-fixable built-in checks, `no-relative-imports` and `no-relative-exports`.
 It will never report or repair a `forbids` / `uses` / `exists` violation. Always
-use `deslop check` to see rule violations.
+use `deslop check` to see rule violations. Both checks are TypeScript only, so
+in a Haskell or Nix project `deslop fix` changes nothing.
 
 After `deslop fix`, run your formatter: rewritten import lines may no longer
 match your import-order lint rule. The recommended script is
@@ -1006,6 +1132,34 @@ match your import-order lint rule. The recommended script is
 
 In CI there is no key and no account: run `npx @ivy-apps/deslop check .` and let
 the exit code fail the job.
+
+### `deslop explore`
+
+```
+deslop explore [PROJECT_DIR] [--diff-base REF] [--ci]
+```
+
+It writes one self-contained file, `deslop/diagram/index.html`, that works
+offline: the module graph, with folders that collapse and expand, a layered
+layout, search, and a "Diff only" view of the modules changed since the branch
+left the diff base, committed or not. `--diff-base` defaults to `main`, and
+`origin/<REF>` is used when the remote has it.
+
+- **It reads no rulebook and shows no violations.** It is a map of the graph,
+  not a check.
+- **Outside a git repository** it still writes the page, and prints:
+
+  ```
+  No diff to show: the project is not in a git repository.
+  ```
+- **It opens the page in your browser** only on a terminal with no `CI`
+  variable set. `--ci` never opens it.
+- Add `deslop/diagram/` to `.gitignore`.
+
+To publish it as a preview on each pull request, check out the full history
+(`fetch-depth: 0`), run
+`npx deslop explore . --ci --diff-base ${{ github.base_ref }}`, and deploy the
+`deslop/diagram/` folder to any static host.
 
 ### Reading a violation
 
@@ -1095,7 +1249,7 @@ Rules for agents working with the baseline:
 
 ---
 
-## 12. Rule cookbook
+## 13. Rule cookbook
 
 Adapt these to the project's actual directory names. They are written for a
 `@/*` alias pointing at `src/`. Every recipe here has been run against a fixture
@@ -1141,7 +1295,7 @@ that proves it fires on a violation and stays silent on correct code.
 
 Note the shape: the feature root is named by a **variable**, in both the target
 and the `allows`. This is depth-safe. Writing `{{TARGET_DIR}}/**` here would be
-wrong for any file in a subfolder: see [Advanced usage](#13-advanced-usage).
+wrong for any file in a subfolder: see [Advanced usage](#14-advanced-usage).
 
 ```yaml
 - id: features-isolated
@@ -1308,7 +1462,7 @@ not from anyone else's import chain.
 
 ---
 
-## 13. Advanced usage
+## 14. Advanced usage
 
 Everything in this section changes what a rule matches. Read it before writing a
 rule that uses `{{TARGET_DIR}}`, `..`, or a variable in more than one casing.
@@ -1533,7 +1687,7 @@ check that its casings match your conventions.
 
 ---
 
-## 14. Probing and verifying your rules
+## 15. Probing and verifying your rules
 
 A rule that matches nothing passes. A green run is therefore **not** evidence
 your rule works. Prove it.
@@ -1602,8 +1756,11 @@ The rule loads, the run is green, and you do not know whether it works.
 
 ### Self-check before finishing
 
-- [ ] Every pattern starts with an alias (`@/`), a `/`-rooted path, a package
-      name, or `**`.
+- [ ] In TypeScript, every pattern starts with an alias (`@/`), a `/`-rooted
+      path, a package name, or `**`. In Haskell it is a slash-spelled module
+      name, bare (`Data/**`) or component-qualified (`lib/*/Data/**`); in Nix,
+      a path from the root without `.nix` (`modules/**`), `inputs/<name>/...`
+      or `nixpkgs/...`.
 - [ ] No `{{TARGET_DIR}}`, `..` or `..*` in a `target` or `exclude`.
 - [ ] No variables in an `exclude` pattern.
 - [ ] No `*`, `**` or `..*` in an `exists` pattern.
@@ -1623,7 +1780,7 @@ The rule loads, the run is green, and you do not know whether it works.
 
 ---
 
-## 15. Limitations
+## 16. Limitations
 
 ### A repeated variable matches less, not more
 
@@ -1647,6 +1804,13 @@ against a literal, or use `*` to fix the depth.
   declared in a shared config *package* are not applied.
 - **JavaScript is never analyzed.** `.js`, `.jsx`, `.mjs`, `.cjs` are invisible.
 - **A rule matching zero modules is never reported.** Silence is not success.
+- **One Haskell package per run.** Two root `.cabal` files, or a
+  `cabal.project` naming another package, is an error. hpack-only and
+  stack-only projects are not read.
+- **Haskell behind CPP or a `-F -pgmF` preprocessor has no imports**, with a
+  warning. `.lhs` and `.hs-boot` files are not read.
+- **Nix is never evaluated.** A path only evaluation can name is Unresolved,
+  and a `forbids` that would have to judge it reports it as one it cannot judge.
 
 ---
 
